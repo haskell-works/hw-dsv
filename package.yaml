@@ -22,7 +22,9 @@ description:         Please see the README on Github at <https://github.com/newh
 dependencies:
 - base >= 4.7 && < 5
 - bytestring
+- hw-bits
 - hw-rankselect
+- hw-prim
 - vector
 
 library:
