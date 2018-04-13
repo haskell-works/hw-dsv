@@ -1,5 +1,5 @@
 dist
-dist-*
+dist-newstyle
 cabal-dev
 *.o
 *.hi
@@ -14,7 +14,16 @@ cabal.sandbox.config
 *.prof
 *.aux
 *.hp
-*.eventlog
-.stack-work/
-cabal.project.local
-.HTF/
+*.cabal
+
+/*.submodules
+/.stack-work/
+/result
+/deps
+/data
+/corpus
+/*.json
+/*.json.ib
+/*.json.bp
+/snapshot.yaml
+/stack-ci.yaml

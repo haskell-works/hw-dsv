@@ -1,0 +1,8 @@
+resolver: lts-10.10
+
+packages:
+- .
+
+extra-deps:
+- hedgehog-0.5.3
+- hw-hspec-hedgehog-0.1.0.3
