@@ -1,6 +1,9 @@
 module HaskellWorks.Data.Sv
-  ( someFunc
+  ( SvCursor(..)
   ) where
 
-someFunc :: IO ()
-someFunc = putStrLn "someFunc"
+data SvCursor t n f = SvCursor
+  { svCursorText     :: t
+  , svCursorNewlines :: n
+  , svCursorFields   :: f
+  } deriving (Eq, Show)
