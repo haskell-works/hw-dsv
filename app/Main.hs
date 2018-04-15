@@ -1,6 +1,8 @@
 module Main where
 
-import HaskellWorks.Data.Sv
+import App.Commands
+import Control.Monad
+import Options.Applicative
 
 main :: IO ()
-main = return ()
+main = join $ execParser (info cmdOpts idm)
