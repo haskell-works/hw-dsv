@@ -24,7 +24,10 @@ dependencies:
 - bytestring
 - hw-bits
 - hw-rankselect
+- hw-rankselect-base
 - hw-prim
+- lens
+- mmap
 - vector
 
 library:
@@ -35,6 +38,7 @@ library:
   - -Wincomplete-record-updates
   - -Wincomplete-uni-patterns
   - -Wredundant-constraints
+  - -O2
 
 executables:
   hw-sv-exe:

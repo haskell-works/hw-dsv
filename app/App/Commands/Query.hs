@@ -1,15 +1,23 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module App.Commands.Query
   ( cmdQuery
   ) where
 
 import Control.Applicative
 import Data.Monoid
+import Data.Word
+import Foreign.ForeignPtr
+import HaskellWorks.Data.Sv
 import Options.Applicative
+import System.IO.MMap
+
+import qualified Data.ByteString.Internal as BSI
 
 runQuery :: Bool -> [Int] -> FilePath -> IO ()
-runQuery _createIndex _column _filePath = do
-  -- toInterestBitsVector
-  return ()
+runQuery createIndex _column filePath = do
+  cursor <- mmapDataFile createIndex filePath
+
   return ()
 
 cmdQuery :: Mod CommandFields (IO ())

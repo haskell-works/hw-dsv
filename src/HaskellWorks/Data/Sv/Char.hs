@@ -9,5 +9,8 @@ dQuote = fromIntegral (ord '"')
 comma :: Word8
 comma = fromIntegral (ord ',')
 
+pipe :: Word8
+pipe = fromIntegral (ord '|')
+
 newline :: Word8
 newline = fromIntegral (ord '\n')
