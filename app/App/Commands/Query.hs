@@ -10,8 +10,9 @@ import Data.Function
 import Data.List
 import Data.Maybe
 import Data.Monoid
-import HaskellWorks.Data.Sv
-import Options.Applicative  hiding (columns)
+import HaskellWorks.Data.Sv.Cursor
+import HaskellWorks.Data.Sv.Load
+import Options.Applicative         hiding (columns)
 
 import qualified Data.ByteString.Char8 as C8
 
