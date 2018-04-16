@@ -5,18 +5,30 @@ module App.Commands.Query
   ) where
 
 import Control.Applicative
+import Control.Monad
+import Data.Function
+import Data.List
+import Data.Maybe
 import Data.Monoid
-import Data.Word
-import Foreign.ForeignPtr
 import HaskellWorks.Data.Sv
-import Options.Applicative
-import System.IO.MMap
+import Options.Applicative  hiding (columns)
 
-import qualified Data.ByteString.Internal as BSI
+import qualified Data.ByteString.Char8 as C8
+
+repeatedly :: (a -> Maybe a) -> a -> [a]
+repeatedly f a = a:case f a of
+  Just b  -> repeatedly f b
+  Nothing -> []
 
 runQuery :: Bool -> [Int] -> FilePath -> IO ()
-runQuery createIndex _column filePath = do
+runQuery createIndex columns filePath = do
   cursor <- mmapDataFile createIndex filePath
+
+  forM_ (repeatedly nextRow cursor) $ \row -> do
+    let fields = repeatedly nextField row
+    let columnToFieldString column = maybe "" (C8.unpack . snippet) (drop column fields & listToMaybe)
+    let fieldStrings = columnToFieldString <$> columns
+    putStrLn $ mconcat $ intersperse "|" fieldStrings
 
   return ()
 

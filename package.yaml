@@ -41,7 +41,7 @@ library:
   - -O2
 
 executables:
-  hw-sv-exe:
+  hw-sv:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
