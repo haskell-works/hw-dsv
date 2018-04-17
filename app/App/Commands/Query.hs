@@ -6,6 +6,7 @@ module App.Commands.Query
 
 import Control.Applicative
 import Control.Monad
+import Data.Char
 import Data.Function
 import Data.List
 import Data.Maybe
@@ -21,9 +22,9 @@ repeatedly f a = a:case f a of
   Just b  -> repeatedly f b
   Nothing -> []
 
-runQuery :: Bool -> [Int] -> FilePath -> IO ()
-runQuery createIndex columns filePath = do
-  cursor <- mmapDataFile createIndex filePath
+runQuery :: Bool -> [Int] -> FilePath -> Char -> IO ()
+runQuery createIndex columns filePath delimiter = do
+  cursor <- mmapDataFile (fromIntegral (ord delimiter)) createIndex filePath
 
   forM_ (repeatedly nextRow cursor) $ \row -> do
     let fields = repeatedly nextField row
@@ -47,3 +48,13 @@ cmdQuery = command "query"  $ flip info idm $ runQuery
           <>  help "Separated Value file"
           <>  metavar "STRING"
           )
+    <*> option readChar
+          (   long "delimiter"
+          <>  help "DSV delimiter"
+          <>  metavar "CHAR"
+          )
+
+readChar :: ReadM Char
+readChar = eitherReader $ \xs -> case xs of
+  [a] -> return a
+  _   -> Left $ "Invalid delimeter " <> show xs

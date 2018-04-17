@@ -36,50 +36,52 @@ boolsToVector n = DVS.unfoldrN vLen (go 0 0)
         go n' w (True :cs) = go (n' + 1) ((1 .<. n') .|. w) cs
         go n' w (False:cs) = go (n' + 1)                 w  cs
 
-toInterestBitsVector :: BS.ByteString -> DVS.Vector Word64
-toInterestBitsVector bs = boolsToVector (BS.length bs) (toInterestBits SvUnquoted bs)
+toInterestBitsVector :: Word8 -> BS.ByteString -> DVS.Vector Word64
+toInterestBitsVector delimiter bs = boolsToVector (BS.length bs) (toInterestBits delimiter SvUnquoted bs)
 
-toInterestBits :: SvMode -> BS.ByteString -> [Bool]
-toInterestBits mode text = case BS.uncons text of
+toInterestBits :: Word8 -> SvMode -> BS.ByteString -> [Bool]
+toInterestBits delimiter mode text = case BS.uncons text of
   Just (a, as) -> case mode of
-    SvUnquoted | a == dQuote  -> False:toInterestBits SvQuoted   as
-    SvUnquoted | a == pipe    -> True :toInterestBits SvUnquoted as
-    SvUnquoted | a == newline -> True :toInterestBits SvUnquoted as
-    SvUnquoted | True         -> False:toInterestBits SvUnquoted as
-    SvQuoted   | a == dQuote  -> False:toInterestBits SvUnquoted as
-    SvQuoted   | True         -> False:toInterestBits SvQuoted   as
+    SvUnquoted | a == dQuote    -> False:toInterestBits delimiter SvQuoted   as
+    SvUnquoted | a == delimiter -> True :toInterestBits delimiter SvUnquoted as
+    SvUnquoted | a == newline   -> True :toInterestBits delimiter SvUnquoted as
+    SvUnquoted | True           -> False:toInterestBits delimiter SvUnquoted as
+    SvQuoted   | a == dQuote    -> False:toInterestBits delimiter SvUnquoted as
+    SvQuoted   | True           -> False:toInterestBits delimiter SvQuoted   as
   _            -> []
 
-loadFileWithNewIndex :: FilePath -> IO (SvCursor BS.ByteString (DVS.Vector Word64))
-loadFileWithNewIndex filePath = do
+loadFileWithNewIndex :: Word8 -> FilePath -> IO (SvCursor BS.ByteString (DVS.Vector Word64))
+loadFileWithNewIndex delimiter filePath = do
   text <- BS.readFile filePath
   return SvCursor
-    { svCursorText          = text
-    , svCursorInterestBits  = toInterestBitsVector text
+    { svCursorDelimiter     = delimiter
+    , svCursorText          = text
+    , svCursorInterestBits  = toInterestBitsVector delimiter text
     , svCursorPosition      = 1
     }
 
 loadIbIndex :: FilePath -> IO (DVS.Vector Word64)
 loadIbIndex filePath = fromForeignRegion <$> mmapFileForeignPtr (filePath ++ ".ib") ReadOnly Nothing
 
-mkInterestBits :: Bool -> FilePath -> IO (DVS.Vector Word64)
-mkInterestBits createIndex filePath = do
+mkInterestBits :: Word8 -> Bool -> FilePath -> IO (DVS.Vector Word64)
+mkInterestBits delimiter createIndex filePath = do
   (fptr :: ForeignPtr Word8, offset, size) <- mmapFileForeignPtr filePath ReadOnly Nothing
   let !bs = BSI.fromForeignPtr (castForeignPtr fptr) offset size
   !ibIndex <- if createIndex
-    then return $ toInterestBitsVector bs
+    then return $ toInterestBitsVector delimiter bs
     else loadIbIndex (filePath ++ ".ib")
   return ibIndex
 
-mmapDataFile :: Bool -> FilePath -> IO (SvCursor BS.ByteString CsPoppy)
-mmapDataFile createIndex filePath = do
+mmapDataFile :: Word8 -> Bool -> FilePath -> IO (SvCursor BS.ByteString CsPoppy)
+mmapDataFile delimiter createIndex filePath = do
   (fptr :: ForeignPtr Word8, offset, size) <- mmapFileForeignPtr filePath ReadOnly Nothing
   let !bs = BSI.fromForeignPtr (castForeignPtr fptr) offset size
   !ibIndex <- makeCsPoppy <$> if createIndex
-    then return $ toInterestBitsVector bs
+    then return $ toInterestBitsVector delimiter bs
     else loadIbIndex (filePath ++ ".ib")
   return SvCursor
-    { svCursorText          = bs
+    { svCursorDelimiter     = delimiter
+    , svCursorText          = bs
     , svCursorInterestBits  = ibIndex
     , svCursorPosition      = 0
     }

@@ -50,7 +50,7 @@ nextField :: (Rank1 s, Select1 s) => SvCursor BS.ByteString s -> Maybe (SvCursor
 nextField c = do
   ibCursor <- nextInterestingBit c
   ibWord <- wordAt ibCursor
-  if ibWord == pipe
+  if ibWord == c ^. L.delimiter
     then nextPosition ibCursor
     else Nothing
 
