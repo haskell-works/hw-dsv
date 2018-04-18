@@ -6,6 +6,7 @@ module HaskellWorks.Data.Sv.Load
   , SvMode(..)
   , toInterestBitsVector
   , toInterestBits
+  , toInterestBits64
   , loadFileWithNewIndex
   , mmapDataFile
   , mkInterestBits
@@ -19,11 +20,13 @@ import HaskellWorks.Data.FromForeignRegion
 import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv.Char
 import HaskellWorks.Data.Sv.Cursor.Type
+import System.IO
 import System.IO.MMap
 
-import qualified Data.ByteString          as BS
-import qualified Data.ByteString.Internal as BSI
-import qualified Data.Vector.Storable     as DVS
+import qualified Data.ByteString                     as BS
+import qualified Data.ByteString.Internal            as BSI
+import qualified Data.Vector.Storable                as DVS
+import qualified HaskellWorks.Data.FromForeignRegion as IO
 
 {-# ANN module ("HLint: ignore Redundant guard"        :: String) #-}
 
@@ -37,7 +40,8 @@ boolsToVector n = DVS.unfoldrN vLen (go 0 0)
         go n' w (False:cs) = go (n' + 1)                 w  cs
 
 toInterestBitsVector :: Word8 -> BS.ByteString -> DVS.Vector Word64
-toInterestBitsVector delimiter bs = boolsToVector (BS.length bs) (toInterestBits delimiter SvUnquoted bs)
+toInterestBitsVector delimiter bs = DVS.fromListN vLen (toInterestBits64 delimiter bs)
+  where vLen = (BS.length bs `div` 64) + 1
 
 toInterestBits :: Word8 -> SvMode -> BS.ByteString -> [Bool]
 toInterestBits delimiter mode text = case BS.uncons text of
@@ -49,6 +53,23 @@ toInterestBits delimiter mode text = case BS.uncons text of
     SvQuoted   | a == dQuote    -> False:toInterestBits delimiter SvUnquoted as
     SvQuoted   | True           -> False:toInterestBits delimiter SvQuoted   as
   _            -> []
+
+toInterestBits64 :: Word8 -> BS.ByteString -> [Word64]
+toInterestBits64 delimiter = go 0 0 SvUnquoted
+  where go :: Int -> Word64 -> SvMode -> BS.ByteString -> [Word64]
+        go n w mode text = case BS.uncons text of
+          Just (a, as) -> case mode of
+            SvUnquoted | a == dQuote    -> cont n w 0 SvQuoted   as
+            SvUnquoted | a == delimiter -> cont n w 1 SvUnquoted as
+            SvUnquoted | a == newline   -> cont n w 1 SvUnquoted as
+            SvUnquoted | otherwise      -> cont n w 0 SvUnquoted as
+            SvQuoted   | a == dQuote    -> cont n w 0 SvUnquoted as
+            SvQuoted   | otherwise      -> cont n w 0 SvQuoted   as
+          Nothing      -> [w]
+        cont :: Int -> Word64 -> Word64 -> SvMode -> BS.ByteString -> [Word64]
+        cont n w b m bs = if n < 63
+          then   go (n + 1) ((b .<. fromIntegral n) .|. w) m bs
+          else w:go      0                              0  m bs
 
 loadFileWithNewIndex :: Word8 -> FilePath -> IO (SvCursor BS.ByteString (DVS.Vector Word64))
 loadFileWithNewIndex delimiter filePath = do
@@ -74,8 +95,7 @@ mkInterestBits delimiter createIndex filePath = do
 
 mmapDataFile :: Word8 -> Bool -> FilePath -> IO (SvCursor BS.ByteString CsPoppy)
 mmapDataFile delimiter createIndex filePath = do
-  (fptr :: ForeignPtr Word8, offset, size) <- mmapFileForeignPtr filePath ReadOnly Nothing
-  let !bs = BSI.fromForeignPtr (castForeignPtr fptr) offset size
+  !bs <- IO.mmapFromForeignRegion filePath
   !ibIndex <- makeCsPoppy <$> if createIndex
     then return $ toInterestBitsVector delimiter bs
     else loadIbIndex (filePath ++ ".ib")

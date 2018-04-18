@@ -5,4 +5,5 @@ packages:
 
 extra-deps:
 - hedgehog-0.5.3
-- hw-hspec-hedgehog-0.1.0.3
+- hw-hspec-hedgehog-0.1.0.4
+- hw-prim-0.4.0.7

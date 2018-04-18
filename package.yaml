@@ -53,6 +53,7 @@ executables:
     - -Wincomplete-record-updates
     - -Wincomplete-uni-patterns
     - -Wredundant-constraints
+    - -O2
     dependencies:
     - hw-sv
     - optparse-applicative
@@ -71,3 +72,13 @@ tests:
     - hspec
     - hw-hspec-hedgehog
 
+benchmarks:
+  bench:
+    main: Main.hs
+    source-dirs: bench
+    ghc-options:
+    - -O2
+    - -msse4.2
+    dependencies:
+    - criterion
+    - hw-sv
