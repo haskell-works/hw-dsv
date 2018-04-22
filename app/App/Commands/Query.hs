@@ -10,7 +10,6 @@ import Data.Char
 import Data.Function
 import Data.List
 import Data.Maybe
-import Data.Monoid
 import HaskellWorks.Data.Sv.Cursor
 import HaskellWorks.Data.Sv.Load
 import Options.Applicative         hiding (columns)
@@ -25,6 +24,7 @@ repeatedly f a = a:case f a of
 runQuery :: Bool -> [Int] -> FilePath -> Char -> IO ()
 runQuery createIndex columns filePath delimiter = do
   cursor <- mmapDataFile (fromIntegral (ord delimiter)) createIndex filePath
+  -- cursor <- mmapDataFile2 delimiter createIndex filePath
 
   forM_ (repeatedly nextRow cursor) $ \row -> do
     let fields = repeatedly nextField row

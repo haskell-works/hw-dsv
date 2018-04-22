@@ -2,7 +2,6 @@ module App.Commands where
 
 import App.Commands.CreateIndex
 import App.Commands.Query
-import Data.Monoid
 import Options.Applicative
 
 cmdOpts :: Parser (IO ())

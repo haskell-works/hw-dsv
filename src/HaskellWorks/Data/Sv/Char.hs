@@ -3,8 +3,8 @@ module HaskellWorks.Data.Sv.Char where
 import Data.Char
 import Data.Word
 
-dQuote :: Word8
-dQuote = fromIntegral (ord '"')
+doubleQuote :: Word8
+doubleQuote = fromIntegral (ord '"')
 
 comma :: Word8
 comma = fromIntegral (ord ',')

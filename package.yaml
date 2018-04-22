@@ -21,6 +21,7 @@ description:         Please see the README on Github at <https://github.com/newh
 
 dependencies:
 - base >= 4.7 && < 5
+- bits-extra
 - bytestring
 - hw-bits
 - hw-rankselect
