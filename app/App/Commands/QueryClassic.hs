@@ -1,7 +1,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module App.Commands.Query
-  ( cmdQuery
+module App.Commands.QueryClassic
+  ( cmdQueryClassic
   ) where
 
 import Control.Applicative
@@ -21,8 +21,8 @@ repeatedly f a = a:case f a of
   Just b  -> repeatedly f b
   Nothing -> []
 
-runQuery :: Bool -> [Int] -> FilePath -> Char -> IO ()
-runQuery createIndex columns filePath delimiter = do
+runQueryClassic :: Bool -> [Int] -> FilePath -> Char -> IO ()
+runQueryClassic createIndex columns filePath delimiter = do
   cursor <- mmapDataFile (fromIntegral (ord delimiter)) createIndex filePath
 
   forM_ (repeatedly nextRow cursor) $ \row -> do
@@ -33,8 +33,8 @@ runQuery createIndex columns filePath delimiter = do
 
   return ()
 
-cmdQuery :: Mod CommandFields (IO ())
-cmdQuery = command "query"  $ flip info idm $ runQuery
+cmdQueryClassic :: Mod CommandFields (IO ())
+cmdQueryClassic = command "query"  $ flip info idm $ runQueryClassic
     <$> switch (long "create-index")
     <*> many
         ( option auto

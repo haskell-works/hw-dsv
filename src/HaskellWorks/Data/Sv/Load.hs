@@ -101,7 +101,7 @@ fillWord64WithChar8 :: Char -> Word64
 fillWord64WithChar8 c = fillWord64 (fromIntegral (ord c) :: Word8)
 
 mkDsvInterestBits :: Char -> DVS.Vector Word64 -> DVS.Vector Word64
-mkDsvInterestBits delimiter v = DVS.fromList $ mkDsvInterestBitsByWord64s
+mkDsvInterestBits delimiter v = DVS.fromListN ((DVS.length v + 7) `div` 8) $ mkDsvInterestBitsByWord64s
   CW.doubleQuote
   CW.newline
   (fillWord64WithChar8 delimiter)
