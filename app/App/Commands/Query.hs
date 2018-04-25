@@ -10,6 +10,7 @@ import Data.Char
 import Data.Function
 import Data.List
 import Data.Maybe
+import HaskellWorks.Data.Sv.Char
 import HaskellWorks.Data.Sv.Cursor
 import HaskellWorks.Data.Sv.Load
 import Options.Applicative         hiding (columns)
@@ -52,8 +53,3 @@ cmdQuery = command "query"  $ flip info idm $ runQuery
           <>  help "DSV delimiter"
           <>  metavar "CHAR"
           )
-
-readChar :: ReadM Char
-readChar = eitherReader $ \xs -> case xs of
-  [a] -> return a
-  _   -> Left $ "Invalid delimeter " <> show xs

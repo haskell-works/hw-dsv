@@ -29,6 +29,7 @@ dependencies:
 - hw-prim
 - lens
 - mmap
+- optparse-applicative
 - vector
 
 library:
@@ -57,7 +58,6 @@ executables:
     - -O2
     dependencies:
     - hw-sv
-    - optparse-applicative
 
 tests:
   hw-sv-test:
