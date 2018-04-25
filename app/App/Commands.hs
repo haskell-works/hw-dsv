@@ -1,6 +1,7 @@
 module App.Commands where
 
 import App.Commands.CreateIndex
+import App.Commands.PrettyPrint
 import App.Commands.Query
 import App.Commands.QueryClassic
 import App.Commands.ShowBits
@@ -12,3 +13,4 @@ cmdOpts = subparser $ mempty
   <>  cmdQueryClassic
   <>  cmdQuery
   <>  cmdShowBits
+  <>  cmdPrettyPrint
