@@ -5,3 +5,8 @@ data CreateIndexOptions = CreateIndexOptions
   , _createIndexOptionsDelimiter :: Char
   , _createIndexOptionsClassic   :: Bool
   } deriving (Eq, Show)
+
+data ShowBitsOptions = ShowBitsOptions
+  { _showBitsOptionsFilePath :: FilePath
+  , _showBitsOptionsPretty   :: Bool
+  } deriving (Eq, Show)

@@ -14,7 +14,6 @@ import HaskellWorks.Data.Sv.Load
 import Options.Applicative                  hiding (columns)
 
 import qualified App.Commands.Options.Lens        as L
-import qualified Data.ByteString                  as BS
 import qualified Data.ByteString.Builder          as B
 import qualified Data.Vector.Storable             as DVS
 import qualified HaskellWorks.Data.Sv.Cursor.Lens as LC
