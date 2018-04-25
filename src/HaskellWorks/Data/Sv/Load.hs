@@ -17,11 +17,12 @@ module HaskellWorks.Data.Sv.Load
   , mkDsvInterestBits
   ) where
 
-import Data.Bits                            (popCount)
-import Data.Char                            (ord)
+import Data.Bits                                 (popCount)
+import Data.Char                                 (ord)
 import Data.Word
 import HaskellWorks.Data.AtIndex
 import HaskellWorks.Data.Bits.BitWise
+import HaskellWorks.Data.Bits.PopCount.PopCount1
 import HaskellWorks.Data.Positioning
 import HaskellWorks.Data.Product
 import HaskellWorks.Data.RankSelect.CsPoppy
@@ -82,11 +83,13 @@ toInterestBits64 delimiter = go 0 0 SvUnquoted
 loadFileWithNewIndex :: Word8 -> FilePath -> IO (SvCursor BS.ByteString (DVS.Vector Word64))
 loadFileWithNewIndex delimiter filePath = do
   text <- BS.readFile filePath
+  let ibIndex = toInterestBitsVector delimiter text
   return SvCursor
     { svCursorDelimiter     = delimiter
     , svCursorText          = text
-    , svCursorInterestBits  = toInterestBitsVector delimiter text
+    , svCursorInterestBits  = ibIndex
     , svCursorPosition      = 1
+    , svCursorPopCount      = popCount1 ibIndex
     }
 
 mkInterestBits :: Word8 -> Bool -> FilePath -> IO (DVS.Vector Word64)
@@ -163,6 +166,7 @@ mmapDataFile delimiter createIndex filePath = do
     , svCursorText          = bs
     , svCursorInterestBits  = ibIndex
     , svCursorPosition      = 0
+    , svCursorPopCount      = popCount1 ibIndex
     }
 
 mmapDataFile2 :: Char -> Bool -> FilePath -> IO (SvCursor BS.ByteString CsPoppy)
@@ -177,4 +181,5 @@ mmapDataFile2 delimiter createIndex filePath = do
     , svCursorText          = bs
     , svCursorInterestBits  = ibIndex
     , svCursorPosition      = 0
+    , svCursorPopCount      = popCount1 ibIndex
     }

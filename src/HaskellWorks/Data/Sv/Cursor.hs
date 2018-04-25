@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns        #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module HaskellWorks.Data.Sv.Cursor
@@ -32,9 +33,11 @@ next cursor = cursor
         newPos      = select1 (svCursorInterestBits cursor) (currentRank + 1)
 
 nextInterestingBit :: (Rank1 s, Select1 s) => SvCursor t s -> Maybe (SvCursor t s)
-nextInterestingBit cursor = Just cursor
-  { svCursorPosition = newPos
-  }
+nextInterestingBit cursor = if currentRank < cursor ^. L.popCount
+  then Just cursor
+    { svCursorPosition = newPos
+    }
+  else Nothing
   where currentRank = rank1   (svCursorInterestBits cursor) (svCursorPosition cursor)
         newPos      = select1 (svCursorInterestBits cursor) (currentRank + 1) - 1
 
@@ -56,14 +59,17 @@ nextField c = do
 
 nextRow :: (Rank1 s, Select1 s) => SvCursor BS.ByteString s -> Maybe (SvCursor BS.ByteString s)
 nextRow c = do
-  ibCursor <- nextInterestingBit c
-  ibWord <- wordAt ibCursor
-  newCursor <- nextPosition ibCursor
+  !ibCursor <- nextInterestingBit c
+  !ibWord <- wordAt ibCursor
+  !newCursor <- nextPosition ibCursor
   if ibWord == newline
-    then Just newCursor
+    then do
+      Just newCursor
     else if atEnd newCursor
-      then Nothing
-      else nextRow newCursor
+      then do
+        Nothing
+      else do
+        nextRow newCursor
 
 atEnd :: SvCursor BS.ByteString s -> Bool
 atEnd c = c ^. L.position >= fromIntegral (BS.length (c ^. L.text))

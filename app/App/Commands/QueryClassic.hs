@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns        #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module App.Commands.QueryClassic
@@ -23,18 +24,18 @@ repeatedly f a = a:case f a of
 
 runQueryClassic :: Bool -> [Int] -> FilePath -> Char -> IO ()
 runQueryClassic createIndex columns filePath delimiter = do
-  cursor <- mmapDataFile (fromIntegral (ord delimiter)) createIndex filePath
+  !cursor <- mmapDataFile (fromIntegral (ord delimiter)) createIndex filePath
 
   forM_ (repeatedly nextRow cursor) $ \row -> do
-    let fields = repeatedly nextField row
+    let !fields = repeatedly nextField row
     let columnToFieldString column = maybe "" (C8.unpack . snippet) (drop column fields & listToMaybe)
-    let fieldStrings = columnToFieldString <$> columns
+    let !fieldStrings = columnToFieldString <$> columns
     putStrLn $ mconcat $ intersperse "|" fieldStrings
 
   return ()
 
 cmdQueryClassic :: Mod CommandFields (IO ())
-cmdQueryClassic = command "query"  $ flip info idm $ runQueryClassic
+cmdQueryClassic = command "query-classic"  $ flip info idm $ runQueryClassic
     <$> switch (long "create-index")
     <*> many
         ( option auto
