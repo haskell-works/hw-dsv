@@ -67,9 +67,9 @@ toInterestBits64 delimiter = go 0 0 SvUnquoted
             SvQuoted   | otherwise      -> cont n w 0 SvQuoted   as
           Nothing      -> [w]
         cont :: Int -> Word64 -> Word64 -> SvMode -> BS.ByteString -> [Word64]
-        cont n w b m bs = if n < 63
-          then   go (n + 1) ((b .<. fromIntegral n) .|. w) m bs
-          else w:go      0                              0  m bs
+        cont n w b m bs = let nw = (b .<. fromIntegral n) .|. w in if n < 63
+          then    go (n + 1) nw m bs
+          else nw:go      0  0  m bs
 
 loadFileWithNewIndex :: Word8 -> FilePath -> IO (SvCursor BS.ByteString (DVS.Vector Word64))
 loadFileWithNewIndex delimiter filePath = do
