@@ -8,6 +8,7 @@ import App.Commands.Options.Type
 import Control.Lens
 import Control.Monad
 import Data.Char
+import Data.Semigroup                       ((<>))
 import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv.Char
 import HaskellWorks.Data.Sv.Load

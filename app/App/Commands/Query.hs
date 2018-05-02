@@ -9,6 +9,7 @@ import Control.Lens
 import Control.Monad
 import Data.List
 import Data.Maybe
+import Data.Semigroup                       ((<>))
 import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv.Char
 import HaskellWorks.Data.Sv.Cursor

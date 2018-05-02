@@ -10,6 +10,7 @@ import Control.Lens
 import Control.Monad
 import Data.Char                 (chr)
 import Data.List                 (intersperse, zip)
+import Data.Semigroup            ((<>))
 import Data.Word
 import HaskellWorks.Data.Bits
 import Numeric                   (showHex)

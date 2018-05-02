@@ -8,6 +8,7 @@ module App.Commands.ShowBits
 import App.Commands.Options.Type
 import Control.Lens
 import Control.Monad
+import Data.Semigroup            ((<>))
 import Data.Word
 import HaskellWorks.Data.Bits
 import Options.Applicative       hiding (columns)

@@ -11,6 +11,7 @@ import Data.Char
 import Data.Function
 import Data.List
 import Data.Maybe
+import Data.Semigroup              ((<>))
 import HaskellWorks.Data.Sv.Char
 import HaskellWorks.Data.Sv.Cursor
 import HaskellWorks.Data.Sv.Load
