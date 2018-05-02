@@ -14,7 +14,7 @@
   },
   "tasks": [
     {
-      "taskName": "stack build",
+      "taskName": "stack build --flag bits-extra:bmi2 --flag hw-sv:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-excess:bmi2",
       "isBuildCommand": true,
       "args": [
         "echo START_STACK_BUILD && cd ${workspaceRoot} && stack build && echo END_STACK_BUILD "
@@ -56,7 +56,7 @@
     },
     {
       "isTestCommand": true,
-      "taskName": "stack test",
+      "taskName": "stack build --flag bits-extra:bmi2 --flag hw-sv:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-excess:bmi2",
       "args": [
         "echo START_STACK_TEST && cd ${workspaceRoot} && stack test && echo END_STACK_TEST "
       ],

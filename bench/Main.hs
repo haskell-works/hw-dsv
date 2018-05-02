@@ -28,14 +28,12 @@ setupEnvByteString filepath = do
 sumFileByteString :: FilePath -> IO ()
 sumFileByteString filePath = do
   !(bs :: BS.ByteString) <- IO.mmapFromForeignRegion filePath
-  IO.hPutStrLn IO.stderr $ "Length ByteString: " <> show (BS.length bs)
   let !_ = BS.foldl' (+) 0 bs
   return ()
 
 sumFileVectorWord64 :: FilePath -> IO ()
 sumFileVectorWord64 filePath = do
   !(v :: DVS.Vector Word64) <- IO.mmapFromForeignRegion filePath
-  IO.hPutStrLn IO.stderr $ "Length Vector: " <> show (DVS.length v)
   let !_ = DVS.foldl' (+) 0 v
   return ()
 
