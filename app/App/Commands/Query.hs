@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module App.Commands.Query
@@ -16,8 +17,9 @@ import HaskellWorks.Data.Sv.Cursor
 import HaskellWorks.Data.Sv.Load
 import Options.Applicative                  hiding (columns)
 
-import qualified Data.ByteString       as BS
-import qualified Data.ByteString.Char8 as C8
+import qualified Data.ByteString         as BS
+import qualified Data.ByteString.Builder as B
+import qualified System.IO               as IO
 
 repeatedly :: (a -> Maybe a) -> a -> [a]
 repeatedly f a = a:case f a of
@@ -32,11 +34,13 @@ runQuery createIndex columns filePath delimiter = do
     let fieldCursors = repeatedly nextField row
     let fieldStrings = columnToFieldString fieldCursors <$> columns
 
-    putStrLn $ mconcat $ intersperse "|" fieldStrings
+    B.hPutBuilder IO.stdout $ mconcat (intersperse "|" fieldStrings) <> B.word8 10
+
+    return ()
 
   return ()
-  where columnToFieldString :: [SvCursor BS.ByteString CsPoppy] -> Int -> String
-        columnToFieldString fields column = maybe "" (C8.unpack . snippet) (drop column fields & listToMaybe)
+  where columnToFieldString :: [SvCursor BS.ByteString CsPoppy] -> Int -> B.Builder
+        columnToFieldString fields column = maybe mempty (B.byteString . snippet) (drop column fields & listToMaybe)
 
 cmdQuery :: Mod CommandFields (IO ())
 cmdQuery = command "query"  $ flip info idm $ runQuery
