@@ -15,3 +15,12 @@ data PrettyPrintOptions = PrettyPrintOptions
   { _prettyPrintOptionsDataFilePath  :: FilePath
   , _prettyPrintOptionsIndexFilePath :: FilePath
   } deriving (Eq, Show)
+
+data QueryOptions = QueryOptions
+  { _queryOptionsCreateIndex      :: Bool
+  , _queryOptionsColumns          :: [Int]
+  , _queryOptionsFilePath         :: FilePath
+  , _queryOptionsOutputFilePath   :: FilePath
+  , _queryOptionsDelimiter        :: Char
+  , _queryOptionsOutputBufferSize :: Maybe Int
+  } deriving (Eq, Show)

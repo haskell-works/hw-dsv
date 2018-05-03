@@ -29,7 +29,10 @@ dependencies:
 - hw-prim
 - lens
 - mmap
+- mtl
 - optparse-applicative
+- resourcet
+- transformers
 - vector
 
 library:

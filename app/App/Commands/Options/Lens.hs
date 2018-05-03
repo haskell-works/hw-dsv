@@ -12,3 +12,4 @@ import Control.Lens
 makeFields ''CreateIndexOptions
 makeFields ''ShowBitsOptions
 makeFields ''PrettyPrintOptions
+makeFields ''QueryOptions
