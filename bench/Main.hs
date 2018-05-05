@@ -60,16 +60,34 @@ benchRankJson40Conduits =
     ]
   ]
 
-loadCassava :: FilePath -> IO (Vector [ByteString])
+loadCassava :: FilePath -> IO (Vector (Vector ByteString))
 loadCassava filePath = do
-  r <- fmap (Data.Csv.decode Data.Csv.HasHeader) (LBS.readFile filePath) :: IO (Either String (Vector [ByteString]))
+  r <- fmap (Data.Csv.decode Data.Csv.HasHeader) (LBS.readFile filePath) :: IO (Either String (Vector (Vector ByteString)))
   case r of
     Left _  -> error "Unexpected parse error"
     Right v -> pure v
 
+repeatedly :: (a -> Maybe a) -> a -> [a]
+repeatedly f a = a:case f a of
+  Just b  -> repeatedly f b
+  Nothing -> []
+
+loadHwsv :: FilePath -> IO (Vector (Vector ByteString))
+loadHwsv filePath = do
+  c <- mmapDataFile2 ',' True filePath
+
+  rows <- forM (repeatedly nextRow c) $ \row -> do
+    let fieldCursors = repeatedly nextField row :: [SvCursor ByteString CsPoppy]
+    let fields = DV.fromList (snippet <$> fieldCursors)
+
+    return fields
+
+  return (DV.fromList rows)
+
 benchCsv :: [Benchmark]
 benchCsv = let infp = "data/weigh-in.csv" in
   [ bench "cassava/decode/[ByteString]" (nfIO (loadCassava infp))
+  , bench "hw-sv/decode/[ByteString]"   (nfIO (loadHwsv    infp))
   ]
 
 main :: IO ()

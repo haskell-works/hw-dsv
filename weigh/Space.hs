@@ -9,7 +9,6 @@ import HaskellWorks.Data.Product
 import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv.Cursor
 import HaskellWorks.Data.Sv.Load
-import System.Directory
 import Weigh
 
 import qualified Data.ByteString                     as BS
@@ -36,15 +35,10 @@ loadCsv filePath = do
     return fields
 
   return (DV.fromList rows)
-  -- where columnToFieldString :: [SvCursor BS.ByteString CsPoppy] -> Int -> BS.ByteString
-  --       columnToFieldString fields column = maybe mempty (B.byteString . snippet) (drop column fields & listToMaybe)
 
 main :: IO ()
 main = do
-  let infp  = "data/weigh-in.csv"
-  let fp    = "data/weigh-out.csv"
-  exists <- doesFileExist fp
-  when exists (removeFile fp)
+  let infp  = "data/bench/data-0001000.csv"
   mainWith $ do
     setColumns [Case, Allocated, Max, Live, GCs]
     sequence_
