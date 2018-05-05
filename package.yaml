@@ -76,6 +76,31 @@ tests:
     - hspec
     - hw-hspec-hedgehog
 
+  hw-sv-space:
+    main:               Space.hs
+    source-dirs:        weigh
+    ghc-options:
+      - -O2
+      - -Wall
+    dependencies:
+      - base
+      - bytestring
+      - cassava
+      - conduit
+      - csv
+      - deepseq
+      - directory
+      - directory
+      - ghc-prim
+      - hw-sv
+      - lazy-csv
+      - parsec
+      - random
+      - sv
+      - text
+      - vector
+      - weigh
+
 benchmarks:
   bench:
     main: Main.hs
