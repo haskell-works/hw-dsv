@@ -3,22 +3,21 @@
 
 module Main where
 
+import Control.Monad
 import Criterion.Main
+import Data.ByteString                      (ByteString)
+import Data.List
 import Data.Monoid
+import Data.Vector                          (Vector)
 import Data.Word
 import Foreign
 import HaskellWorks.Data.Bits.BitShown
 import HaskellWorks.Data.FromByteString
 import HaskellWorks.Data.FromForeignRegion
-import HaskellWorks.Data.Sv
-
-import Control.Monad
-import Data.ByteString                      (ByteString)
-import Data.Vector                          (Vector)
-import Data.Word
 import HaskellWorks.Data.FromForeignRegion
 import HaskellWorks.Data.Product
 import HaskellWorks.Data.RankSelect.CsPoppy
+import HaskellWorks.Data.Sv
 import HaskellWorks.Data.Sv.Cursor
 import HaskellWorks.Data.Sv.Load
 import System.Directory
@@ -84,11 +83,18 @@ loadHwsv filePath = do
 
   return (DV.fromList rows)
 
-benchCsv :: [Benchmark]
-benchCsv = let infp = "data/weigh-in.csv" in
-  [ bench "cassava/decode/[ByteString]" (nfIO (loadCassava infp))
-  , bench "hw-sv/decode/[ByteString]"   (nfIO (loadHwsv    infp))
-  ]
+makeBenchCsv :: IO [Benchmark]
+makeBenchCsv = do
+  entries <- listDirectory "data/bench"
+  let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
+  benchmarks <- forM files $ \file -> return $ mempty
+    <> [ bench ("cassava/decode/" <> file) (nfIO (loadCassava file))]
+    <> [ bench ("hw-sv/decode/" <> file)   (nfIO (loadHwsv    file))]
+  return (join benchmarks)
 
 main :: IO ()
-main = defaultMain benchCsv
+main = do
+  benchmarks <- mconcat <$> sequence
+    [ makeBenchCsv
+    ]
+  defaultMain benchmarks
