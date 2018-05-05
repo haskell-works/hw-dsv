@@ -61,6 +61,7 @@ executables:
     - -O2
     dependencies:
     - hw-sv
+    - hedgehog
 
 tests:
   hw-sv-test:

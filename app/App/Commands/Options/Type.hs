@@ -24,3 +24,8 @@ data QueryOptions = QueryOptions
   , _queryOptionsDelimiter        :: Char
   , _queryOptionsOutputBufferSize :: Maybe Int
   } deriving (Eq, Show)
+
+data GenerateOptions = GenerateOptions
+  { _generateOptionsFields :: Int
+  , _generateOptionsRows   :: Int
+  } deriving (Eq, Show)

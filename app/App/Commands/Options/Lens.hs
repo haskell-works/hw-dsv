@@ -10,6 +10,7 @@ import App.Commands.Options.Type
 import Control.Lens
 
 makeFields ''CreateIndexOptions
-makeFields ''ShowBitsOptions
+makeFields ''GenerateOptions
 makeFields ''PrettyPrintOptions
 makeFields ''QueryOptions
+makeFields ''ShowBitsOptions
