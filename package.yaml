@@ -90,7 +90,6 @@ tests:
       - csv
       - deepseq
       - directory
-      - directory
       - ghc-prim
       - hw-sv
       - lazy-csv
@@ -109,8 +108,11 @@ benchmarks:
     - -O2
     - -msse4.2
     dependencies:
+    - cassava
     - criterion
+    - directory
     - hw-sv
+    - weigh
 
 when:
 - condition: (flag(bmi2)) && (impl(ghc >=8.4.1))

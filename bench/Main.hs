@@ -12,8 +12,23 @@ import HaskellWorks.Data.FromByteString
 import HaskellWorks.Data.FromForeignRegion
 import HaskellWorks.Data.Sv
 
+import Control.Monad
+import Data.ByteString                      (ByteString)
+import Data.Vector                          (Vector)
+import Data.Word
+import HaskellWorks.Data.FromForeignRegion
+import HaskellWorks.Data.Product
+import HaskellWorks.Data.RankSelect.CsPoppy
+import HaskellWorks.Data.Sv.Cursor
+import HaskellWorks.Data.Sv.Load
+import System.Directory
+import Weigh
+
 import qualified Data.ByteString                     as BS
 import qualified Data.ByteString.Internal            as BSI
+import qualified Data.ByteString.Lazy                as LBS
+import qualified Data.Csv
+import qualified Data.Vector                         as DV
 import qualified Data.Vector.Storable                as DVS
 import qualified HaskellWorks.Data.FromForeignRegion as IO
 import qualified System.IO                           as IO
@@ -45,5 +60,17 @@ benchRankJson40Conduits =
     ]
   ]
 
+loadCassava :: FilePath -> IO (Vector [ByteString])
+loadCassava filePath = do
+  r <- fmap (Data.Csv.decode Data.Csv.HasHeader) (LBS.readFile filePath) :: IO (Either String (Vector [ByteString]))
+  case r of
+    Left _  -> error "Unexpected parse error"
+    Right v -> pure v
+
+benchCsv :: [Benchmark]
+benchCsv = let infp = "data/weigh-in.csv" in
+  [ bench "cassava/decode/[ByteString]" (nfIO (loadCassava infp))
+  ]
+
 main :: IO ()
-main = defaultMain benchRankJson40Conduits
+main = defaultMain benchCsv
