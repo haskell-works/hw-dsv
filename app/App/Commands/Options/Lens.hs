@@ -9,8 +9,14 @@ module App.Commands.Options.Lens where
 import App.Commands.Options.Type
 import Control.Lens
 
+makeFields ''CatOptions
+makeFields ''CreateFastIndexOptions
+makeFields ''CreateLazyIndexOptions
 makeFields ''CreateIndexOptions
 makeFields ''GenerateOptions
+makeFields ''LazyCountFieldsOptions
 makeFields ''PrettyPrintOptions
+makeFields ''QueryLazyOptions
+makeFields ''QueryLazy9Options
 makeFields ''QueryOptions
 makeFields ''ShowBitsOptions

@@ -1,6 +1,8 @@
 module HaskellWorks.Data.Sv.Char.Word64 where
 
+import Data.Char
 import Data.Word
+import HaskellWorks.Data.Sv.Broadword
 
 import qualified HaskellWorks.Data.Sv.Char as C
 
@@ -15,3 +17,6 @@ pipe = 0x0101010101010101 * fromIntegral C.pipe
 
 newline :: Word64
 newline = 0x0101010101010101 * fromIntegral C.newline
+
+fillWord64WithChar8 :: Char -> Word64
+fillWord64WithChar8 c = fillWord64 (fromIntegral (ord c) :: Word8)

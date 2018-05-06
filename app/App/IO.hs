@@ -13,6 +13,6 @@ openOutputFile filePath maybeBufferSize = allocate open close
   where open  = do
           handle <- IO.openFile filePath IO.WriteMode
           forM_ maybeBufferSize $ \bufferSize -> do
-            liftIO $ IO.hSetBuffering handle (IO.BlockBuffering (Just (64 * 1024 * 1024)))
+            liftIO $ IO.hSetBuffering handle (IO.BlockBuffering (Just bufferSize))
           return handle
         close = IO.hClose

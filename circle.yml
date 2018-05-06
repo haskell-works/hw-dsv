@@ -7,8 +7,6 @@ jobs:
 
     steps:
       - checkout
-      - run: git fetch --unshallow || true
-      - run: grep '^resolver:' stack.yaml > resolver.txt
 
       ##### Copying scripts
       - run:
@@ -40,26 +38,18 @@ jobs:
           paths:
             - ~/.cabal
 
-      ##### Building library
       - restore_cache:
           keys:
             - dot-stack-{{ checksum "stack.yaml" }}-{{ checksum "package.yaml" }}
             - dot-stack-{{ checksum "stack.yaml" }}-build
             - dot-stack-{{ checksum "stack.yaml" }}-setup
-            - dot-stack-{{ checksum "resolver.txt" }}
 
-      ##### Fetching latest organisation package versions
       - run:
           name: Fetching latest organisation package versions
           command: |
             fetch
             echo "== stack-ci.yaml =="
             cat stack-ci.yaml
-
-      - save_cache:
-          key: dot-stack-{{ checksum "resolver.txt" }}
-          paths:
-            - ~/.stack
 
       - restore_cache:
           key: dot-stack-work-{{ checksum "stack.yaml" }}

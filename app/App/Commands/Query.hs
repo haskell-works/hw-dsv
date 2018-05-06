@@ -32,7 +32,9 @@ repeatedly f a = a:case f a of
 
 runQuery :: QueryOptions -> IO ()
 runQuery opts = do
-  cursor <- mmapDataFile2 (opts ^. L.delimiter) (opts ^. L.createIndex) (opts ^. L.filePath)
+  cursor <- if opts ^. L.fast
+    then mmapCursor    (opts ^. L.delimiter) (opts ^. L.createIndex) (opts ^. L.filePath)
+    else mmapDataFile2 (opts ^. L.delimiter) (opts ^. L.createIndex) (opts ^. L.filePath)
 
   runResourceT $ do
     (_, hOut) <- IO.openOutputFile (opts ^. L.outputFilePath) (opts ^. L.outputBufferSize)
@@ -83,3 +85,4 @@ optsQuery = QueryOptions
             <>  metavar "BYTES"
             )
           )
+    <*> switch (long "fast")

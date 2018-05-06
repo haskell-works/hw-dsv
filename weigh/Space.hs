@@ -44,3 +44,4 @@ main = do
           v <- loadCsv infp :: IO (Vector (Vector ByteString))
           pure v
       ]
+  return ()

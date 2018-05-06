@@ -10,3 +10,4 @@ testWord8s w =  let w8s = w
                     w2s = w4s .|. (w4s .>. 2)
                     w1s = w2s .|. (w2s .>. 1)
                 in  pext w1s 0x0101010101010101
+{-# INLINE testWord8s #-}

@@ -12,7 +12,6 @@ import Options.Applicative       hiding (columns)
 
 import qualified App.Commands.Options.Lens as L
 import qualified App.Gen                   as G
-import qualified Data.ByteString.Builder   as B
 import qualified Hedgehog.Gen              as G
 import qualified Hedgehog.Range            as R
 

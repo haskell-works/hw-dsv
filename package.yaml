@@ -21,6 +21,7 @@ description:         Please see the README on Github at <https://github.com/newh
 
 dependencies:
 - base >= 4.7 && < 5
+- attoparsec
 - bits-extra
 - bytestring
 - hw-bits
@@ -72,10 +73,12 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
+    - directory
     - hw-sv
     - hedgehog
     - hspec
     - hw-hspec-hedgehog
+    - text
 
   hw-sv-space:
     main:               Space.hs

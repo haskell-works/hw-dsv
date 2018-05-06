@@ -5,19 +5,21 @@ module Main where
 
 import Control.Monad
 import Criterion.Main
-import Data.ByteString                      (ByteString)
+import Data.ByteString                           (ByteString)
 import Data.List
 import Data.Monoid
-import Data.Vector                          (Vector)
+import Data.Vector                               (Vector)
 import Data.Word
 import Foreign
 import HaskellWorks.Data.Bits.BitShown
 import HaskellWorks.Data.FromByteString
 import HaskellWorks.Data.FromForeignRegion
-import HaskellWorks.Data.FromForeignRegion
 import HaskellWorks.Data.Product
+import HaskellWorks.Data.RankSelect.Base.Rank1
+import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv
+import HaskellWorks.Data.Sv.Char.Word64
 import HaskellWorks.Data.Sv.Cursor
 import HaskellWorks.Data.Sv.Internal
 import HaskellWorks.Data.Sv.Load
@@ -31,6 +33,8 @@ import qualified Data.Csv
 import qualified Data.Vector                         as DV
 import qualified Data.Vector.Storable                as DVS
 import qualified HaskellWorks.Data.FromForeignRegion as IO
+import qualified HaskellWorks.Data.Sv.Char.Word64    as C
+import qualified HaskellWorks.Data.Sv.Lazy.Internal  as LI
 import qualified System.IO                           as IO
 import qualified System.IO.MMap                      as IO
 
@@ -84,13 +88,88 @@ loadHwsv filePath = do
 
   return (DV.fromList rows)
 
+loadHwsvFast :: FilePath -> IO (Vector (Vector ByteString))
+loadHwsvFast filePath = do
+  c <- mmapCursor ',' True filePath
+
+  rows <- forM (repeatedly nextRow c) $ \row -> do
+    let fieldCursors = repeatedly nextField row :: [SvCursor ByteString CsPoppy]
+    let fields = DV.fromList (snippet <$> fieldCursors)
+
+    return fields
+
+  return (DV.fromList rows)
+
+loadHwsvIndex :: FilePath -> IO (Vector (Vector ByteString))
+loadHwsvIndex filePath = do
+  !c <- mmapCursor ',' True filePath
+
+  return DV.empty
+
+loadHwsvFaster :: FilePath -> IO (Vector (Vector ByteString))
+loadHwsvFaster filePath = do
+  bsss <- loadDsv ',' True filePath
+
+  rows <- forM bsss $ \bss -> do
+    let fields = DV.fromList bss
+
+    return fields
+
+  return (DV.fromList rows)
+
+loadHwsvCount :: FilePath -> IO Int
+loadHwsvCount filePath = do
+  !c <- mmapCursor ',' True filePath
+
+  return (countNexts c)
+
+loadHwsvLazy :: FilePath -> IO (Vector (Vector LBS.ByteString))
+loadHwsvLazy filePath = do
+  !bs <- LBS.readFile filePath
+
+  let c = LI.makeLazyCursor ',' bs
+
+  return (LI.toVectorVector c)
+
+loadHwsvFake :: FilePath -> IO (Vector (Vector ByteString))
+loadHwsvFake filePath = do
+  bs <- BS.readFile filePath
+
+  let rawRows = DV.unfoldrN ((BS.length bs + 79) `div` 80) (go 80) bs
+  let rows = DV.map (\bs -> DV.unfoldrN ((BS.length bs + 4) `div` 5) (go 80) bs) rawRows
+
+  return rows
+
+  where go :: Int -> ByteString -> Maybe (ByteString, ByteString)
+        go n bs = case BS.splitAt 80 bs of
+          (as, cs) | BS.length as > n -> Just (as, cs)
+          (as, cs) | BS.length cs > n -> Nothing
+
 makeBenchCsv :: IO [Benchmark]
 makeBenchCsv = do
   entries <- listDirectory "data/bench"
   let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
   benchmarks <- forM files $ \file -> return $ mempty
-    <> [bench ("cassava/decode/" <> file) (nfIO (loadCassava file))]
-    <> [bench ("hw-sv/decode/" <> file)   (nfIO (loadHwsv    file))]
+    <> [bench ("cassava/decode/"            <> file) (nfIO (loadCassava     file))]
+
+    -- <> [bench ("hw-sv/decode/via-list/"     <> file) (nfIO (loadHwsv      file))]
+    -- <> [bench ("hw-sv/decode/via-vector/"   <> file) (nfIO (loadHwsvFast    file))]
+    -- <> [bench ("hw-sv/decode/via-faster/"   <> file) (nfIO (loadHwsvFaster  file))]
+    -- <> [bench ("hw-sv/decode/via-index/"    <> file) (nfIO (loadHwsvIndex   file))]
+    -- <> [bench ("hw-sv/decode/via-count/"    <> file) (nfIO (loadHwsvCount   file))]
+
+    <> [bench ("hw-sv/decode/via-lazy/"     <> file) (nfIO (loadHwsvLazy   file))]
+    -- <> [bench ("hw-sv/decode/via-fake/"     <> file) (nfIO (loadHwsvFake    file))]
+  return (join benchmarks)
+
+makeBenchW64s :: IO [Benchmark]
+makeBenchW64s = do
+  entries <- listDirectory "data/bench"
+  let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
+  benchmarks <- forM files $ \file -> return
+    [ env (IO.mmapFromForeignRegion file) $ \v -> bgroup "Creating bit index from mmaped file" $ mempty
+      <> [bench ("mkDsvInterestBitsByWord64sXXX with sum" <> file) (whnf (DVS.foldl (+) 0 . mkDsvInterestBitsByWord64sXXX doubleQuote newline comma) v)]
+    ]
   return (join benchmarks)
 
 makeBenchLbs :: IO [Benchmark]
@@ -102,12 +181,26 @@ makeBenchLbs = do
       <> [bench ("lazyByteStringToWord64s1 with sum" <> file) (whnf (sum . lazyByteStringToWord64s1) bs)]
       <> [bench ("lazyByteStringToWord64s2 with sum" <> file) (whnf (sum . lazyByteStringToWord64s2) bs)]
       <> [bench ("lazyByteStringToWord64s3 with sum" <> file) (whnf (sum . lazyByteStringToWord64s3) bs)]
+      <> [bench ("lazyByteStringToWord64s4 with sum" <> file) (whnf (sum . lazyByteStringToWord64s4) bs)]
+    ]
+  return (join benchmarks)
+
+makeBenchMkInterestBits :: IO [Benchmark]
+makeBenchMkInterestBits = do
+  entries <- listDirectory "data/bench"
+  let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
+  benchmarks <- forM files $ \file -> return
+    [ env (IO.mmapFromForeignRegion file) $ \(v :: DVS.Vector Word64) -> bgroup "Loading lazy byte string into Word64s" $ mempty
+      <> [bench ("mkDsvInterestBitsByWord64sXXX with sum" <> file) (whnf (DVS.foldr (+) 0 . mkDsvInterestBitsByWord64sXXX C.doubleQuote C.newline C.pipe) v)]
+      <> [bench ("mkDsvInterestBitsByWord64s    with sum" <> file) (whnf (DVS.foldr (+) 0 . mkDsvInterestBits    '|') v)]
     ]
   return (join benchmarks)
 
 main :: IO ()
 main = do
   benchmarks <- (mconcat <$>) $ sequence $ mempty
-    -- <> [makeBenchCsv]
-    <> [makeBenchLbs]
+    <> [makeBenchCsv]
+    -- <> [makeBenchW64s]
+    -- <> [makeBenchLbs]
+    -- <> [makeBenchMkInterestBits]
   defaultMain benchmarks
