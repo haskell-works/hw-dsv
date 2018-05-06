@@ -3,21 +3,14 @@ module Main where
 import Control.Monad
 import Data.ByteString                      (ByteString)
 import Data.Vector                          (Vector)
-import Data.Word
-import HaskellWorks.Data.FromForeignRegion
-import HaskellWorks.Data.Product
 import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv.Cursor
 import HaskellWorks.Data.Sv.Load
 import Weigh
 
-import qualified Data.ByteString                     as BS
-import qualified Data.ByteString.Lazy                as LBS
+import qualified Data.ByteString.Lazy as LBS
 import qualified Data.Csv
-import qualified Data.Vector                         as DV
-import qualified Data.Vector.Storable                as DVS
-import qualified HaskellWorks.Data.FromForeignRegion as IO
-import qualified System.IO                           as IO
+import qualified Data.Vector          as DV
 
 repeatedly :: (a -> Maybe a) -> a -> [a]
 repeatedly f a = a:case f a of

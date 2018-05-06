@@ -6,25 +6,15 @@ module App.Commands.Generate
 
 import App.Commands.Options.Type
 import Control.Lens
-import Control.Monad
-import Data.Char
-import Data.Ix
 import Data.List
-import Data.Semigroup                       ((<>))
-import HaskellWorks.Data.RankSelect.CsPoppy
-import HaskellWorks.Data.Sv.Char
-import HaskellWorks.Data.Sv.Load
-import Hedgehog
-import Options.Applicative                  hiding (columns)
+import Data.Semigroup            ((<>))
+import Options.Applicative       hiding (columns)
 
-import qualified App.Commands.Options.Lens        as L
-import qualified App.Gen                          as G
-import qualified Data.ByteString.Builder          as B
-import qualified Data.Vector.Storable             as DVS
-import qualified HaskellWorks.Data.Sv.Cursor.Lens as LC
-import qualified Hedgehog.Gen                     as G
-import qualified Hedgehog.Range                   as R
-import qualified System.IO                        as IO
+import qualified App.Commands.Options.Lens as L
+import qualified App.Gen                   as G
+import qualified Data.ByteString.Builder   as B
+import qualified Hedgehog.Gen              as G
+import qualified Hedgehog.Range            as R
 
 printField :: String -> String
 printField cs = if any invalid cs
