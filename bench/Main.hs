@@ -19,6 +19,7 @@ import HaskellWorks.Data.Product
 import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv
 import HaskellWorks.Data.Sv.Cursor
+import HaskellWorks.Data.Sv.Internal
 import HaskellWorks.Data.Sv.Load
 import System.Directory
 import Weigh
@@ -88,13 +89,25 @@ makeBenchCsv = do
   entries <- listDirectory "data/bench"
   let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
   benchmarks <- forM files $ \file -> return $ mempty
-    <> [ bench ("cassava/decode/" <> file) (nfIO (loadCassava file))]
-    <> [ bench ("hw-sv/decode/" <> file)   (nfIO (loadHwsv    file))]
+    <> [bench ("cassava/decode/" <> file) (nfIO (loadCassava file))]
+    <> [bench ("hw-sv/decode/" <> file)   (nfIO (loadHwsv    file))]
+  return (join benchmarks)
+
+makeBenchLbs :: IO [Benchmark]
+makeBenchLbs = do
+  entries <- listDirectory "data/bench"
+  let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
+  benchmarks <- forM files $ \file -> return
+    [ env (LBS.readFile file) $ \bs -> bgroup "Loading lazy byte string into Word64s" $mempty
+      <> [bench ("lazyByteStringToWord64s1 with sum" <> file) (whnf (sum . lazyByteStringToWord64s1) bs)]
+      <> [bench ("lazyByteStringToWord64s2 with sum" <> file) (whnf (sum . lazyByteStringToWord64s2) bs)]
+      <> [bench ("lazyByteStringToWord64s3 with sum" <> file) (whnf (sum . lazyByteStringToWord64s3) bs)]
+    ]
   return (join benchmarks)
 
 main :: IO ()
 main = do
-  benchmarks <- mconcat <$> sequence
-    [ makeBenchCsv
-    ]
+  benchmarks <- (mconcat <$>) $ sequence $ mempty
+    -- <> [makeBenchCsv]
+    <> [makeBenchLbs]
   defaultMain benchmarks

@@ -13,6 +13,8 @@ import HaskellWorks.Data.Sv.Broadword
 import HaskellWorks.Data.Sv.Cursor.Type
 
 import qualified Data.ByteString                     as BS
+import qualified Data.ByteString.Lazy                as LBS
+import qualified Data.ByteString.Unsafe              as BSU
 import qualified Data.Vector.Storable                as DVS
 import qualified HaskellWorks.Data.FromForeignRegion as IO
 import qualified HaskellWorks.Data.Length            as V
@@ -80,6 +82,11 @@ mkDsvInterestBits delimiter v = DVS.fromListN ((DVS.length v + 7) `div` 8) $ mkD
   0
   v
 
+-- rdqs: repeated double quotes
+-- rnls: repeated new lines
+-- rdls: repeated delimiters
+-- numQuotes: Number of quotes since beginning
+-- n: Number of rank select bit string words since beginning
 mkDsvInterestBitsByWord64s :: Word64 -> Word64 -> Word64 -> Count -> Position -> DVS.Vector Word64 -> [Word64]
 mkDsvInterestBitsByWord64s rdqs rnls rdls numQuotes n ws | n < V.end ws =
   let w0    = atIndexOr 0 ws n
@@ -123,3 +130,47 @@ mkDsvInterestBitsByWord64s rdqs rnls rdls numQuotes n ws | n < V.end ws =
   in  (comp (wNls .&. wDls) .&. wMask):mkDsvInterestBitsByWord64s rdqs rnls rdls newNumQuotes (n + 8) ws
 mkDsvInterestBitsByWord64s _ _ _ _ _ _ = []
 
+word8To64 :: Word8 -> Word64
+word8To64 = fromIntegral
+
+lazyByteStringToWord64s1 :: LBS.ByteString -> [Word64]
+lazyByteStringToWord64s1 lbs = case LBS.splitAt 8 lbs of
+  (lcs, lds)
+    | LBS.length lcs == 8 ->
+        let w = (word8To64 (lcs `LBS.index` 0) .<.  0) .|.
+                (word8To64 (lcs `LBS.index` 1) .<.  8) .|.
+                (word8To64 (lcs `LBS.index` 2) .<. 16) .|.
+                (word8To64 (lcs `LBS.index` 3) .<. 24) .|.
+                (word8To64 (lcs `LBS.index` 4) .<. 32) .|.
+                (word8To64 (lcs `LBS.index` 5) .<. 40) .|.
+                (word8To64 (lcs `LBS.index` 6) .<. 48) .|.
+                (word8To64 (lcs `LBS.index` 7) .<. 56)
+        in w:lazyByteStringToWord64s1 lds
+    | otherwise -> [LBS.foldl' go 0 lcs]
+  where go :: Word64 -> Word8 -> Word64
+        go w b = (w .<. 8) .|. word8To64 b
+
+lazyByteStringToWord64s2 :: LBS.ByteString -> [Word64]
+lazyByteStringToWord64s2 lbs = case LBS.splitAt 8 lbs of
+  (lcs, lds)
+    | LBS.length lcs == 8 -> case LBS.toStrict lcs of
+        cs ->
+          let w = (word8To64 (cs `BSU.unsafeIndex` 0) .<.  0) .|.
+                  (word8To64 (cs `BSU.unsafeIndex` 1) .<.  8) .|.
+                  (word8To64 (cs `BSU.unsafeIndex` 2) .<. 16) .|.
+                  (word8To64 (cs `BSU.unsafeIndex` 3) .<. 24) .|.
+                  (word8To64 (cs `BSU.unsafeIndex` 4) .<. 32) .|.
+                  (word8To64 (cs `BSU.unsafeIndex` 5) .<. 40) .|.
+                  (word8To64 (cs `BSU.unsafeIndex` 6) .<. 48) .|.
+                  (word8To64 (cs `BSU.unsafeIndex` 7) .<. 56)
+          in w:lazyByteStringToWord64s2 lds
+    | otherwise -> [LBS.foldl' go 0 lcs]
+  where go :: Word64 -> Word8 -> Word64
+        go w b = (w .<. 8) .|. word8To64 b
+
+lazyByteStringToWord64s3 :: LBS.ByteString -> [Word64]
+lazyByteStringToWord64s3 lbs = case LBS.splitAt 8 lbs of
+  (lcs, lds) -> case LBS.toStrict lcs of
+    cs -> BS.foldl' go 0 cs:if LBS.null lds then [] else lazyByteStringToWord64s3 lds
+  where go :: Word64 -> Word8 -> Word64
+        go w b = (w .<. 8) .|. word8To64 b
