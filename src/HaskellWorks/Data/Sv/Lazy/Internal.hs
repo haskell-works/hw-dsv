@@ -144,13 +144,13 @@ makeCummulativePopCount = go 0
         go _ []     = []
 {-# INLINE makeCummulativePopCount #-}
 
-makeLazyCursor :: Char -> LBS.ByteString -> SvCursor9
-makeLazyCursor delimiter lbs = SvCursor9
-  { svCursor9Delimiter     = fromIntegral (ord delimiter)
-  , svCursor9Text          = lbs
-  , svCursor9InterestBits  = ib
-  , svCursor9Newlines      = nls
-  , svCursor9Position      = 1
+makeLazyCursor :: Char -> LBS.ByteString -> SvCursor
+makeLazyCursor delimiter lbs = SvCursor
+  { svCursorDelimiter     = fromIntegral (ord delimiter)
+  , svCursorText          = lbs
+  , svCursorInterestBits  = ib
+  , svCursorNewlines      = nls
+  , svCursorPosition      = 1
   }
   where ws  = LBS.toVector64Chunks 512 lbs
         ibq = makeIbs CW.doubleQuote                      <$> ws
@@ -163,15 +163,15 @@ makeLazyCursor delimiter lbs = SvCursor9
         nls = zip2And ibn qm
 {-# INLINE makeLazyCursor #-}
 
-snippet :: SvCursor9 -> LBS.ByteString
-snippet c = LBS.take (len `max` 0) $ LBS.drop posC $ svCursor9Text c
+snippet :: SvCursor -> LBS.ByteString
+snippet c = LBS.take (len `max` 0) $ LBS.drop posC $ svCursorText c
   where d = nextField c
-        posC = fromIntegral $ svCursor9Position c - 1
-        posD = fromIntegral $ svCursor9Position d - 1
+        posC = fromIntegral $ svCursorPosition c - 1
+        posD = fromIntegral $ svCursorPosition d - 1
         len  = posD - posC
 {-# INLINE snippet #-}
 
-countNexts :: SvCursor9 -> Int
+countNexts :: SvCursor -> Int
 countNexts = go 0
   where go n d = if not (atEnd d)
           then let e = nextField d in if not (atEnd e)
@@ -181,52 +181,52 @@ countNexts = go 0
         {-# INLINE go #-}
 {-# INLINE countNexts #-}
 
-trimCursor :: SvCursor9 -> SvCursor9
-trimCursor c = if svCursor9Position c > 512
+trimCursor :: SvCursor -> SvCursor
+trimCursor c = if svCursorPosition c > 512
   then trimCursor c
-    { svCursor9Text         = LBS.drop 512 (svCursor9Text c)
-    , svCursor9InterestBits = drop 1 (svCursor9InterestBits c)
-    , svCursor9Newlines     = drop 1 (svCursor9Newlines c)
-    , svCursor9Position     = svCursor9Position c - 512
+    { svCursorText         = LBS.drop 512 (svCursorText c)
+    , svCursorInterestBits = drop 1 (svCursorInterestBits c)
+    , svCursorNewlines     = drop 1 (svCursorNewlines c)
+    , svCursorPosition     = svCursorPosition c - 512
     }
   else c
 {-# INLINE trimCursor #-}
 
-atEnd :: SvCursor9 -> Bool
-atEnd c = LBS.null (LBS.drop (fromIntegral (svCursor9Position c)) (svCursor9Text c))
+atEnd :: SvCursor -> Bool
+atEnd c = LBS.null (LBS.drop (fromIntegral (svCursorPosition c)) (svCursorText c))
 {-# INLINE atEnd #-}
 
-nextField :: SvCursor9 -> SvCursor9
+nextField :: SvCursor -> SvCursor
 nextField cursor = cursor
-  { svCursor9Position = newPos
+  { svCursorPosition = newPos
   }
-  where currentRank = rank1   (svCursor9InterestBits cursor) (svCursor9Position cursor)
-        newPos      = select1 (svCursor9InterestBits cursor) (currentRank + 1)
+  where currentRank = rank1   (svCursorInterestBits cursor) (svCursorPosition cursor)
+        newPos      = select1 (svCursorInterestBits cursor) (currentRank + 1)
 {-# INLINE nextField #-}
 
-nextRow :: SvCursor9 -> SvCursor9
+nextRow :: SvCursor -> SvCursor
 nextRow cursor = cursor
-  { svCursor9Position = newPos
+  { svCursorPosition = newPos
   }
-  where currentRank = rank1   (svCursor9Newlines cursor) (svCursor9Position cursor)
-        newPos      = select1 (svCursor9Newlines cursor) (currentRank + 1)
+  where currentRank = rank1   (svCursorNewlines cursor) (svCursorPosition cursor)
+        newPos      = select1 (svCursorNewlines cursor) (currentRank + 1)
 {-# INLINE nextRow #-}
 
-nextPosition :: SvCursor9 -> SvCursor9
+nextPosition :: SvCursor -> SvCursor
 nextPosition cursor = cursor
-    { svCursor9Position = if LBS.null (LBS.drop (fromIntegral newPos) (svCursor9Text cursor))
-                            then fromIntegral (LBS.length (svCursor9Text cursor))
+    { svCursorPosition = if LBS.null (LBS.drop (fromIntegral newPos) (svCursorText cursor))
+                            then fromIntegral (LBS.length (svCursorText cursor))
                             else newPos
     }
-  where newPos  = svCursor9Position cursor + 1
+  where newPos  = svCursorPosition cursor + 1
 {-# INLINE nextPosition #-}
 
-mkRow :: SvCursor9 -> SvCursor9 -> DV.Vector LBS.ByteString
+mkRow :: SvCursor -> SvCursor -> DV.Vector LBS.ByteString
 mkRow c d = DV.unfoldrN c2d go c
-  where cr  = rank1 (svCursor9InterestBits c) (svCursor9Position c)
-        dr  = rank1 (svCursor9InterestBits d) (svCursor9Position d)
+  where cr  = rank1 (svCursorInterestBits c) (svCursorPosition c)
+        dr  = rank1 (svCursorInterestBits d) (svCursorPosition d)
         c2d = fromIntegral (dr - cr)
-        go :: SvCursor9 -> Maybe (LBS.ByteString, SvCursor9)
+        go :: SvCursor -> Maybe (LBS.ByteString, SvCursor)
         go e = case nextField e of
           f -> case snippet e of
             s -> case nextPosition f of
@@ -234,13 +234,13 @@ mkRow c d = DV.unfoldrN c2d go c
         {-# INLINE go #-}
 {-# INLINE mkRow #-}
 
-toListVector :: SvCursor9 -> [DV.Vector LBS.ByteString]
-toListVector c = if svCursor9Position d > svCursor9Position c && not (atEnd c)
+toListVector :: SvCursor -> [DV.Vector LBS.ByteString]
+toListVector c = if svCursorPosition d > svCursorPosition c && not (atEnd c)
   then mkRow c d:toListVector (trimCursor d)
   else []
   where d = nextRow c
 {-# INLINE toListVector #-}
 
-toVectorVector :: SvCursor9 -> DV.Vector (DV.Vector LBS.ByteString)
+toVectorVector :: SvCursor -> DV.Vector (DV.Vector LBS.ByteString)
 toVectorVector = DV.fromList . toListVector
 {-# INLINE toVectorVector #-}

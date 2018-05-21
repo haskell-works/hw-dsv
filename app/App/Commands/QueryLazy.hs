@@ -23,14 +23,14 @@ import qualified App.IO                             as IO
 import qualified Data.ByteString.Builder            as B
 import qualified Data.ByteString.Lazy               as LBS
 import qualified Data.Vector                        as DV
-import qualified HaskellWorks.Data.Sv.Lazy.Internal as LI
+import qualified HaskellWorks.Data.Sv.Lazy.Internal as SVL
 
 runQueryLazy :: QueryLazyOptions -> IO ()
 runQueryLazy opts = do
   !bs <- LBS.readFile (opts ^. L.filePath)
 
-  let !c = LI.makeLazyCursor (opts ^. L.delimiter) bs
-  let !rows = LI.toListVector c
+  let !c = SVL.makeLazyCursor (opts ^. L.delimiter) bs
+  let !rows = SVL.toListVector c
   let !outDelimiterBuilder = B.word8 (fromIntegral (ord (opts ^. L.outDelimiter)))
 
   runResourceT $ do
@@ -49,7 +49,7 @@ runQueryLazy opts = do
           else B.lazyByteString (LBS.empty)
 
 cmdQueryLazy :: Mod CommandFields (IO ())
-cmdQueryLazy = command "query-lazy-9" $ flip info idm $ runQueryLazy <$> optsQueryLazy
+cmdQueryLazy = command "query-lazy" $ flip info idm $ runQueryLazy <$> optsQueryLazy
 
 optsQueryLazy :: Parser QueryLazyOptions
 optsQueryLazy = QueryLazyOptions

@@ -10,12 +10,13 @@ import Data.Word
 import HaskellWorks.Data.Bits.BitRead
 import HaskellWorks.Data.Bits.BitShow
 import HaskellWorks.Data.FromByteString
-import HaskellWorks.Data.Sv.Strict.Load
 import HaskellWorks.Hspec.Hedgehog
 import Hedgehog
 import Test.Hspec
 
-import qualified Data.Vector.Storable as DVS
+import qualified Data.Vector.Storable                 as DVS
+import qualified HaskellWorks.Data.Sv.Strict.Internal as SVS
+import qualified HaskellWorks.Data.Sv.Strict.Load     as SVS
 
 {-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
@@ -35,7 +36,7 @@ spec = describe "HaskellWorks.Data.SvSpec" $ do
           \00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
 
     let v = fromByteString bs
-    let actual = mkDsvInterestBits ',' v
+    let actual = SVS.mkDsvInterestBits ',' v
 
     bitShow actual ===  "00000000 10000000 01000000 10000000 00000000 00000000 00010000 00001000 \
                         \00000100 00001000 00000000 00000000 00000001 00000000 10000000 01000000 \
@@ -53,7 +54,7 @@ spec = describe "HaskellWorks.Data.SvSpec" $ do
           \00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
 
     let v = fromByteString bs
-    let !actual = mkDsvInterestBits ',' v
+    let !actual = SVS.mkDsvInterestBits ',' v
 
     bitShow actual ===  "00000000 10000000 01000000 10000000 00000000 00000000 00010000 00001000 \
                         \00000100 00001000 00000000 00000000 00000001 00000000 10000000 01000000 \
@@ -71,7 +72,7 @@ spec = describe "HaskellWorks.Data.SvSpec" $ do
           \00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
 
     let v = fromByteString bs
-    let !actual = mkDsvInterestBits ',' v
+    let !actual = SVS.mkDsvInterestBits ',' v
 
     bitShow actual ===  "00000000 10000000 01000000 10000000 00000000 00000000 00010000 00001000 \
                         \00000100 00001000 00000000 00000000 00000001 00000000 10000000 01000000 \

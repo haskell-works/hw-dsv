@@ -5,10 +5,10 @@ import Data.Word
 import qualified Data.ByteString.Lazy as LBS
 import qualified Data.Vector.Storable as DVS
 
-data SvCursor9 = SvCursor9
-  { svCursor9Delimiter    :: Word8
-  , svCursor9Text         :: !LBS.ByteString
-  , svCursor9InterestBits :: ![DVS.Vector Word64]
-  , svCursor9Newlines     :: ![DVS.Vector Word64]
-  , svCursor9Position     :: !Word64
+data SvCursor = SvCursor
+  { svCursorDelimiter    :: Word8
+  , svCursorText         :: !LBS.ByteString
+  , svCursorInterestBits :: ![DVS.Vector Word64]
+  , svCursorNewlines     :: ![DVS.Vector Word64]
+  , svCursorPosition     :: !Word64
   } deriving (Eq, Show)

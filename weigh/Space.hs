@@ -4,13 +4,13 @@ import Control.Monad
 import Data.ByteString                      (ByteString)
 import Data.Vector                          (Vector)
 import HaskellWorks.Data.RankSelect.CsPoppy
-import HaskellWorks.Data.Sv.Strict.Cursor
-import HaskellWorks.Data.Sv.Strict.Load
 import Weigh
 
-import qualified Data.ByteString.Lazy as LBS
-import qualified Data.Csv
-import qualified Data.Vector          as DV
+import qualified Data.ByteString.Lazy               as LBS
+import qualified Data.Csv                           as CSV
+import qualified Data.Vector                        as DV
+import qualified HaskellWorks.Data.Sv.Strict.Cursor as SVS
+import qualified HaskellWorks.Data.Sv.Strict.Load   as SVS
 
 repeatedly :: (a -> Maybe a) -> a -> [a]
 repeatedly f a = a:case f a of
@@ -19,11 +19,11 @@ repeatedly f a = a:case f a of
 
 loadCsv :: FilePath -> IO (DV.Vector (DV.Vector ByteString))
 loadCsv filePath = do
-  c <- mmapDataFile2 ',' True filePath
+  c <- SVS.mmapDataFile2 ',' True filePath
 
-  rows <- forM (repeatedly nextRow c) $ \row -> do
-    let fieldCursors = repeatedly nextField row :: [SvCursor ByteString CsPoppy]
-    let fields = DV.fromList (snippet <$> fieldCursors)
+  rows <- forM (repeatedly SVS.nextRow c) $ \row -> do
+    let fieldCursors = repeatedly SVS.nextField row :: [SVS.SvCursor ByteString CsPoppy]
+    let fields = DV.fromList (SVS.snippet <$> fieldCursors)
 
     return fields
 
@@ -36,7 +36,7 @@ main = do
     setColumns [Case, Allocated, Max, Live, GCs]
     sequence_
       [ action "cassava/decode/Vector ByteString" $ do
-          r <- fmap (Data.Csv.decode Data.Csv.HasHeader) (LBS.readFile infp) :: IO (Either String (Vector (Vector ByteString)))
+          r <- fmap (CSV.decode CSV.HasHeader) (LBS.readFile infp) :: IO (Either String (Vector (Vector ByteString)))
           case r of
             Left _  -> error "Unexpected parse error"
             Right v -> pure v

@@ -13,7 +13,7 @@ import Options.Applicative       hiding (columns)
 
 import qualified App.Commands.Options.Lens          as L
 import qualified Data.ByteString.Lazy               as LBS
-import qualified HaskellWorks.Data.Sv.Lazy.Internal as LI
+import qualified HaskellWorks.Data.Sv.Lazy.Internal as SVL
 
 runLazyCountFields :: LazyCountFieldsOptions -> IO ()
 runLazyCountFields opts = do
@@ -22,9 +22,9 @@ runLazyCountFields opts = do
 
   !bs <- LBS.readFile filePath
 
-  let !c = LI.makeLazyCursor delimiter bs
+  let !c = SVL.makeLazyCursor delimiter bs
 
-  putStrLn $ "Number of fields: " <> show (LI.countNexts c)
+  putStrLn $ "Number of fields: " <> show (SVL.countNexts c)
 
 optsLazyCountFields :: Parser LazyCountFieldsOptions
 optsLazyCountFields = LazyCountFieldsOptions

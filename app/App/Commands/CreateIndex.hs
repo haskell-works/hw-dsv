@@ -11,13 +11,13 @@ import Data.Char
 import Data.Semigroup                       ((<>))
 import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv.Char
-import HaskellWorks.Data.Sv.Strict.Load
 import Options.Applicative                  hiding (columns)
 
 import qualified App.Commands.Options.Lens        as L
 import qualified Data.ByteString.Builder          as B
 import qualified Data.Vector.Storable             as DVS
 import qualified HaskellWorks.Data.Sv.Cursor.Lens as LC
+import qualified HaskellWorks.Data.Sv.Strict.Load as SVS
 import qualified System.IO                        as IO
 
 runCreateIndex :: CreateIndexOptions -> IO ()
@@ -26,8 +26,8 @@ runCreateIndex opts = do
   let delimiter = opts ^. L.delimiter
 
   !cursor <- if opts ^. L.classic
-    then mmapDataFile  (fromIntegral (ord delimiter)) True filePath
-    else mmapDataFile2                    delimiter   True filePath
+    then SVS.mmapDataFile  (fromIntegral (ord delimiter)) True filePath
+    else SVS.mmapDataFile2                    delimiter   True filePath
 
   let ib = cursor ^. LC.interestBits
 

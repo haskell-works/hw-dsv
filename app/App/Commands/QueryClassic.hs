@@ -11,13 +11,13 @@ import Data.Char
 import Data.Function
 import Data.List
 import Data.Maybe
-import Data.Semigroup                     ((<>))
+import Data.Semigroup            ((<>))
 import HaskellWorks.Data.Sv.Char
-import HaskellWorks.Data.Sv.Strict.Cursor
-import HaskellWorks.Data.Sv.Strict.Load
-import Options.Applicative                hiding (columns)
+import Options.Applicative       hiding (columns)
 
-import qualified Data.ByteString.Char8 as C8
+import qualified Data.ByteString.Char8              as C8
+import qualified HaskellWorks.Data.Sv.Strict.Cursor as SVS
+import qualified HaskellWorks.Data.Sv.Strict.Load   as SVS
 
 repeatedly :: (a -> Maybe a) -> a -> [a]
 repeatedly f a = a:case f a of
@@ -26,11 +26,11 @@ repeatedly f a = a:case f a of
 
 runQueryClassic :: Bool -> [Int] -> FilePath -> Char -> IO ()
 runQueryClassic createIndex columns filePath delimiter = do
-  !cursor <- mmapDataFile (fromIntegral (ord delimiter)) createIndex filePath
+  !cursor <- SVS.mmapDataFile (fromIntegral (ord delimiter)) createIndex filePath
 
-  forM_ (repeatedly nextRow cursor) $ \row -> do
-    let !fields = repeatedly nextField row
-    let columnToFieldString column = maybe "" (C8.unpack . snippet) (drop column fields & listToMaybe)
+  forM_ (repeatedly SVS.nextRow cursor) $ \row -> do
+    let !fields = repeatedly SVS.nextField row
+    let columnToFieldString column = maybe "" (C8.unpack . SVS.snippet) (drop column fields & listToMaybe)
     let !fieldStrings = columnToFieldString <$> columns
     putStrLn $ mconcat $ intersperse "|" fieldStrings
 

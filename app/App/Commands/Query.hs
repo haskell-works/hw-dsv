@@ -16,14 +16,14 @@ import Data.Maybe
 import Data.Semigroup                       ((<>))
 import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv.Char
-import HaskellWorks.Data.Sv.Strict.Cursor
-import HaskellWorks.Data.Sv.Strict.Load
 import Options.Applicative                  hiding (columns)
 
-import qualified App.Commands.Options.Lens as L
-import qualified App.IO                    as IO
-import qualified Data.ByteString           as BS
-import qualified Data.ByteString.Builder   as B
+import qualified App.Commands.Options.Lens          as L
+import qualified App.IO                             as IO
+import qualified Data.ByteString                    as BS
+import qualified Data.ByteString.Builder            as B
+import qualified HaskellWorks.Data.Sv.Strict.Cursor as SVS
+import qualified HaskellWorks.Data.Sv.Strict.Load   as SVS
 
 repeatedly :: (a -> Maybe a) -> a -> [a]
 repeatedly f a = a:case f a of
@@ -33,14 +33,14 @@ repeatedly f a = a:case f a of
 runQuery :: QueryOptions -> IO ()
 runQuery opts = do
   cursor <- if opts ^. L.fast
-    then mmapCursor    (opts ^. L.delimiter) (opts ^. L.createIndex) (opts ^. L.filePath)
-    else mmapDataFile2 (opts ^. L.delimiter) (opts ^. L.createIndex) (opts ^. L.filePath)
+    then SVS.mmapCursor    (opts ^. L.delimiter) (opts ^. L.createIndex) (opts ^. L.filePath)
+    else SVS.mmapDataFile2 (opts ^. L.delimiter) (opts ^. L.createIndex) (opts ^. L.filePath)
 
   runResourceT $ do
     (_, hOut) <- IO.openOutputFile (opts ^. L.outputFilePath) (opts ^. L.outputBufferSize)
 
-    forM_ (repeatedly nextRow cursor) $ \row -> do
-      let fieldCursors = repeatedly nextField row
+    forM_ (repeatedly SVS.nextRow cursor) $ \row -> do
+      let fieldCursors = repeatedly SVS.nextField row
       let fieldStrings = columnToFieldString fieldCursors <$> (opts ^. L.columns)
 
       liftIO $ B.hPutBuilder hOut $ mconcat (intersperse "|" fieldStrings) <> B.word8 10
@@ -48,8 +48,8 @@ runQuery opts = do
       return ()
 
     return ()
-  where columnToFieldString :: [SvCursor BS.ByteString CsPoppy] -> Int -> B.Builder
-        columnToFieldString fields column = maybe mempty (B.byteString . snippet) (drop column fields & listToMaybe)
+  where columnToFieldString :: [SVS.SvCursor BS.ByteString CsPoppy] -> Int -> B.Builder
+        columnToFieldString fields column = maybe mempty (B.byteString . SVS.snippet) (drop column fields & listToMaybe)
 
 cmdQuery :: Mod CommandFields (IO ())
 cmdQuery = command "query" $ flip info idm $ runQuery <$> optsQuery

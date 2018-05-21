@@ -3,15 +3,12 @@
 {-# LANGUAGE TypeOperators       #-}
 
 module HaskellWorks.Data.Sv.Strict.Load
-  ( SvCursor(..)
-  , SvMode(..)
+  ( SVS.SvCursor(..)
+  , SVS.SvMode(..)
   , FillWord64(..)
   , loadFileWithNewIndex
   , mmapDataFile
   , mmapDataFile2
-  , mkInterestBits
-  , boolsToVector
-  , mkDsvInterestBits
   , mmapCursor
   , loadDsv
   , countNexts
@@ -28,84 +25,84 @@ import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv.Broadword
-import HaskellWorks.Data.Sv.Strict.Cursor
-import HaskellWorks.Data.Sv.Strict.Internal
 
-import qualified Data.ByteString                     as BS
-import qualified Data.Vector                         as DV
-import qualified Data.Vector.Storable                as DVS
-import qualified HaskellWorks.Data.FromForeignRegion as IO
-import qualified HaskellWorks.Data.Sv.Char           as C
-import qualified HaskellWorks.Data.Sv.Char.Word64    as CW
+import qualified Data.ByteString                      as BS
+import qualified Data.Vector                          as DV
+import qualified Data.Vector.Storable                 as DVS
+import qualified HaskellWorks.Data.FromForeignRegion  as IO
+import qualified HaskellWorks.Data.Sv.Char            as C
+import qualified HaskellWorks.Data.Sv.Char.Word64     as CW
+import qualified HaskellWorks.Data.Sv.Strict.Cursor   as SVS
+import qualified HaskellWorks.Data.Sv.Strict.Internal as SVS
 
 {-# ANN module ("HLint: ignore Redundant guard"        :: String) #-}
 
-loadFileWithNewIndex :: Word8 -> FilePath -> IO (SvCursor BS.ByteString (DVS.Vector Word64))
+loadFileWithNewIndex :: Word8 -> FilePath -> IO (SVS.SvCursor BS.ByteString (DVS.Vector Word64))
 loadFileWithNewIndex delimiter filePath = do
   text <- BS.readFile filePath
-  let ibIndex = toInterestBitsVector delimiter text
-  return SvCursor
-    { svCursorDelimiter     = delimiter
-    , svCursorText          = text
-    , svCursorInterestBits  = ibIndex
-    , svCursorPosition      = 1
-    , svCursorPopCount      = popCount1 ibIndex
+  let ibIndex = SVS.toInterestBitsVector delimiter text
+  return SVS.SvCursor
+    { SVS.svCursorDelimiter     = delimiter
+    , SVS.svCursorText          = text
+    , SVS.svCursorInterestBits  = ibIndex
+    , SVS.svCursorPosition      = 1
+    , SVS.svCursorPopCount      = popCount1 ibIndex
     }
 
-mmapDataFile :: Word8 -> Bool -> FilePath -> IO (SvCursor BS.ByteString CsPoppy)
+mmapDataFile :: Word8 -> Bool -> FilePath -> IO (SVS.SvCursor BS.ByteString CsPoppy)
 mmapDataFile delimiter createIndex filePath = do
   !bs <- IO.mmapFromForeignRegion filePath
   !ibIndex <- makeCsPoppy <$> if createIndex
-    then return $ toInterestBitsVector delimiter bs
+    then return $ SVS.toInterestBitsVector delimiter bs
     else IO.mmapFromForeignRegion (filePath ++ ".ib")
-  return SvCursor
-    { svCursorDelimiter     = delimiter
-    , svCursorText          = bs
-    , svCursorInterestBits  = ibIndex
-    , svCursorPosition      = 0
-    , svCursorPopCount      = popCount1 ibIndex
+  return SVS.SvCursor
+    { SVS.svCursorDelimiter     = delimiter
+    , SVS.svCursorText          = bs
+    , SVS.svCursorInterestBits  = ibIndex
+    , SVS.svCursorPosition      = 0
+    , SVS.svCursorPopCount      = popCount1 ibIndex
     }
 
-mmapDataFile2 :: Char -> Bool -> FilePath -> IO (SvCursor BS.ByteString CsPoppy)
+mmapDataFile2 :: Char -> Bool -> FilePath -> IO (SVS.SvCursor BS.ByteString CsPoppy)
 mmapDataFile2 delimiter createIndex filePath = do
   (!bs) :*: (!v) <- IO.mmapFromForeignRegion filePath
   let !_ = v :: DVS.Vector Word64
   !ibIndex <- makeCsPoppy <$> if createIndex
-    then return $ mkDsvInterestBits delimiter v
+    then return $ SVS.mkDsvInterestBits delimiter v
     else IO.mmapFromForeignRegion (filePath ++ ".ib")
-  return SvCursor
-    { svCursorDelimiter     = fromIntegral (ord delimiter)
-    , svCursorText          = bs
-    , svCursorInterestBits  = ibIndex
-    , svCursorPosition      = 0
-    , svCursorPopCount      = popCount1 ibIndex
+  return SVS.SvCursor
+    { SVS.svCursorDelimiter     = fromIntegral (ord delimiter)
+    , SVS.svCursorText          = bs
+    , SVS.svCursorInterestBits  = ibIndex
+    , SVS.svCursorPosition      = 0
+    , SVS.svCursorPopCount      = popCount1 ibIndex
     }
 
-mmapCursor :: Char -> Bool -> FilePath -> IO (SvCursor BS.ByteString CsPoppy)
+mmapCursor :: Char -> Bool -> FilePath -> IO (SVS.SvCursor BS.ByteString CsPoppy)
 mmapCursor delimiter createIndex filePath = do
   (!bs) :*: (!v) <- IO.mmapFromForeignRegion filePath
   let !_ = v :: DVS.Vector Word64
   !ibIndex <- makeCsPoppy <$> if createIndex
-    then return $ mkDsvInterestBits2 delimiter v
+    then return $ SVS.mkDsvInterestBits2 delimiter v
     else IO.mmapFromForeignRegion (filePath ++ ".ib")
-  return SvCursor
-    { svCursorDelimiter     = fromIntegral (ord delimiter)
-    , svCursorText          = bs
-    , svCursorInterestBits  = ibIndex
-    , svCursorPosition      = 0
-    , svCursorPopCount      = popCount1 ibIndex
+  return SVS.SvCursor
+    { SVS.svCursorDelimiter     = fromIntegral (ord delimiter)
+    , SVS.svCursorText          = bs
+    , SVS.svCursorInterestBits  = ibIndex
+    , SVS.svCursorPosition      = 0
+    , SVS.svCursorPopCount      = popCount1 ibIndex
     }
 
-extractRows :: forall s. (Rank1 s, Select1 s) => SvCursor BS.ByteString s -> [[BS.ByteString]]
+extractRows :: forall s. (Rank1 s, Select1 s) => SVS.SvCursor BS.ByteString s -> [[BS.ByteString]]
 extractRows = go []
-  where go :: [BS.ByteString] -> SvCursor BS.ByteString s -> [[BS.ByteString]]
-        go fs c = case nextInterestingBit c of
-          Just ibc -> case wordAt ibc of
-            Just ibw -> case nextPosition ibc of
+  where go :: [BS.ByteString] -> SVS.SvCursor BS.ByteString s -> [[BS.ByteString]]
+        go fs c = case SVS.nextInterestingBit c of
+          Just ibc -> case SVS.wordAt ibc of
+            Just ibw -> case SVS.nextPosition ibc of
               Just newCursor ->
-                let start = fromIntegral (svCursorPosition c)
-                    len   = (fromIntegral (svCursorPosition ibc) - start) `max` 0
-                    text  = BS.take len $ BS.drop start $ svCursorText c
+                let start = fromIntegral (SVS.svCursorPosition c)
+                    len   = (fromIntegral (SVS.svCursorPosition ibc) - start) `max` 0
+                    text  = BS.take len $ BS.drop start $ SVS.svCursorText c
                 in if ibw == C.newline
                   then reverse (text:fs):go [] newCursor
                   else go (text:fs) newCursor
@@ -116,39 +113,39 @@ extractRows = go []
 loadDsv :: Char -> Bool -> FilePath -> IO [[ByteString]]
 loadDsv delimiter createIndex filePath = extractRows <$> mmapCursor delimiter createIndex filePath
 
-countNexts :: forall s. (Rank1 s, Select1 s) => SvCursor BS.ByteString s -> Int
+countNexts :: forall s. (Rank1 s, Select1 s) => SVS.SvCursor BS.ByteString s -> Int
 countNexts = go 0
-  where go n d = case nextInterestingBit d of
-          Just e -> case nextPosition e of
+  where go n d = case SVS.nextInterestingBit d of
+          Just e -> case SVS.nextPosition e of
             Just f  -> go (n + 1) f
             Nothing -> n
           Nothing -> n
 
-loadCursor2FromDsv :: Char -> FilePath -> IO (SvCursor2 BS.ByteString CsPoppy)
+loadCursor2FromDsv :: Char -> FilePath -> IO (SVS.SvCursor2 BS.ByteString CsPoppy)
 loadCursor2FromDsv delimiter filePath = do
   (!bs) :*: (!v) <- IO.mmapFromForeignRegion filePath
   let !_ = v  :: DVS.Vector Word64
   let !_ = bs :: BS.ByteString
   let wdq = CW.doubleQuote
   let wnl = CW.newline
-  let wdl = fillWord64WithChar8 delimiter
-  let sv  = mkStripes wdq wnl wdl v
-  let cv  = mkCummulativeDqPopCountFromStriped sv
-  let nv  = mkDsvIbNlFromStriped sv cv
-  let dv  = mkDsvIbDlFromStriped sv cv
-  return SvCursor2
-    { svCursor2Delimiter   = fromIntegral (ord delimiter)
-    , svCursor2Text        = bs
-    , svCursor2IbNewline   = makeCsPoppy nv
-    , svCursor2IbDelimiter = makeCsPoppy dv
-    , svCursor2Position    = 1
+  let wdl = SVS.fillWord64WithChar8 delimiter
+  let sv  = SVS.mkStripes wdq wnl wdl v
+  let cv  = SVS.mkCummulativeDqPopCountFromStriped sv
+  let nv  = SVS.mkDsvIbNlFromStriped sv cv
+  let dv  = SVS.mkDsvIbDlFromStriped sv cv
+  return SVS.SvCursor2
+    { SVS.svCursor2Delimiter   = fromIntegral (ord delimiter)
+    , SVS.svCursor2Text        = bs
+    , SVS.svCursor2IbNewline   = makeCsPoppy nv
+    , SVS.svCursor2IbDelimiter = makeCsPoppy dv
+    , SVS.svCursor2Position    = 1
     }
 
-makeDv :: SvCursor2 BS.ByteString CsPoppy -> DV.Vector (DV.Vector BS.ByteString)
+makeDv :: SVS.SvCursor2 BS.ByteString CsPoppy -> DV.Vector (DV.Vector BS.ByteString)
 makeDv c = DV.constructN rowCount makeRow
   where rowCount :: Int
-        rowCount = fromIntegral (popCount1 (svCursor2IbNewline c) + 1)
-        fv = svCursor2IbDelimiter c
+        rowCount = fromIntegral (popCount1 (SVS.svCursor2IbNewline c) + 1)
+        fv = SVS.svCursor2IbDelimiter c
         makeRow :: DV.Vector (DV.Vector ByteString) -> DV.Vector ByteString
         makeRow u =
           let ui = DV.length u
