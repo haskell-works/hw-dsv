@@ -10,7 +10,7 @@ import Data.Word
 import HaskellWorks.Data.Bits.BitRead
 import HaskellWorks.Data.Bits.BitShow
 import HaskellWorks.Data.FromByteString
-import HaskellWorks.Data.Sv.Load
+import HaskellWorks.Data.Sv.Strict.Load
 import HaskellWorks.Hspec.Hedgehog
 import Hedgehog
 import Test.Hspec

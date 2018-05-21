@@ -18,11 +18,11 @@ import HaskellWorks.Data.Product
 import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.RankSelect.CsPoppy
-import HaskellWorks.Data.Sv
 import HaskellWorks.Data.Sv.Char.Word64
-import HaskellWorks.Data.Sv.Cursor
-import HaskellWorks.Data.Sv.Internal
-import HaskellWorks.Data.Sv.Load
+import HaskellWorks.Data.Sv.Strict
+import HaskellWorks.Data.Sv.Strict.Cursor
+import HaskellWorks.Data.Sv.Strict.Internal
+import HaskellWorks.Data.Sv.Strict.Load
 import System.Directory
 import Weigh
 

@@ -7,12 +7,12 @@ module App.Commands.CreateFastIndex
 
 import App.Commands.Options.Type
 import Control.Lens
-import Data.Semigroup                 ((<>))
+import Data.Semigroup                       ((<>))
 import Data.Word
 import HaskellWorks.Data.Bits.BitWise
 import HaskellWorks.Data.Sv.Char
-import HaskellWorks.Data.Sv.Internal
-import Options.Applicative            hiding (columns)
+import HaskellWorks.Data.Sv.Strict.Internal
+import Options.Applicative                  hiding (columns)
 
 import qualified App.Commands.Options.Lens           as L
 import qualified Data.ByteString.Builder             as B

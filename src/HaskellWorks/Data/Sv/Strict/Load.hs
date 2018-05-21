@@ -2,7 +2,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeOperators       #-}
 
-module HaskellWorks.Data.Sv.Load
+module HaskellWorks.Data.Sv.Strict.Load
   ( SvCursor(..)
   , SvMode(..)
   , FillWord64(..)
@@ -28,8 +28,8 @@ import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv.Broadword
-import HaskellWorks.Data.Sv.Cursor
-import HaskellWorks.Data.Sv.Internal
+import HaskellWorks.Data.Sv.Strict.Cursor
+import HaskellWorks.Data.Sv.Strict.Internal
 
 import qualified Data.ByteString                     as BS
 import qualified Data.Vector                         as DV

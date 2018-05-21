@@ -3,7 +3,7 @@
 {-# LANGUAGE MultiWayIf          #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module HaskellWorks.Data.Sv.Cursor
+module HaskellWorks.Data.Sv.Strict.Cursor
   ( SvCursor(..)
   , SvCursor2(..)
   , SvMode(..)

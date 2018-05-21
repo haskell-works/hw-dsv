@@ -18,8 +18,8 @@ import HaskellWorks.Data.Bits.BitShow
 import HaskellWorks.Data.Bits.PopCount.PopCount1
 import HaskellWorks.Data.FromByteString
 import HaskellWorks.Data.Sv.Broadword
-import HaskellWorks.Data.Sv.Internal
-import HaskellWorks.Data.Sv.Load
+import HaskellWorks.Data.Sv.Strict.Internal
+import HaskellWorks.Data.Sv.Strict.Load
 import HaskellWorks.Hspec.Hedgehog
 import Hedgehog
 import Test.Hspec
