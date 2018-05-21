@@ -172,19 +172,6 @@ makeBenchW64s = do
     ]
   return (join benchmarks)
 
-makeBenchLbs :: IO [Benchmark]
-makeBenchLbs = do
-  entries <- listDirectory "data/bench"
-  let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
-  benchmarks <- forM files $ \file -> return
-    [ env (LBS.readFile file) $ \bs -> bgroup "Loading lazy byte string into Word64s" $mempty
-      <> [bench ("lazyByteStringToWord64s1 with sum" <> file) (whnf (sum . lazyByteStringToWord64s1) bs)]
-      <> [bench ("lazyByteStringToWord64s2 with sum" <> file) (whnf (sum . lazyByteStringToWord64s2) bs)]
-      <> [bench ("lazyByteStringToWord64s3 with sum" <> file) (whnf (sum . lazyByteStringToWord64s3) bs)]
-      <> [bench ("lazyByteStringToWord64s4 with sum" <> file) (whnf (sum . lazyByteStringToWord64s4) bs)]
-    ]
-  return (join benchmarks)
-
 makeBenchMkInterestBits :: IO [Benchmark]
 makeBenchMkInterestBits = do
   entries <- listDirectory "data/bench"
@@ -201,6 +188,5 @@ main = do
   benchmarks <- (mconcat <$>) $ sequence $ mempty
     <> [makeBenchCsv]
     -- <> [makeBenchW64s]
-    -- <> [makeBenchLbs]
     -- <> [makeBenchMkInterestBits]
   defaultMain benchmarks

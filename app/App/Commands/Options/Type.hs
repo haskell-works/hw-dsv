@@ -36,14 +36,6 @@ data GenerateOptions = GenerateOptions
   , _generateOptionsRows   :: Int
   } deriving (Eq, Show)
 
-data QueryLazyOptions = QueryLazyOptions
-  { _queryLazyOptionsColumns          :: [Int]
-  , _queryLazyOptionsFilePath         :: FilePath
-  , _queryLazyOptionsOutputFilePath   :: FilePath
-  , _queryLazyOptionsDelimiter        :: Char
-  , _queryLazyOptionsOutputBufferSize :: Maybe Int
-  } deriving (Eq, Show)
-
 data CatOptions = CatOptions
   { _catOptionsSource :: FilePath
   , _catOptionsTarget :: FilePath

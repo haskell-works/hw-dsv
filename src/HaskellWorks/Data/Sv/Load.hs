@@ -12,7 +12,6 @@ module HaskellWorks.Data.Sv.Load
   , mkInterestBits
   , boolsToVector
   , mkDsvInterestBits
-  , loadLazyCursor
   , mmapCursor
   , loadDsv
   , countNexts
@@ -33,7 +32,6 @@ import HaskellWorks.Data.Sv.Cursor
 import HaskellWorks.Data.Sv.Internal
 
 import qualified Data.ByteString                     as BS
-import qualified Data.ByteString.Lazy                as LBS
 import qualified Data.Vector                         as DV
 import qualified Data.Vector.Storable                as DVS
 import qualified HaskellWorks.Data.FromForeignRegion as IO
@@ -81,18 +79,6 @@ mmapDataFile2 delimiter createIndex filePath = do
     , svCursorInterestBits  = ibIndex
     , svCursorPosition      = 0
     , svCursorPopCount      = popCount1 ibIndex
-    }
-
-loadLazyCursor :: Char -> FilePath -> IO LazyCursor
-loadLazyCursor delimiter filePath = do
-  !lbs <- LBS.readFile filePath
-  let !_ = lbs :: LBS.ByteString
-  let ib = makeLazyCursorIb  CW.doubleQuote CW.newline (fillWord64WithChar8 delimiter) 0 (lazyByteStringToWord64s2 lbs)
-  return LazyCursor
-    { lazyCursorDelimiter     = fromIntegral (ord delimiter)
-    , lazyCursorText          = lbs
-    , lazyCursorInterestBits  = ib
-    , lazyCursorPosition      = 1
     }
 
 mmapCursor :: Char -> Bool -> FilePath -> IO (SvCursor BS.ByteString CsPoppy)

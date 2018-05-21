@@ -4,7 +4,6 @@
 
 module HaskellWorks.Data.Sv.Internal where
 
-import Control.Applicative
 import Control.Monad.State
 import Data.Bits                        (popCount)
 import Data.Char                        (ord)
@@ -20,14 +19,11 @@ import Prelude
 import qualified Data.Attoparsec.ByteString          as AP
 import qualified Data.Attoparsec.Lazy                as APL
 import qualified Data.ByteString                     as BS
-import qualified Data.ByteString.Lazy                as LBS
-import qualified Data.ByteString.Unsafe              as BSU
 import qualified Data.Vector.Storable                as DVS
 import qualified HaskellWorks.Data.FromForeignRegion as IO
 import qualified HaskellWorks.Data.Length            as V
 import qualified HaskellWorks.Data.Sv.Char           as C
 import qualified HaskellWorks.Data.Sv.Char.Word64    as CW
-import qualified Prelude                             as P
 
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
 
@@ -143,48 +139,6 @@ mkDsvInterestBitsByWord64s _ _ _ _ _ _ = []
 word8To64 :: Word8 -> Word64
 word8To64 = fromIntegral
 
-lazyByteStringToWord64s1 :: LBS.ByteString -> [Word64]
-lazyByteStringToWord64s1 lbs = case LBS.splitAt 8 lbs of
-  (lcs, lds)
-    | LBS.length lcs == 8 ->
-        let w = (word8To64 (lcs `LBS.index` 0) .<.  0) .|.
-                (word8To64 (lcs `LBS.index` 1) .<.  8) .|.
-                (word8To64 (lcs `LBS.index` 2) .<. 16) .|.
-                (word8To64 (lcs `LBS.index` 3) .<. 24) .|.
-                (word8To64 (lcs `LBS.index` 4) .<. 32) .|.
-                (word8To64 (lcs `LBS.index` 5) .<. 40) .|.
-                (word8To64 (lcs `LBS.index` 6) .<. 48) .|.
-                (word8To64 (lcs `LBS.index` 7) .<. 56)
-        in w:lazyByteStringToWord64s1 lds
-    | otherwise -> [LBS.foldl' go 0 lcs]
-  where go :: Word64 -> Word8 -> Word64
-        go w b = (w .<. 8) .|. word8To64 b
-
-lazyByteStringToWord64s2 :: LBS.ByteString -> [Word64]
-lazyByteStringToWord64s2 lbs = case LBS.splitAt 8 lbs of
-  (lcs, lds)
-    | LBS.length lcs == 8 -> case LBS.toStrict lcs of
-        cs ->
-          let w = (word8To64 (cs `BSU.unsafeIndex` 0) .<.  0) .|.
-                  (word8To64 (cs `BSU.unsafeIndex` 1) .<.  8) .|.
-                  (word8To64 (cs `BSU.unsafeIndex` 2) .<. 16) .|.
-                  (word8To64 (cs `BSU.unsafeIndex` 3) .<. 24) .|.
-                  (word8To64 (cs `BSU.unsafeIndex` 4) .<. 32) .|.
-                  (word8To64 (cs `BSU.unsafeIndex` 5) .<. 40) .|.
-                  (word8To64 (cs `BSU.unsafeIndex` 6) .<. 48) .|.
-                  (word8To64 (cs `BSU.unsafeIndex` 7) .<. 56)
-          in w:lazyByteStringToWord64s2 lds
-    | otherwise -> [LBS.foldl' go 0 lcs]
-  where go :: Word64 -> Word8 -> Word64
-        go w b = (w .<. 8) .|. word8To64 b
-
-lazyByteStringToWord64s3 :: LBS.ByteString -> [Word64]
-lazyByteStringToWord64s3 lbs = case LBS.splitAt 8 lbs of
-  (lcs, lds) -> case LBS.toStrict lcs of
-    cs -> BS.foldl' go 0 cs:if LBS.null lds then [] else lazyByteStringToWord64s3 lds
-  where go :: Word64 -> Word8 -> Word64
-        go w b = (w .<. 8) .|. word8To64 b
-
 parserWord64 :: APL.Parser Word64
 parserWord64 = do
   a <- AP.anyWord8
@@ -204,11 +158,6 @@ parserWord64 = do
             (fromIntegral (g .<. 48))  .|.
             (fromIntegral (h .<. 56))
 
-lazyByteStringToWord64s4 :: LBS.ByteString -> [Word64]
-lazyByteStringToWord64s4 bs = case APL.parse (many parserWord64) bs of
-  APL.Done _ r -> r
-  _            -> error "Parser failed"
-
 realignByteStrings :: Int -> [BS.ByteString] -> [BS.ByteString]
 realignByteStrings n = go
   where go (bs:xss)    | BS.length bs == 0 = go xss
@@ -219,75 +168,12 @@ realignByteStrings n = go
         go [bs]        | BS.length bs > 0 = [bs]
         go _           = []
 
-makeLazyCursor :: Char -> LBS.ByteString -> LazyCursor
-makeLazyCursor delimiter lbs = LazyCursor
-  { lazyCursorDelimiter     = fromIntegral (ord delimiter)
-  , lazyCursorText          = lbs
-  , lazyCursorInterestBits  = ib
-  , lazyCursorPosition      = 1
-  }
-  where w64s  = lazyByteStringToWord64s2 lbs
-        ib    = makeLazyCursorIb CW.doubleQuote CW.newline (fillWord64WithChar8 delimiter) 0 w64s
-
--- rdqs: repeated double quotes
--- rnls: repeated new lines
--- rdls: repeated delimiters
--- numQuotes: Number of quotes since beginning
-makeLazyCursorIb :: Word64 -> Word64 -> Word64 -> Count -> [Word64] -> [Word64]
-makeLazyCursorIb rdqs rnls rdls = go
-  where go numQuotes (w0:w1:w2:w3:w4:w5:w6:w7:ws) =
-          let w0Dqs = testWord8s (w0 .^. rdqs)
-              w0Nls = testWord8s (w0 .^. rnls)
-              w0Dls = testWord8s (w0 .^. rdls)
-              w1Dqs = testWord8s (w1 .^. rdqs)
-              w1Nls = testWord8s (w1 .^. rnls)
-              w1Dls = testWord8s (w1 .^. rdls)
-              w2Dqs = testWord8s (w2 .^. rdqs)
-              w2Nls = testWord8s (w2 .^. rnls)
-              w2Dls = testWord8s (w2 .^. rdls)
-              w3Dqs = testWord8s (w3 .^. rdqs)
-              w3Nls = testWord8s (w3 .^. rnls)
-              w3Dls = testWord8s (w3 .^. rdls)
-              w4Dqs = testWord8s (w4 .^. rdqs)
-              w4Nls = testWord8s (w4 .^. rnls)
-              w4Dls = testWord8s (w4 .^. rdls)
-              w5Dqs = testWord8s (w5 .^. rdqs)
-              w5Nls = testWord8s (w5 .^. rnls)
-              w5Dls = testWord8s (w5 .^. rdls)
-              w6Dqs = testWord8s (w6 .^. rdqs)
-              w6Nls = testWord8s (w6 .^. rnls)
-              w6Dls = testWord8s (w6 .^. rdls)
-              w7Dqs = testWord8s (w7 .^. rdqs)
-              w7Nls = testWord8s (w7 .^. rnls)
-              w7Dls = testWord8s (w7 .^. rdls)
-              wDqs  = (w7Dqs  .<. 56) .|. (w6Dqs .<. 48) .|. (w5Dqs .<. 40) .|. (w4Dqs .<. 32) .|. (w3Dqs .<. 24) .|. (w2Dqs .<. 16) .|. (w1Dqs .<. 8) .|. w0Dqs
-              wNls  = (w7Nls  .<. 56) .|. (w6Nls .<. 48) .|. (w5Nls .<. 40) .|. (w4Nls .<. 32) .|. (w3Nls .<. 24) .|. (w2Nls .<. 16) .|. (w1Nls .<. 8) .|. w0Nls
-              wDls  = (w7Dls  .<. 56) .|. (w6Dls .<. 48) .|. (w5Dls .<. 40) .|. (w4Dls .<. 32) .|. (w3Dls .<. 24) .|. (w2Dls .<. 16) .|. (w1Dls .<. 8) .|. w0Dls
-              numWordQuotes = comp wDqs
-              wMask = toggle64 numQuotes numWordQuotes
-              newNumQuotes = numQuotes + fromIntegral (popCount numWordQuotes)
-          in  (comp (wNls .&. wDls) .&. wMask):go newNumQuotes ws
-        go _ [] = []
-        go numQuotes ws = go numQuotes (ws <> (ws <> replicate (8 - P.length ws) 0))
-
 unsafeIndex :: DVS.Vector Word64 -> Int -> Word64
 unsafeIndex v i | i < 0                           = error $ "Invalid index: " <> show i <> " for vector sized " <> show (DVS.length v)
 unsafeIndex v i | fromIntegral i >= DVS.length v  = error $ "Invalid index: " <> show i <> " for vector sized " <> show (DVS.length v)
 unsafeIndex v i | otherwise                       = DVS.unsafeIndex v (fromIntegral i)
 -- unsafeIndex v i = DVS.unsafeIndex v (fromIntegral i)
 {-# INLINE unsafeIndex #-}
-
--- unsafeIndex1 :: DVS.Vector Word64 -> Int -> Word64
--- unsafeIndex1 = unsafeIndex
-
--- unsafeIndex2 :: DVS.Vector Word64 -> Int -> Word64
--- unsafeIndex2 = unsafeIndex
-
--- unsafeIndex3 :: DVS.Vector Word64 -> Int -> Word64
--- unsafeIndex3 = unsafeIndex
-
--- unsafeIndex4 :: DVS.Vector Word64 -> Int -> Word64
--- unsafeIndex4 = unsafeIndex
 
 dvsLength :: DVS.Vector Word64 -> Int
 dvsLength v = fromIntegral (DVS.length v)

@@ -16,7 +16,6 @@ makeFields ''CreateIndexOptions
 makeFields ''GenerateOptions
 makeFields ''LazyCountFieldsOptions
 makeFields ''PrettyPrintOptions
-makeFields ''QueryLazyOptions
 makeFields ''QueryLazy9Options
 makeFields ''QueryOptions
 makeFields ''ShowBitsOptions
