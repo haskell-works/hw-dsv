@@ -9,7 +9,7 @@ import App.Commands.LazyCountFields
 import App.Commands.PrettyPrint
 import App.Commands.Query
 import App.Commands.QueryClassic
-import App.Commands.QueryLazy9
+import App.Commands.QueryLazy
 import App.Commands.ShowBits
 import Data.Semigroup               ((<>))
 import Options.Applicative
@@ -25,5 +25,5 @@ cmdOpts = subparser $ mempty
   <>  cmdPrettyPrint
   <>  cmdQuery
   <>  cmdQueryClassic
-  <>  cmdQueryLazy9
+  <>  cmdQueryLazy
   <>  cmdShowBits

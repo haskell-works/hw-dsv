@@ -2,8 +2,8 @@
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module App.Commands.QueryLazy9
-  ( cmdQueryLazy9
+module App.Commands.QueryLazy
+  ( cmdQueryLazy
   ) where
 
 import App.Commands.Options.Type
@@ -25,8 +25,8 @@ import qualified Data.ByteString.Lazy               as LBS
 import qualified Data.Vector                        as DV
 import qualified HaskellWorks.Data.Sv.Lazy.Internal as LI
 
-runQueryLazy9 :: QueryLazy9Options -> IO ()
-runQueryLazy9 opts = do
+runQueryLazy :: QueryLazyOptions -> IO ()
+runQueryLazy opts = do
   !bs <- LBS.readFile (opts ^. L.filePath)
 
   let !c = LI.makeLazyCursor (opts ^. L.delimiter) bs
@@ -48,11 +48,11 @@ runQueryLazy9 opts = do
           then B.lazyByteString (DV.unsafeIndex fields i)
           else B.lazyByteString (LBS.empty)
 
-cmdQueryLazy9 :: Mod CommandFields (IO ())
-cmdQueryLazy9 = command "query-lazy-9" $ flip info idm $ runQueryLazy9 <$> optsQueryLazy9
+cmdQueryLazy :: Mod CommandFields (IO ())
+cmdQueryLazy = command "query-lazy-9" $ flip info idm $ runQueryLazy <$> optsQueryLazy
 
-optsQueryLazy9 :: Parser QueryLazy9Options
-optsQueryLazy9 = QueryLazy9Options
+optsQueryLazy :: Parser QueryLazyOptions
+optsQueryLazy = QueryLazyOptions
     <$> many
         ( option auto
           (   long "column"

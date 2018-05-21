@@ -51,10 +51,10 @@ data LazyCountFieldsOptions = LazyCountFieldsOptions
   , _lazyCountFieldsOptionsDelimiter :: Char
   } deriving (Eq, Show)
 
-data QueryLazy9Options = QueryLazy9Options
-  { _queryLazy9OptionsColumns        :: [Int]
-  , _queryLazy9OptionsFilePath       :: FilePath
-  , _queryLazy9OptionsOutputFilePath :: FilePath
-  , _queryLazy9OptionsDelimiter      :: Char
-  , _queryLazy9OptionsOutDelimiter   :: Char
+data QueryLazyOptions = QueryLazyOptions
+  { _queryLazyOptionsColumns        :: [Int]
+  , _queryLazyOptionsFilePath       :: FilePath
+  , _queryLazyOptionsOutputFilePath :: FilePath
+  , _queryLazyOptionsDelimiter      :: Char
+  , _queryLazyOptionsOutDelimiter   :: Char
   } deriving (Eq, Show)
