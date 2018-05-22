@@ -11,7 +11,7 @@ module HaskellWorks.Data.Sv.Strict.Load
   , mmapDataFile2
   , mmapCursor
   , loadDsv
-  , countNexts
+  , countFields
   , loadCursor2FromDsv
   , makeDv
   ) where
@@ -113,8 +113,8 @@ extractRows = go []
 loadDsv :: Char -> Bool -> FilePath -> IO [[ByteString]]
 loadDsv delimiter createIndex filePath = extractRows <$> mmapCursor delimiter createIndex filePath
 
-countNexts :: forall s. (Rank1 s, Select1 s) => SVS.SvCursor BS.ByteString s -> Int
-countNexts = go 0
+countFields :: forall s. (Rank1 s, Select1 s) => SVS.SvCursor BS.ByteString s -> Int
+countFields = go 0
   where go n d = case SVS.nextInterestingBit d of
           Just e -> case SVS.nextPosition e of
             Just f  -> go (n + 1) f
