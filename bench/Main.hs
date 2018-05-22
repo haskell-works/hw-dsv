@@ -152,14 +152,14 @@ makeBenchCsv = do
   benchmarks <- forM files $ \file -> return $ mempty
     <> [bench ("cassava/decode/"            <> file) (nfIO (loadCassava     file))]
 
-    -- <> [bench ("hw-sv/decode/via-list/"     <> file) (nfIO (loadHwsv      file))]
-    -- <> [bench ("hw-sv/decode/via-vector/"   <> file) (nfIO (loadHwsvFast    file))]
-    -- <> [bench ("hw-sv/decode/via-faster/"   <> file) (nfIO (loadHwsvFaster  file))]
-    -- <> [bench ("hw-sv/decode/via-index/"    <> file) (nfIO (loadHwsvIndex   file))]
-    -- <> [bench ("hw-sv/decode/via-count/"    <> file) (nfIO (loadHwsvCount   file))]
+    <> [bench ("hw-sv/decode/via-list/"     <> file) (nfIO (loadHwsv      file))]
+    <> [bench ("hw-sv/decode/via-vector/"   <> file) (nfIO (loadHwsvFast    file))]
+    <> [bench ("hw-sv/decode/via-faster/"   <> file) (nfIO (loadHwsvFaster  file))]
+    <> [bench ("hw-sv/decode/via-index/"    <> file) (nfIO (loadHwsvIndex   file))]
+    <> [bench ("hw-sv/decode/via-count/"    <> file) (nfIO (loadHwsvCount   file))]
 
     <> [bench ("hw-sv/decode/via-lazy/"     <> file) (nfIO (loadHwsvLazy   file))]
-    -- <> [bench ("hw-sv/decode/via-fake/"     <> file) (nfIO (loadHwsvFake    file))]
+    <> [bench ("hw-sv/decode/via-fake/"     <> file) (nfIO (loadHwsvFake    file))]
   return (join benchmarks)
 
 makeBenchW64s :: IO [Benchmark]
@@ -187,6 +187,6 @@ main :: IO ()
 main = do
   benchmarks <- (mconcat <$>) $ sequence $ mempty
     <> [makeBenchCsv]
-    -- <> [makeBenchW64s]
-    -- <> [makeBenchMkInterestBits]
+    <> [makeBenchW64s]
+    <> [makeBenchMkInterestBits]
   defaultMain benchmarks
