@@ -22,18 +22,18 @@ import HaskellWorks.Hspec.Hedgehog
 import Hedgehog
 import Test.Hspec
 
-import qualified Data.ByteString                      as BS
-import qualified Data.Text                            as T
-import qualified Data.Text.Encoding                   as T
-import qualified Data.Vector.Storable                 as DVS
-import qualified HaskellWorks.Data.FromForeignRegion  as IO
-import qualified HaskellWorks.Data.Sv.Char.Word64     as C
-import qualified HaskellWorks.Data.Sv.Gen             as G
-import qualified HaskellWorks.Data.Sv.Strict.Internal as SVS
-import qualified HaskellWorks.Data.Sv.Strict.Load     as SVS
-import qualified Hedgehog.Gen                         as G
-import qualified Hedgehog.Range                       as R
-import qualified System.Directory                     as IO
+import qualified Data.ByteString                             as BS
+import qualified Data.Text                                   as T
+import qualified Data.Text.Encoding                          as T
+import qualified Data.Vector.Storable                        as DVS
+import qualified HaskellWorks.Data.FromForeignRegion         as IO
+import qualified HaskellWorks.Data.Sv.Char.Word64            as C
+import qualified HaskellWorks.Data.Sv.Gen                    as G
+import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal as SVS
+import qualified HaskellWorks.Data.Sv.Strict.Load            as SVS
+import qualified Hedgehog.Gen                                as G
+import qualified Hedgehog.Range                              as R
+import qualified System.Directory                            as IO
 
 {-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}

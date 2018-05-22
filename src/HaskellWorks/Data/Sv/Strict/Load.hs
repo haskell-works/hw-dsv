@@ -26,14 +26,14 @@ import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv.Broadword
 
-import qualified Data.ByteString                      as BS
-import qualified Data.Vector                          as DV
-import qualified Data.Vector.Storable                 as DVS
-import qualified HaskellWorks.Data.FromForeignRegion  as IO
-import qualified HaskellWorks.Data.Sv.Char            as C
-import qualified HaskellWorks.Data.Sv.Char.Word64     as CW
-import qualified HaskellWorks.Data.Sv.Strict.Cursor   as SVS
-import qualified HaskellWorks.Data.Sv.Strict.Internal as SVS
+import qualified Data.ByteString                             as BS
+import qualified Data.Vector                                 as DV
+import qualified Data.Vector.Storable                        as DVS
+import qualified HaskellWorks.Data.FromForeignRegion         as IO
+import qualified HaskellWorks.Data.Sv.Char                   as C
+import qualified HaskellWorks.Data.Sv.Char.Word64            as CW
+import qualified HaskellWorks.Data.Sv.Strict.Cursor          as SVS
+import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal as SVS
 
 {-# ANN module ("HLint: ignore Redundant guard"        :: String) #-}
 

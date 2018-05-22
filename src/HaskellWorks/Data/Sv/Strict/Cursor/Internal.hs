@@ -2,7 +2,7 @@
 {-# LANGUAGE ExplicitForAll   #-}
 {-# LANGUAGE FlexibleContexts #-}
 
-module HaskellWorks.Data.Sv.Strict.Internal where
+module HaskellWorks.Data.Sv.Strict.Cursor.Internal where
 
 import Control.Monad.State
 import Data.Bits                               (popCount)
