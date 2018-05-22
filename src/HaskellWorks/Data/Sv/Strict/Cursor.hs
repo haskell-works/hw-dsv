@@ -7,8 +7,6 @@ module HaskellWorks.Data.Sv.Strict.Cursor
   ( SvCursor(..)
   , SvCursor2(..)
   , SvMode(..)
-  , LazyCursor(..)
-  , LazyCursorType(..)
   , next
   , snippet
   , nextField
@@ -16,8 +14,6 @@ module HaskellWorks.Data.Sv.Strict.Cursor
   , wordAt
   , nextPosition
   , nextRow
-  , lazyNext
-  , lazySnippet
   ) where
 
 import Control.Lens
@@ -29,9 +25,7 @@ import HaskellWorks.Data.Sv.Char
 import HaskellWorks.Data.Sv.Strict.Cursor.Type
 
 import qualified Data.ByteString                         as BS
-import qualified Data.ByteString.Lazy                    as LBS
 import qualified HaskellWorks.Data.AtIndex               as VL
-import qualified HaskellWorks.Data.Sv.Char               as C
 import qualified HaskellWorks.Data.Sv.Strict.Cursor.Lens as L
 
 next :: (Rank1 s, Select1 s) => SvCursor t s -> SvCursor t s
@@ -96,39 +90,3 @@ snippet c = BS.take (len `max` 0) $ BS.drop posC $ svCursorText c
         posC = fromIntegral $ svCursorPosition c
         posD = fromIntegral $ svCursorPosition d
         len  = posD - posC - 1
-
-data LazyCursorType = LazyField | LazyRow deriving (Eq, Show)
-
-lazyWordAt :: LazyCursor -> Word8
-lazyWordAt c = (c ^. L.text) `LBS.index` fromIntegral ((c ^. L.position) - 1)
-
-lazyNext :: LazyCursor -> Maybe (LazyCursorType, LazyCursor)
-lazyNext cursor = ((lazyTrim <$>) <$>) . discriminate $ cursor
-  { lazyCursorPosition = newPos
-  }
-  where currentRank     = rank1   (cursor ^. L.interestBits) (cursor ^. L.position)
-        newPos          = select1 (cursor ^. L.interestBits) (currentRank + 1)
-        discriminate ic = if LBS.null (LBS.drop (fromIntegral ((ic ^. L.position) - 1)) (ic ^. L.text))
-          then Nothing
-          else let w = lazyWordAt ic in if
-            | w == ic ^. L.delimiter  -> Just (LazyField, lazyNextPosition ic)
-            | w == C.newline          -> Just (LazyRow  , lazyNextPosition ic)
-            | otherwise -> error "Oops"
-
-lazyNextPosition :: LazyCursor -> LazyCursor
-lazyNextPosition c = c & L.position %~ (+1)
-
-lazyTrim :: LazyCursor -> LazyCursor
-lazyTrim c
-  | c ^. L.position > 128 = c & L.position      %~ (\c' -> c' - 64)
-                              & L.interestBits  %~ drop 1
-                              & L.text          %~ LBS.drop 64
-  | otherwise            = c
-
-lazySnippet :: LazyCursor -> LBS.ByteString
-lazySnippet c = case snd <$> lazyNext c of
-  Nothing ->  LBS.drop posC $ c ^. L.text
-  Just d  ->  let posD = fromIntegral $ (d ^. L.position) - 1
-                  len  = posD - posC - 1
-              in LBS.take (len `max` 0) $ LBS.drop posC $ c ^. L.text
-  where posC = fromIntegral $ (c ^. L.position) - 1

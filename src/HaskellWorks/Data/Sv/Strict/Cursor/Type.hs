@@ -5,7 +5,6 @@ module HaskellWorks.Data.Sv.Strict.Cursor.Type
   ( SvCursor(..)
   , SvCursor2(..)
   , SvMode(..)
-  , LazyCursor(..)
   ) where
 
 import Data.Word
