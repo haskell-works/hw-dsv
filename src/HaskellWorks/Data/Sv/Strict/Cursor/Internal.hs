@@ -252,8 +252,8 @@ mkCummulativeDqPopCount v = DVS.constructN (DVS.length v `div` 2) go
                       w  = (w1 .&. 0xffffffff00000000) .|. (w0 .>. 32)
                   in atIndexOr2 0 u (ui - 1) + fromIntegral (popCount w)
 
-mkDsvInterestBitsByWord64sInternalXXX :: DVS.Vector Word64 -> DVS.Vector Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
-mkDsvInterestBitsByWord64sInternalXXX rawBits cpcs v = DVS.constructN ((DVS.length v + 7) `div` 8) go
+mkIbVector' :: DVS.Vector Word64 -> DVS.Vector Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
+mkIbVector' rawBits cpcs v = DVS.constructN ((DVS.length v + 7) `div` 8) go
   where go :: DVS.Vector Word64 -> Word64
         go u = let ui = dvsLength u in if ui > 1
           then  let vi  = ui * 2
@@ -274,7 +274,7 @@ mkDsvInterestBitsByWord64sInternalXXX rawBits cpcs v = DVS.constructN ((DVS.leng
                 in w .&. m
 
 mkIbVector :: Char -> DVS.Vector Word64 -> DVS.Vector Word64
-mkIbVector delimiter v = mkDsvInterestBitsByWord64sInternalXXX rawBits cpcs v
+mkIbVector delimiter v = mkIbVector' rawBits cpcs v
   where rdqs    = CW.doubleQuote
         rnls    = CW.newline
         rdls    = fillWord64WithChar8 delimiter

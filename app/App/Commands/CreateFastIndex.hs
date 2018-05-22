@@ -38,7 +38,7 @@ runCreateFastIndex opts = do
   let !rawBitsLo  = DVS.map (\c -> fromIntegral ( c         .&. 0xffffffff)  :: Word32) rawBits
   let !rawBitsHi  = DVS.map (\c -> fromIntegral ((c .>. 32) .&. 0xffffffff)  :: Word32) rawBits
   let !cpcs       = SVS.mkCummulativeDqPopCount rawBits
-  let !ib         = SVS.mkDsvInterestBitsByWord64sInternalXXX rawBits cpcs v
+  let !ib         = SVS.mkIbVector' rawBits cpcs v
 
   writeBuilder (filePath <> ".rb.idx")    $ foldMap B.word64LE (DVS.toList rawBits)
   writeBuilder (filePath <> ".rb.lo.idx") $ foldMap B.word32LE (DVS.toList rawBitsLo)
