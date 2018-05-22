@@ -278,8 +278,8 @@ mkDsvInterestBitsByWord64sXXX rdqs rnls rdls v = mkDsvInterestBitsByWord64sInter
   where rawBits = mkDsvRawBitsByWord64s rdqs rnls rdls v
         cpcs    = mkCummulativeDqPopCount rawBits -- cummulative popcounts
 
-mkDsvInterestBits2 :: Char -> DVS.Vector Word64 -> DVS.Vector Word64
-mkDsvInterestBits2 delimiter = mkDsvInterestBitsByWord64sXXX
+mkIbVector :: Char -> DVS.Vector Word64 -> DVS.Vector Word64
+mkIbVector delimiter = mkDsvInterestBitsByWord64sXXX
   CW.doubleQuote
   CW.newline
   (fillWord64WithChar8 delimiter)
