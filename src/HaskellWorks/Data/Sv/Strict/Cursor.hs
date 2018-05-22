@@ -38,8 +38,8 @@ next :: (Rank1 s, Select1 s) => SvCursor t s -> SvCursor t s
 next cursor = cursor
   { svCursorPosition = newPos
   }
-  where currentRank = rank1   (svCursorInterestBits cursor) (svCursorPosition cursor)
-        newPos      = select1 (svCursorInterestBits cursor) (currentRank + 1)
+  where currentRank = rank1   (svCursorMarkers cursor) (svCursorPosition cursor)
+        newPos      = select1 (svCursorMarkers cursor) (currentRank + 1)
 
 nextInterestingBit :: (Rank1 s, Select1 s) => SvCursor t s -> Maybe (SvCursor t s)
 nextInterestingBit cursor = if currentRank < cursor ^. L.popCount
@@ -47,8 +47,8 @@ nextInterestingBit cursor = if currentRank < cursor ^. L.popCount
     { svCursorPosition = newPos
     }
   else Nothing
-  where currentRank = rank1   (svCursorInterestBits cursor) (svCursorPosition cursor)
-        newPos      = select1 (svCursorInterestBits cursor) (currentRank + 1) - 1
+  where currentRank = rank1   (svCursorMarkers cursor) (svCursorPosition cursor)
+        newPos      = select1 (svCursorMarkers cursor) (currentRank + 1) - 1
 
 nextPosition :: SvCursor BS.ByteString s -> Maybe (SvCursor BS.ByteString s)
 nextPosition cursor = if newPos < fromIntegral (VL.length (svCursorText cursor))

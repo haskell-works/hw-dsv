@@ -42,11 +42,11 @@ loadFileWithNewIndex delimiter filePath = do
   text <- BS.readFile filePath
   let ibIndex = SVS.toInterestBitsVector delimiter text
   return SVS.SvCursor
-    { SVS.svCursorDelimiter     = delimiter
-    , SVS.svCursorText          = text
-    , SVS.svCursorInterestBits  = ibIndex
-    , SVS.svCursorPosition      = 1
-    , SVS.svCursorPopCount      = popCount1 ibIndex
+    { SVS.svCursorDelimiter = delimiter
+    , SVS.svCursorText      = text
+    , SVS.svCursorMarkers   = ibIndex
+    , SVS.svCursorPosition  = 1
+    , SVS.svCursorPopCount  = popCount1 ibIndex
     }
 
 mmapDataFile :: Word8 -> Bool -> FilePath -> IO (SVS.SvCursor BS.ByteString CsPoppy)
@@ -56,11 +56,11 @@ mmapDataFile delimiter createIndex filePath = do
     then return $ SVS.toInterestBitsVector delimiter bs
     else IO.mmapFromForeignRegion (filePath ++ ".ib")
   return SVS.SvCursor
-    { SVS.svCursorDelimiter     = delimiter
-    , SVS.svCursorText          = bs
-    , SVS.svCursorInterestBits  = ibIndex
-    , SVS.svCursorPosition      = 0
-    , SVS.svCursorPopCount      = popCount1 ibIndex
+    { SVS.svCursorDelimiter = delimiter
+    , SVS.svCursorText      = bs
+    , SVS.svCursorMarkers   = ibIndex
+    , SVS.svCursorPosition  = 0
+    , SVS.svCursorPopCount  = popCount1 ibIndex
     }
 
 mmapDataFile2 :: Char -> Bool -> FilePath -> IO (SVS.SvCursor BS.ByteString CsPoppy)
@@ -71,11 +71,11 @@ mmapDataFile2 delimiter createIndex filePath = do
     then return $ SVS.mkDsvInterestBits delimiter v
     else IO.mmapFromForeignRegion (filePath ++ ".ib")
   return SVS.SvCursor
-    { SVS.svCursorDelimiter     = fromIntegral (ord delimiter)
-    , SVS.svCursorText          = bs
-    , SVS.svCursorInterestBits  = ibIndex
-    , SVS.svCursorPosition      = 0
-    , SVS.svCursorPopCount      = popCount1 ibIndex
+    { SVS.svCursorDelimiter = fromIntegral (ord delimiter)
+    , SVS.svCursorText      = bs
+    , SVS.svCursorMarkers   = ibIndex
+    , SVS.svCursorPosition  = 0
+    , SVS.svCursorPopCount  = popCount1 ibIndex
     }
 
 mmapCursor :: Char -> Bool -> FilePath -> IO (SVS.SvCursor BS.ByteString CsPoppy)
@@ -86,11 +86,11 @@ mmapCursor delimiter createIndex filePath = do
     then return $ SVS.mkDsvInterestBits2 delimiter v
     else IO.mmapFromForeignRegion (filePath ++ ".ib")
   return SVS.SvCursor
-    { SVS.svCursorDelimiter     = fromIntegral (ord delimiter)
-    , SVS.svCursorText          = bs
-    , SVS.svCursorInterestBits  = ibIndex
-    , SVS.svCursorPosition      = 0
-    , SVS.svCursorPopCount      = popCount1 ibIndex
+    { SVS.svCursorDelimiter = fromIntegral (ord delimiter)
+    , SVS.svCursorText      = bs
+    , SVS.svCursorMarkers   = ibIndex
+    , SVS.svCursorPosition  = 0
+    , SVS.svCursorPopCount  = popCount1 ibIndex
     }
 
 extractRows :: forall s. (Rank1 s, Select1 s) => SVS.SvCursor BS.ByteString s -> [[BS.ByteString]]
@@ -106,7 +106,7 @@ extractRows = go []
                 in if ibw == C.newline
                   then reverse (text:fs):go [] newCursor
                   else go (text:fs) newCursor
-              Nothing        -> [reverse fs]
+              Nothing -> [reverse fs]
             Nothing -> [reverse fs]
           Nothing -> [reverse fs]
 

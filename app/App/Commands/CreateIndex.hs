@@ -29,11 +29,11 @@ runCreateIndex opts = do
     then SVS.mmapDataFile  (fromIntegral (ord delimiter)) True filePath
     else SVS.mmapDataFile2                    delimiter   True filePath
 
-  let ib = cursor ^. LC.interestBits
+  let markers = cursor ^. LC.markers
 
   hOut <- IO.openFile (filePath ++ ".idx") IO.WriteMode
 
-  forM_ (DVS.toList (csPoppyBits ib)) $ \w -> do
+  forM_ (DVS.toList (csPoppyBits markers)) $ \w -> do
     B.hPutBuilder hOut (B.word64LE w)
 
   IO.hClose hOut

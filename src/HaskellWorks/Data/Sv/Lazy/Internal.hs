@@ -112,11 +112,11 @@ makeCummulativePopCount = go 0
 
 makeLazyCursor :: Char -> LBS.ByteString -> SvCursor
 makeLazyCursor delimiter lbs = SvCursor
-  { svCursorDelimiter     = fromIntegral (ord delimiter)
-  , svCursorText          = lbs
-  , svCursorInterestBits  = ib
-  , svCursorNewlines      = nls
-  , svCursorPosition      = 1
+  { svCursorDelimiter = fromIntegral (ord delimiter)
+  , svCursorText      = lbs
+  , svCursorMarkers   = ib
+  , svCursorNewlines  = nls
+  , svCursorPosition  = 1
   }
   where ws  = LBS.toVector64Chunks 512 lbs
         ibq = makeIbs CW.doubleQuote                      <$> ws
@@ -150,10 +150,10 @@ countFields = go 0
 trimCursor :: SvCursor -> SvCursor
 trimCursor c = if svCursorPosition c > 512
   then trimCursor c
-    { svCursorText         = LBS.drop 512 (svCursorText c)
-    , svCursorInterestBits = drop 1 (svCursorInterestBits c)
-    , svCursorNewlines     = drop 1 (svCursorNewlines c)
-    , svCursorPosition     = svCursorPosition c - 512
+    { svCursorText      = LBS.drop 512 (svCursorText c)
+    , svCursorMarkers   = drop 1 (svCursorMarkers c)
+    , svCursorNewlines  = drop 1 (svCursorNewlines c)
+    , svCursorPosition  = svCursorPosition c - 512
     }
   else c
 {-# INLINE trimCursor #-}
@@ -166,8 +166,8 @@ nextField :: SvCursor -> SvCursor
 nextField cursor = cursor
   { svCursorPosition = newPos
   }
-  where currentRank = rank1   (svCursorInterestBits cursor) (svCursorPosition cursor)
-        newPos      = select1 (svCursorInterestBits cursor) (currentRank + 1)
+  where currentRank = rank1   (svCursorMarkers cursor) (svCursorPosition cursor)
+        newPos      = select1 (svCursorMarkers cursor) (currentRank + 1)
 {-# INLINE nextField #-}
 
 nextRow :: SvCursor -> SvCursor
@@ -189,8 +189,8 @@ nextPosition cursor = cursor
 
 mkRow :: SvCursor -> SvCursor -> DV.Vector LBS.ByteString
 mkRow c d = DV.unfoldrN c2d go c
-  where cr  = rank1 (svCursorInterestBits c) (svCursorPosition c)
-        dr  = rank1 (svCursorInterestBits d) (svCursorPosition d)
+  where cr  = rank1 (svCursorMarkers c) (svCursorPosition c)
+        dr  = rank1 (svCursorMarkers d) (svCursorPosition d)
         c2d = fromIntegral (dr - cr)
         go :: SvCursor -> Maybe (LBS.ByteString, SvCursor)
         go e = case nextField e of

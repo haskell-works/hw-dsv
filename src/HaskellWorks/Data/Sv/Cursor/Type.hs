@@ -15,12 +15,12 @@ import HaskellWorks.Data.Positioning
 import qualified Data.ByteString.Lazy as LBS
 
 data SvCursor t s = SvCursor
-  { svCursorDelimiter    :: Elem t
-  , svCursorText         :: !t
-  , svCursorInterestBits :: !s
-  , svCursorPosition     :: !Word64
+  { svCursorDelimiter :: Elem t
+  , svCursorText      :: !t
+  , svCursorMarkers   :: !s
+  , svCursorPosition  :: !Word64
   -- TODO See if there is a faster way to compute popCount field
-  , svCursorPopCount     :: !Count
+  , svCursorPopCount  :: !Count
   }
 
 deriving instance (Eq   (Elem t), Eq   t, Eq   s) => Eq   (SvCursor t s)
