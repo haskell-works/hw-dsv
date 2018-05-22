@@ -13,8 +13,8 @@ import HaskellWorks.Data.Sv.Char
 import Options.Applicative       hiding (columns)
 
 import qualified App.Commands.Options.Lens                 as L
+import qualified App.IO                                    as IO
 import qualified Data.ByteString.Builder                   as B
-import qualified Data.ByteString.Lazy                      as LBS
 import qualified Data.Vector.Storable                      as DVS
 import qualified HaskellWorks.Data.Sv.ByteString.Lazy      as LBS
 import qualified HaskellWorks.Data.Sv.Char.Word64          as CW
@@ -32,7 +32,7 @@ runCreateLazyIndex opts = do
   let filePath  = opts ^. L.filePath
   let delimiter = opts ^. L.delimiter
 
-  lbs <- LBS.readFile filePath
+  lbs <- IO.readInputFile filePath
 
   let ws  = LBS.toVector64Chunks 512 lbs
   let ibq = SVL.makeIbs CW.doubleQuote                      <$> ws

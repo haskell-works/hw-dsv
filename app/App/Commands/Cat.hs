@@ -8,6 +8,7 @@ import Data.Semigroup            ((<>))
 import Options.Applicative       hiding (columns)
 
 import qualified App.Commands.Options.Lens as L
+import qualified App.IO                    as IO
 import qualified Data.ByteString.Lazy      as LBS
 
 runCat :: CatOptions -> IO ()
@@ -15,7 +16,7 @@ runCat opts = do
   let source = opts ^. L.source
   let target = opts ^. L.target
 
-  contents <- LBS.readFile source
+  contents <- IO.readInputFile source
 
   LBS.writeFile target contents
 

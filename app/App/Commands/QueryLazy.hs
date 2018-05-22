@@ -27,7 +27,7 @@ import qualified HaskellWorks.Data.Sv.Lazy.Cursor as SVL
 
 runQueryLazy :: QueryLazyOptions -> IO ()
 runQueryLazy opts = do
-  !bs <- LBS.readFile (opts ^. L.filePath)
+  !bs <- IO.readInputFile (opts ^. L.filePath)
 
   let !c = SVL.makeLazyCursor (opts ^. L.delimiter) bs
   let !rows = SVL.toListVector c
