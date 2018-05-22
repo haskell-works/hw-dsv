@@ -11,11 +11,6 @@ data CreateFastIndexOptions = CreateFastIndexOptions
   , _createFastIndexOptionsDelimiter :: Char
   } deriving (Eq, Show)
 
-data ShowBitsOptions = ShowBitsOptions
-  { _showBitsOptionsFilePath :: FilePath
-  , _showBitsOptionsPretty   :: Bool
-  } deriving (Eq, Show)
-
 data PrettyPrintOptions = PrettyPrintOptions
   { _prettyPrintOptionsDataFilePath  :: FilePath
   , _prettyPrintOptionsIndexFilePath :: FilePath

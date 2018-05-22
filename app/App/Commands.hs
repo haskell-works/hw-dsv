@@ -10,7 +10,6 @@ import App.Commands.PrettyPrint
 import App.Commands.Query
 import App.Commands.QueryClassic
 import App.Commands.QueryLazy
-import App.Commands.ShowBits
 import Data.Semigroup               ((<>))
 import Options.Applicative
 
@@ -26,4 +25,3 @@ cmdOpts = subparser $ mempty
   <>  cmdQuery
   <>  cmdQueryClassic
   <>  cmdQueryLazy
-  <>  cmdShowBits

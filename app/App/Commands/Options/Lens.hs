@@ -18,4 +18,3 @@ makeFields ''LazyCountFieldsOptions
 makeFields ''PrettyPrintOptions
 makeFields ''QueryLazyOptions
 makeFields ''QueryOptions
-makeFields ''ShowBitsOptions
