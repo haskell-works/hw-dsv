@@ -11,9 +11,9 @@ import Data.Semigroup            ((<>))
 import HaskellWorks.Data.Sv.Char
 import Options.Applicative       hiding (columns)
 
-import qualified App.Commands.Options.Lens          as L
-import qualified Data.ByteString.Lazy               as LBS
-import qualified HaskellWorks.Data.Sv.Lazy.Internal as SVL
+import qualified App.Commands.Options.Lens        as L
+import qualified Data.ByteString.Lazy             as LBS
+import qualified HaskellWorks.Data.Sv.Lazy.Cursor as SVL
 
 runLazyCountFields :: LazyCountFieldsOptions -> IO ()
 runLazyCountFields opts = do

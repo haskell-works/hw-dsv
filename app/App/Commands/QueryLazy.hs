@@ -18,12 +18,12 @@ import Data.Semigroup               ((<>))
 import HaskellWorks.Data.Sv.Char
 import Options.Applicative          hiding (columns)
 
-import qualified App.Commands.Options.Lens          as L
-import qualified App.IO                             as IO
-import qualified Data.ByteString.Builder            as B
-import qualified Data.ByteString.Lazy               as LBS
-import qualified Data.Vector                        as DV
-import qualified HaskellWorks.Data.Sv.Lazy.Internal as SVL
+import qualified App.Commands.Options.Lens        as L
+import qualified App.IO                           as IO
+import qualified Data.ByteString.Builder          as B
+import qualified Data.ByteString.Lazy             as LBS
+import qualified Data.Vector                      as DV
+import qualified HaskellWorks.Data.Sv.Lazy.Cursor as SVL
 
 runQueryLazy :: QueryLazyOptions -> IO ()
 runQueryLazy opts = do
