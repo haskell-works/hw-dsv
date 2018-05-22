@@ -27,8 +27,8 @@ import qualified HaskellWorks.Data.Sv.Char.Word64    as CW
 
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
 
-toInterestBitsVector :: Char -> BS.ByteString -> DVS.Vector Word64
-toInterestBitsVector delimiter bs = DVS.fromListN vLen (mkIbList delimiter bs)
+mkIbVectorViaList :: Char -> BS.ByteString -> DVS.Vector Word64
+mkIbVectorViaList delimiter bs = DVS.fromListN vLen (mkIbList delimiter bs)
   where vLen = (BS.length bs `div` 64) + 1
 
 toInterestBits :: Word8 -> SvMode -> BS.ByteString -> [Bool]
@@ -74,7 +74,7 @@ mkInterestBits :: Char -> Bool -> FilePath -> IO (DVS.Vector Word64)
 mkInterestBits delimiter createIndex filePath = do
   !bs <- IO.mmapFromForeignRegion filePath
   !ibIndex <- if createIndex
-    then return $ toInterestBitsVector delimiter bs
+    then return $ mkIbVectorViaList delimiter bs
     else IO.mmapFromForeignRegion (filePath ++ ".ib")
   return ibIndex
 

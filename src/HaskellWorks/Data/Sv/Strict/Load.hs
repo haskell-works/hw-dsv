@@ -40,7 +40,7 @@ import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal as SVS
 loadFileWithNewIndex :: Char -> FilePath -> IO (SVS.SvCursor BS.ByteString (DVS.Vector Word64))
 loadFileWithNewIndex delimiter filePath = do
   text <- BS.readFile filePath
-  let ibIndex = SVS.toInterestBitsVector delimiter text
+  let ibIndex = SVS.mkIbVectorViaList delimiter text
   return SVS.SvCursor
     { SVS.svCursorDelimiter = fromIntegral (ord delimiter)
     , SVS.svCursorText      = text
@@ -53,7 +53,7 @@ mmapDataFile :: Char -> Bool -> FilePath -> IO (SVS.SvCursor BS.ByteString CsPop
 mmapDataFile delimiter createIndex filePath = do
   !bs <- IO.mmapFromForeignRegion filePath
   !ibIndex <- makeCsPoppy <$> if createIndex
-    then return $ SVS.toInterestBitsVector delimiter bs
+    then return $ SVS.mkIbVectorViaList delimiter bs
     else IO.mmapFromForeignRegion (filePath ++ ".ib")
   return SVS.SvCursor
     { SVS.svCursorDelimiter = fromIntegral (ord delimiter)
