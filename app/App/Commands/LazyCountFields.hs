@@ -24,7 +24,7 @@ runLazyCountFields opts = do
 
   let !c = SVL.makeLazyCursor delimiter bs
 
-  putStrLn $ "Number of fields: " <> show (SVL.countNexts c)
+  putStrLn $ "Number of fields: " <> show (SVL.countFields c)
 
 optsLazyCountFields :: Parser LazyCountFieldsOptions
 optsLazyCountFields = LazyCountFieldsOptions

@@ -12,7 +12,7 @@ module HaskellWorks.Data.Sv.Lazy.Internal
   , nextRow
   , snippet
   , nextPosition
-  , countNexts
+  , countFields
   , toListVector
   , toVectorVector
   ) where
@@ -171,15 +171,15 @@ snippet c = LBS.take (len `max` 0) $ LBS.drop posC $ svCursorText c
         len  = posD - posC
 {-# INLINE snippet #-}
 
-countNexts :: SvCursor -> Int
-countNexts = go 0
+countFields :: SvCursor -> Int
+countFields = go 0
   where go n d = if not (atEnd d)
           then let e = nextField d in if not (atEnd e)
             then let f = nextPosition e in go (n + 1) (trimCursor f)
             else n
           else n
         {-# INLINE go #-}
-{-# INLINE countNexts #-}
+{-# INLINE countFields #-}
 
 trimCursor :: SvCursor -> SvCursor
 trimCursor c = if svCursorPosition c > 512

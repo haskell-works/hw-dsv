@@ -121,7 +121,7 @@ loadHwsvCount :: FilePath -> IO Int
 loadHwsvCount filePath = do
   !c <- SVS.mmapCursor ',' True filePath
 
-  return (SVS.countNexts c)
+  return (SVS.countFields c)
 
 loadHwsvLazy :: FilePath -> IO (Vector (Vector LBS.ByteString))
 loadHwsvLazy filePath = do
