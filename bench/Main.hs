@@ -168,7 +168,7 @@ makeBenchW64s = do
   let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
   benchmarks <- forM files $ \file -> return
     [ env (IO.mmapFromForeignRegion file) $ \v -> bgroup "Creating bit index from mmaped file" $ mempty
-      <> [bench ("mkDsvInterestBitsByWord64sXXX with sum" <> file) (whnf (DVS.foldl (+) 0 . SVS.mkDsvInterestBitsByWord64sXXX doubleQuote newline comma) v)]
+      <> [bench ("mkIbVector                  with sum" <> file) (whnf (DVS.foldl (+) 0 . SVS.mkIbVector ',') v)]
     ]
   return (join benchmarks)
 
@@ -178,8 +178,8 @@ makeBenchMkInterestBits = do
   let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
   benchmarks <- forM files $ \file -> return
     [ env (IO.mmapFromForeignRegion file) $ \(v :: DVS.Vector Word64) -> bgroup "Loading lazy byte string into Word64s" $ mempty
-      <> [bench ("mkDsvInterestBitsByWord64sXXX with sum" <> file) (whnf (DVS.foldr (+) 0 . SVS.mkDsvInterestBitsByWord64sXXX C.doubleQuote C.newline C.pipe) v)]
-      <> [bench ("mkDsvInterestBitsByWord64s    with sum" <> file) (whnf (DVS.foldr (+) 0 . SVS.mkDsvInterestBits    '|') v)]
+      <> [bench ("mkIbVector                  with sum" <> file) (whnf (DVS.foldr (+) 0 . SVS.mkIbVector        '|') v)]
+      <> [bench ("mkDsvInterestBitsByWord64s  with sum" <> file) (whnf (DVS.foldr (+) 0 . SVS.mkDsvInterestBits '|') v)]
     ]
   return (join benchmarks)
 

@@ -273,16 +273,13 @@ mkDsvInterestBitsByWord64sInternalXXX rawBits cpcs v = DVS.constructN ((DVS.leng
                     m   = toggle64 cpc d
                 in w .&. m
 
-mkDsvInterestBitsByWord64sXXX :: Word64 -> Word64 -> Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
-mkDsvInterestBitsByWord64sXXX rdqs rnls rdls v = mkDsvInterestBitsByWord64sInternalXXX rawBits cpcs v
-  where rawBits = mkDsvRawBitsByWord64s rdqs rnls rdls v
-        cpcs    = mkCummulativeDqPopCount rawBits -- cummulative popcounts
-
 mkIbVector :: Char -> DVS.Vector Word64 -> DVS.Vector Word64
-mkIbVector delimiter = mkDsvInterestBitsByWord64sXXX
-  CW.doubleQuote
-  CW.newline
-  (fillWord64WithChar8 delimiter)
+mkIbVector delimiter v = mkDsvInterestBitsByWord64sInternalXXX rawBits cpcs v
+  where rdqs    = CW.doubleQuote
+        rnls    = CW.newline
+        rdls    = fillWord64WithChar8 delimiter
+        rawBits = mkDsvRawBitsByWord64s rdqs rnls rdls v
+        cpcs    = mkCummulativeDqPopCount rawBits -- cummulative popcounts
 
 -- rdqs: repeated double quotes
 -- rnls: repeated new lines

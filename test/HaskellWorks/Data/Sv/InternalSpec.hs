@@ -54,23 +54,23 @@ spec = describe "HaskellWorks.Data.Sv.InternalSpec" $ do
     let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
     forM_ files $ \file -> do
       v <- liftIO $ IO.mmapFromForeignRegion file
-      let !pccccccc = DVS.foldr (\a b -> popCount1 a + b) 0 (SVS.mkDsvRawBitsByWord64s C.doubleQuote C.newline C.pipe v)
-      let !actual   = DVS.foldr (\a b -> popCount1 a + b) 0 (SVS.mkDsvInterestBitsByWord64sXXX C.doubleQuote C.newline C.pipe v)
-      let !expected =     foldr (\a b -> popCount1 a + b) 0 (SVS.mkDsvInterestBitsByWord64s    C.doubleQuote C.newline C.pipe 0 0 v)
+      let !pccccccc = DVS.foldr (\a b -> popCount1 a + b) 0 (SVS.mkDsvRawBitsByWord64s      C.doubleQuote C.newline C.pipe      v)
+      let !actual   = DVS.foldr (\a b -> popCount1 a + b) 0 (SVS.mkIbVector                 '|'                                 v)
+      let !expected =     foldr (\a b -> popCount1 a + b) 0 (SVS.mkDsvInterestBitsByWord64s C.doubleQuote C.newline C.pipe 0 0  v)
       annotate $ "file    : " <> file
       annotate $ "pccccccc: " <> show pccccccc
       actual === expected
   it "Case 2" $ requireTest $ do
     bs :: ByteString <- forAll $ T.encodeUtf8 . T.pack <$> G.string (R.linear 0 128) (G.element " \"|\n")
     v <- forAll $ pure $ fromByteString bs
-    let !actual   = DVS.foldr (\a b -> popCount1 a + b) 0 (SVS.mkDsvInterestBitsByWord64sXXX C.doubleQuote C.newline C.pipe v)
-    let !expected =     foldr (\a b -> popCount1 a + b) 0 (SVS.mkDsvInterestBitsByWord64s    C.doubleQuote C.newline C.pipe 0 0 v)
+    let !actual   = DVS.foldr (\a b -> popCount1 a + b) 0 (SVS.mkIbVector                 '|'                                 v)
+    let !expected =     foldr (\a b -> popCount1 a + b) 0 (SVS.mkDsvInterestBitsByWord64s C.doubleQuote C.newline C.pipe 0 0  v)
     actual === expected
   it "Case 3" $ requireTest $ do
     bs :: ByteString <- forAll $ T.encodeUtf8 . T.pack <$> G.string (R.linear 0 128) (G.element " \"|\n")
     v <- forAll $ pure $ fromByteString bs
-    let !actual   = DVS.foldr (\a b -> popCount1 a + b) 0 (SVS.mkDsvInterestBitsByWord64sXXX C.doubleQuote C.newline C.pipe v)
-    let !expected =     foldr (\a b -> popCount1 a + b) 0 (SVS.mkDsvInterestBitsByWord64s    C.doubleQuote C.newline C.pipe 0 0 v)
+    let !actual   = DVS.foldr (\a b -> popCount1 a + b) 0 (SVS.mkIbVector                 '|'                                 v)
+    let !expected =     foldr (\a b -> popCount1 a + b) 0 (SVS.mkDsvInterestBitsByWord64s C.doubleQuote C.newline C.pipe 0 0  v)
     actual === expected
   it "Case 4" $ requireTest $ do
     bs :: ByteString <- forAll $ T.encodeUtf8 . T.pack <$> G.string (R.linear 0 10000) (G.element " \"")
@@ -92,7 +92,7 @@ spec = describe "HaskellWorks.Data.Sv.InternalSpec" $ do
     let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
     forM_ files $ \file -> do
       v <- liftIO $ IO.mmapFromForeignRegion file
-      let !actual   = SVS.mkDsvInterestBitsByWord64sXXX C.doubleQuote C.newline C.pipe v
+      let !actual   = SVS.mkIbVector '|' v
       let !expected = DVS.fromList $ SVS.mkDsvInterestBitsByWord64s C.doubleQuote C.newline C.pipe 0 0 v
       annotate $ "file    : " <> file
       actual === expected
