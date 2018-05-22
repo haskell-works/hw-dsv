@@ -81,40 +81,6 @@ makeIbs iw v = DVS.constructN ((DVS.length v + 7) `div` 8) go
                   in comp w
 {-# INLINE makeIbs #-}
 
-zipOr :: DVS.Vector Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
-zipOr as bs = DVS.constructN (DVS.length as `max` DVS.length bs) go
-  where go :: DVS.Vector Word64 -> Word64
-        go u =
-          let ui = DVS.length u
-          in if ui < DVS.length as && ui < DVS.length bs
-            then DVS.unsafeIndex as ui .|. DVS.unsafeIndex bs ui
-            else error "Different sized vectors"
-{-# INLINE zipOr #-}
-
-zip2Or :: [DVS.Vector Word64] -> [DVS.Vector Word64] -> [DVS.Vector Word64]
-zip2Or (a:as) (b:bs) = zipOr a b:zip2Or as bs
-zip2Or (a:as) []     = a:zip2Or as []
-zip2Or []     (b:bs) = b:zip2Or [] bs
-zip2Or []     []     = []
-{-# INLINE zip2Or #-}
-
-zipAnd :: DVS.Vector Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
-zipAnd as bs = DVS.constructN (DVS.length as `max` DVS.length bs) go
-  where go :: DVS.Vector Word64 -> Word64
-        go u =
-          let ui = DVS.length u
-          in if ui < DVS.length as && ui < DVS.length bs
-            then DVS.unsafeIndex as ui .&. DVS.unsafeIndex bs ui
-            else error "Different sized vectors"
-{-# INLINE zipAnd #-}
-
-zip2And :: [DVS.Vector Word64] -> [DVS.Vector Word64] -> [DVS.Vector Word64]
-zip2And (a:as) (b:bs) = zipAnd a b:zip2And as bs
-zip2And (a:as) []     = a:zip2And as []
-zip2And []     (b:bs) = b:zip2And [] bs
-zip2And []     []     = []
-{-# INLINE zip2And #-}
-
 makeQuoteMask1 :: DVS.Vector Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
 makeQuoteMask1 ibv pcv = DVS.constructN (DVS.length ibv) go
   where go :: DVS.Vector Word64 -> Word64
