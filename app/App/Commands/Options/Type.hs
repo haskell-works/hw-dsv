@@ -11,11 +11,6 @@ data CreateFastIndexOptions = CreateFastIndexOptions
   , _createFastIndexOptionsDelimiter :: Char
   } deriving (Eq, Show)
 
-data PrettyPrintOptions = PrettyPrintOptions
-  { _prettyPrintOptionsDataFilePath  :: FilePath
-  , _prettyPrintOptionsIndexFilePath :: FilePath
-  } deriving (Eq, Show)
-
 data QueryOptions = QueryOptions
   { _queryOptionsCreateIndex      :: Bool
   , _queryOptionsColumns          :: [Int]
