@@ -13,12 +13,12 @@ import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv.Char
 import Options.Applicative                  hiding (columns)
 
-import qualified App.Commands.Options.Lens        as L
-import qualified Data.ByteString.Builder          as B
-import qualified Data.Vector.Storable             as DVS
-import qualified HaskellWorks.Data.Sv.Cursor.Lens as LC
-import qualified HaskellWorks.Data.Sv.Strict.Load as SVS
-import qualified System.IO                        as IO
+import qualified App.Commands.Options.Lens               as L
+import qualified Data.ByteString.Builder                 as B
+import qualified Data.Vector.Storable                    as DVS
+import qualified HaskellWorks.Data.Sv.Strict.Cursor.Lens as LC
+import qualified HaskellWorks.Data.Sv.Strict.Load        as SVS
+import qualified System.IO                               as IO
 
 runCreateIndex :: CreateIndexOptions -> IO ()
 runCreateIndex opts = do

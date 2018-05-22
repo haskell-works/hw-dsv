@@ -26,13 +26,13 @@ import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv.Char
-import HaskellWorks.Data.Sv.Cursor.Type
+import HaskellWorks.Data.Sv.Strict.Cursor.Type
 
-import qualified Data.ByteString                  as BS
-import qualified Data.ByteString.Lazy             as LBS
-import qualified HaskellWorks.Data.AtIndex        as VL
-import qualified HaskellWorks.Data.Sv.Char        as C
-import qualified HaskellWorks.Data.Sv.Cursor.Lens as L
+import qualified Data.ByteString                         as BS
+import qualified Data.ByteString.Lazy                    as LBS
+import qualified HaskellWorks.Data.AtIndex               as VL
+import qualified HaskellWorks.Data.Sv.Char               as C
+import qualified HaskellWorks.Data.Sv.Strict.Cursor.Lens as L
 
 next :: (Rank1 s, Select1 s) => SvCursor t s -> SvCursor t s
 next cursor = cursor

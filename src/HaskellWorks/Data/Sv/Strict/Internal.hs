@@ -5,15 +5,15 @@
 module HaskellWorks.Data.Sv.Strict.Internal where
 
 import Control.Monad.State
-import Data.Bits                        (popCount)
-import Data.Char                        (ord)
+import Data.Bits                               (popCount)
+import Data.Char                               (ord)
 import Data.Word
 import HaskellWorks.Data.AtIndex
 import HaskellWorks.Data.Bits.BitWise
 import HaskellWorks.Data.Positioning
 import HaskellWorks.Data.Sv.Bits
 import HaskellWorks.Data.Sv.Broadword
-import HaskellWorks.Data.Sv.Cursor.Type
+import HaskellWorks.Data.Sv.Strict.Cursor.Type
 import Prelude
 
 import qualified Data.Attoparsec.ByteString          as AP

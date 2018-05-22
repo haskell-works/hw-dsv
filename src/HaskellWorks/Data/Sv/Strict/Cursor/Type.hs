@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleContexts   #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
-module HaskellWorks.Data.Sv.Cursor.Type
+module HaskellWorks.Data.Sv.Strict.Cursor.Type
   ( SvCursor(..)
   , SvCursor2(..)
   , SvMode(..)
