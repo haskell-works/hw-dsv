@@ -7,7 +7,6 @@ module App.Commands.QueryClassic
 
 import Control.Applicative
 import Control.Monad
-import Data.Char
 import Data.Function
 import Data.List
 import Data.Maybe
@@ -26,7 +25,7 @@ repeatedly f a = a:case f a of
 
 runQueryClassic :: Bool -> [Int] -> FilePath -> Char -> IO ()
 runQueryClassic createIndex columns filePath delimiter = do
-  !cursor <- SVS.mmapDataFile (fromIntegral (ord delimiter)) createIndex filePath
+  !cursor <- SVS.mmapDataFile delimiter createIndex filePath
 
   forM_ (repeatedly SVS.nextRow cursor) $ \row -> do
     let !fields = repeatedly SVS.nextField row

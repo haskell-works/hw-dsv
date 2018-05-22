@@ -7,7 +7,6 @@ module App.Commands.CreateIndex
 import App.Commands.Options.Type
 import Control.Lens
 import Control.Monad
-import Data.Char
 import Data.Semigroup                       ((<>))
 import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv.Char
@@ -26,8 +25,8 @@ runCreateIndex opts = do
   let delimiter = opts ^. L.delimiter
 
   !cursor <- if opts ^. L.classic
-    then SVS.mmapDataFile  (fromIntegral (ord delimiter)) True filePath
-    else SVS.mmapDataFile2                    delimiter   True filePath
+    then SVS.mmapDataFile   delimiter True filePath
+    else SVS.mmapDataFile2  delimiter True filePath
 
   let markers = cursor ^. LC.markers
 

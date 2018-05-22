@@ -37,26 +37,26 @@ import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal as SVS
 
 {-# ANN module ("HLint: ignore Redundant guard"        :: String) #-}
 
-loadFileWithNewIndex :: Word8 -> FilePath -> IO (SVS.SvCursor BS.ByteString (DVS.Vector Word64))
+loadFileWithNewIndex :: Char -> FilePath -> IO (SVS.SvCursor BS.ByteString (DVS.Vector Word64))
 loadFileWithNewIndex delimiter filePath = do
   text <- BS.readFile filePath
   let ibIndex = SVS.toInterestBitsVector delimiter text
   return SVS.SvCursor
-    { SVS.svCursorDelimiter = delimiter
+    { SVS.svCursorDelimiter = fromIntegral (ord delimiter)
     , SVS.svCursorText      = text
     , SVS.svCursorMarkers   = ibIndex
     , SVS.svCursorPosition  = 1
     , SVS.svCursorPopCount  = popCount1 ibIndex
     }
 
-mmapDataFile :: Word8 -> Bool -> FilePath -> IO (SVS.SvCursor BS.ByteString CsPoppy)
+mmapDataFile :: Char -> Bool -> FilePath -> IO (SVS.SvCursor BS.ByteString CsPoppy)
 mmapDataFile delimiter createIndex filePath = do
   !bs <- IO.mmapFromForeignRegion filePath
   !ibIndex <- makeCsPoppy <$> if createIndex
     then return $ SVS.toInterestBitsVector delimiter bs
     else IO.mmapFromForeignRegion (filePath ++ ".ib")
   return SVS.SvCursor
-    { SVS.svCursorDelimiter = delimiter
+    { SVS.svCursorDelimiter = fromIntegral (ord delimiter)
     , SVS.svCursorText      = bs
     , SVS.svCursorMarkers   = ibIndex
     , SVS.svCursorPosition  = 0

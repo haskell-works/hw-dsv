@@ -27,8 +27,8 @@ import qualified HaskellWorks.Data.Sv.Char.Word64    as CW
 
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
 
-toInterestBitsVector :: Word8 -> BS.ByteString -> DVS.Vector Word64
-toInterestBitsVector delimiter bs = DVS.fromListN vLen (toInterestBits64 delimiter bs)
+toInterestBitsVector :: Char -> BS.ByteString -> DVS.Vector Word64
+toInterestBitsVector delimiter bs = DVS.fromListN vLen (mkIbList delimiter bs)
   where vLen = (BS.length bs `div` 64) + 1
 
 toInterestBits :: Word8 -> SvMode -> BS.ByteString -> [Bool]
@@ -42,13 +42,13 @@ toInterestBits delimiter mode text = case BS.uncons text of
     SvQuoted   | otherwise          -> False:toInterestBits delimiter SvQuoted   as
   _            -> []
 
-toInterestBits64 :: Word8 -> BS.ByteString -> [Word64]
-toInterestBits64 delimiter = go 0 0 SvUnquoted
+mkIbList :: Char -> BS.ByteString -> [Word64]
+mkIbList delimiter = go 0 0 SvUnquoted
   where go :: Int -> Word64 -> SvMode -> BS.ByteString -> [Word64]
         go n w mode text = case BS.uncons text of
           Just (a, as) -> case mode of
             SvUnquoted | a == C.doubleQuote -> cont n w 0 SvQuoted   as
-            SvUnquoted | a == delimiter     -> cont n w 1 SvUnquoted as
+            SvUnquoted | a == wd     -> cont n w 1 SvUnquoted as
             SvUnquoted | a == C.newline     -> cont n w 1 SvUnquoted as
             SvUnquoted | otherwise          -> cont n w 0 SvUnquoted as
             SvQuoted   | a == C.doubleQuote -> cont n w 0 SvUnquoted as
@@ -58,6 +58,8 @@ toInterestBits64 delimiter = go 0 0 SvUnquoted
         cont n w b m bs = let nw = (b .<. fromIntegral n) .|. w in if n < 63
           then    go (n + 1) nw m bs
           else nw:go      0  0  m bs
+        wd :: Word8
+        wd = fromIntegral (ord delimiter)
 
 boolsToVector :: Int -> [Bool] -> DVS.Vector Word64
 boolsToVector n = DVS.unfoldrN vLen (go 0 0)
@@ -68,7 +70,7 @@ boolsToVector n = DVS.unfoldrN vLen (go 0 0)
         go n' w (True :cs) = go (n' + 1) ((1 .<. n') .|. w) cs
         go n' w (False:cs) = go (n' + 1)                 w  cs
 
-mkInterestBits :: Word8 -> Bool -> FilePath -> IO (DVS.Vector Word64)
+mkInterestBits :: Char -> Bool -> FilePath -> IO (DVS.Vector Word64)
 mkInterestBits delimiter createIndex filePath = do
   !bs <- IO.mmapFromForeignRegion filePath
   !ibIndex <- if createIndex
