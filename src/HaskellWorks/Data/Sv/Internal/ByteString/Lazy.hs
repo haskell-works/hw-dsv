@@ -1,10 +1,10 @@
-module HaskellWorks.Data.Sv.ByteString.Lazy where
+module HaskellWorks.Data.Sv.Internal.ByteString.Lazy where
 
 import Data.Word
 
-import qualified Data.ByteString.Lazy            as LBS
-import qualified Data.Vector.Storable            as DVS
-import qualified HaskellWorks.Data.Sv.ByteString as BS
+import qualified Data.ByteString.Lazy                     as LBS
+import qualified Data.Vector.Storable                     as DVS
+import qualified HaskellWorks.Data.Sv.Internal.ByteString as BS
 
 toVector64Chunks :: Int -> LBS.ByteString -> [DVS.Vector Word64]
 toVector64Chunks chunkBytes = go

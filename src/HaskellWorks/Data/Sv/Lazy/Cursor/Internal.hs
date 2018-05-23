@@ -10,12 +10,12 @@ module HaskellWorks.Data.Sv.Lazy.Cursor.Internal
 import Data.Word
 import HaskellWorks.Data.Bits.BitWise
 import HaskellWorks.Data.Bits.PopCount.PopCount1
-import HaskellWorks.Data.Sv.Bits
-import HaskellWorks.Data.Sv.Broadword
+import HaskellWorks.Data.Sv.Internal.Bits
+import HaskellWorks.Data.Sv.Internal.Broadword
 import Prelude
 
-import qualified Data.Vector.Storable                 as DVS
-import qualified HaskellWorks.Data.Sv.Vector.Storable as DVS
+import qualified Data.Vector.Storable                          as DVS
+import qualified HaskellWorks.Data.Sv.Internal.Vector.Storable as DVS
 
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
 

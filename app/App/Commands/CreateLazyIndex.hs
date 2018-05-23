@@ -7,19 +7,19 @@ module App.Commands.CreateLazyIndex
 import App.Commands.Options.Type
 import Control.Lens
 import Control.Monad
-import Data.Semigroup            ((<>))
-import HaskellWorks.Data.Sv.Bits
-import HaskellWorks.Data.Sv.Char
-import Options.Applicative       hiding (columns)
+import Data.Semigroup                     ((<>))
+import HaskellWorks.Data.Sv.Internal.Bits
+import HaskellWorks.Data.Sv.Internal.Char
+import Options.Applicative                hiding (columns)
 
-import qualified App.Commands.Options.Lens                 as L
-import qualified App.IO                                    as IO
-import qualified Data.ByteString.Builder                   as B
-import qualified Data.Vector.Storable                      as DVS
-import qualified HaskellWorks.Data.Sv.ByteString.Lazy      as LBS
-import qualified HaskellWorks.Data.Sv.Char.Word64          as CW
-import qualified HaskellWorks.Data.Sv.Lazy.Cursor.Internal as SVL
-import qualified System.IO                                 as IO
+import qualified App.Commands.Options.Lens                     as L
+import qualified App.IO                                        as IO
+import qualified Data.ByteString.Builder                       as B
+import qualified Data.Vector.Storable                          as DVS
+import qualified HaskellWorks.Data.Sv.Internal.ByteString.Lazy as LBS
+import qualified HaskellWorks.Data.Sv.Internal.Char.Word64     as CW
+import qualified HaskellWorks.Data.Sv.Lazy.Cursor.Internal     as SVL
+import qualified System.IO                                     as IO
 
 writeBuilder :: FilePath -> B.Builder -> IO ()
 writeBuilder fp b = do

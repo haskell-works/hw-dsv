@@ -1,4 +1,4 @@
-module HaskellWorks.Data.Sv.Bits where
+module HaskellWorks.Data.Sv.Internal.Bits where
 
 import Data.Bits.Pext
 import Data.Word

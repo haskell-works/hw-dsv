@@ -1,10 +1,10 @@
-module HaskellWorks.Data.Sv.Char.Word64 where
+module HaskellWorks.Data.Sv.Internal.Char.Word64 where
 
 import Data.Char
 import Data.Word
-import HaskellWorks.Data.Sv.Broadword
+import HaskellWorks.Data.Sv.Internal.Broadword
 
-import qualified HaskellWorks.Data.Sv.Char as C
+import qualified HaskellWorks.Data.Sv.Internal.Char as C
 
 doubleQuote :: Word64
 doubleQuote = 0x0101010101010101 * fromIntegral C.doubleQuote

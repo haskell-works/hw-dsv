@@ -5,12 +5,12 @@ module HaskellWorks.Data.Sv.BroadwordSpec (spec) where
 
 import Control.Concurrent
 import Control.Monad.IO.Class
-import Data.Maybe                       (fromJust)
+import Data.Maybe                              (fromJust)
 import Data.Word
 import HaskellWorks.Data.Bits.BitRead
 import HaskellWorks.Data.Bits.BitShow
 import HaskellWorks.Data.FromByteString
-import HaskellWorks.Data.Sv.Broadword
+import HaskellWorks.Data.Sv.Internal.Broadword
 import HaskellWorks.Hspec.Hedgehog
 import Hedgehog
 import Test.Hspec

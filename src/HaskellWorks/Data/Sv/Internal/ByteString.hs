@@ -1,4 +1,4 @@
-module HaskellWorks.Data.Sv.ByteString where
+module HaskellWorks.Data.Sv.Internal.ByteString where
 
 import Data.Word
 import HaskellWorks.Data.Bits.BitWise

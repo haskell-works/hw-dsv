@@ -11,19 +11,19 @@ import Data.Word
 import HaskellWorks.Data.AtIndex
 import HaskellWorks.Data.Bits.BitWise
 import HaskellWorks.Data.Positioning
-import HaskellWorks.Data.Sv.Bits
-import HaskellWorks.Data.Sv.Broadword
+import HaskellWorks.Data.Sv.Internal.Bits
+import HaskellWorks.Data.Sv.Internal.Broadword
 import HaskellWorks.Data.Sv.Strict.Cursor.Type
 import Prelude
 
-import qualified Data.Attoparsec.ByteString          as AP
-import qualified Data.Attoparsec.Lazy                as APL
-import qualified Data.ByteString                     as BS
-import qualified Data.Vector.Storable                as DVS
-import qualified HaskellWorks.Data.FromForeignRegion as IO
-import qualified HaskellWorks.Data.Length            as V
-import qualified HaskellWorks.Data.Sv.Char           as C
-import qualified HaskellWorks.Data.Sv.Char.Word64    as CW
+import qualified Data.Attoparsec.ByteString                as AP
+import qualified Data.Attoparsec.Lazy                      as APL
+import qualified Data.ByteString                           as BS
+import qualified Data.Vector.Storable                      as DVS
+import qualified HaskellWorks.Data.FromForeignRegion       as IO
+import qualified HaskellWorks.Data.Length                  as V
+import qualified HaskellWorks.Data.Sv.Internal.Char        as C
+import qualified HaskellWorks.Data.Sv.Internal.Char.Word64 as CW
 
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
 

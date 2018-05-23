@@ -10,13 +10,13 @@ import App.Commands.Options.Type
 import Control.Applicative
 import Control.Lens
 import Control.Monad
-import Control.Monad.IO.Class       (liftIO)
+import Control.Monad.IO.Class             (liftIO)
 import Control.Monad.Trans.Resource
 import Data.Char
 import Data.List
-import Data.Semigroup               ((<>))
-import HaskellWorks.Data.Sv.Char
-import Options.Applicative          hiding (columns)
+import Data.Semigroup                     ((<>))
+import HaskellWorks.Data.Sv.Internal.Char
+import Options.Applicative                hiding (columns)
 
 import qualified App.Commands.Options.Lens        as L
 import qualified App.IO                           as IO

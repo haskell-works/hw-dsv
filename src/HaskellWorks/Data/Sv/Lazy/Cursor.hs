@@ -16,15 +16,15 @@ import Data.Char                                 (ord)
 import Data.Function
 import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
-import HaskellWorks.Data.Sv.Bits
+import HaskellWorks.Data.Sv.Internal.Bits
 import HaskellWorks.Data.Sv.Lazy.Cursor.Internal
 import HaskellWorks.Data.Sv.Lazy.Cursor.Type
 import Prelude
 
-import qualified Data.ByteString.Lazy                 as LBS
-import qualified Data.Vector                          as DV
-import qualified HaskellWorks.Data.Sv.ByteString.Lazy as LBS
-import qualified HaskellWorks.Data.Sv.Char.Word64     as CW
+import qualified Data.ByteString.Lazy                          as LBS
+import qualified Data.Vector                                   as DV
+import qualified HaskellWorks.Data.Sv.Internal.ByteString.Lazy as LBS
+import qualified HaskellWorks.Data.Sv.Internal.Char.Word64     as CW
 
 makeLazyCursor :: Char -> LBS.ByteString -> SvCursor
 makeLazyCursor delimiter lbs = SvCursor

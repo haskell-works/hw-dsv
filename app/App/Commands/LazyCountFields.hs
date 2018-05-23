@@ -7,9 +7,9 @@ module App.Commands.LazyCountFields
 
 import App.Commands.Options.Type
 import Control.Lens
-import Data.Semigroup            ((<>))
-import HaskellWorks.Data.Sv.Char
-import Options.Applicative       hiding (columns)
+import Data.Semigroup                     ((<>))
+import HaskellWorks.Data.Sv.Internal.Char
+import Options.Applicative                hiding (columns)
 
 import qualified App.Commands.Options.Lens        as L
 import qualified App.IO                           as IO

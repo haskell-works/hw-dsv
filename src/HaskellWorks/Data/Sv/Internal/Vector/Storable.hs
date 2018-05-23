@@ -1,4 +1,4 @@
-module HaskellWorks.Data.Sv.Vector.Storable where
+module HaskellWorks.Data.Sv.Internal.Vector.Storable where
 
 import Data.Word
 

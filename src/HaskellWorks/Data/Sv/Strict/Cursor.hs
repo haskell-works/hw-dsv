@@ -21,7 +21,7 @@ import Data.Word
 import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.RankSelect.CsPoppy
-import HaskellWorks.Data.Sv.Char
+import HaskellWorks.Data.Sv.Internal.Char
 import HaskellWorks.Data.Sv.Strict.Cursor.Type
 
 import qualified Data.ByteString                         as BS

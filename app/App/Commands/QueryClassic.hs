@@ -10,9 +10,9 @@ import Control.Monad
 import Data.Function
 import Data.List
 import Data.Maybe
-import Data.Semigroup            ((<>))
-import HaskellWorks.Data.Sv.Char
-import Options.Applicative       hiding (columns)
+import Data.Semigroup                     ((<>))
+import HaskellWorks.Data.Sv.Internal.Char
+import Options.Applicative                hiding (columns)
 
 import qualified Data.ByteString.Char8              as C8
 import qualified HaskellWorks.Data.Sv.Strict.Cursor as SVS

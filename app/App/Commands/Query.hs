@@ -15,7 +15,7 @@ import Data.List
 import Data.Maybe
 import Data.Semigroup                       ((<>))
 import HaskellWorks.Data.RankSelect.CsPoppy
-import HaskellWorks.Data.Sv.Char
+import HaskellWorks.Data.Sv.Internal.Char
 import Options.Applicative                  hiding (columns)
 
 import qualified App.Commands.Options.Lens          as L
