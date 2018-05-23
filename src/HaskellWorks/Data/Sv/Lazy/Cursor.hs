@@ -2,7 +2,7 @@ module HaskellWorks.Data.Sv.Lazy.Cursor
   ( makeCursor
   , snippet
   , countFields
-  , trimCursor
+  , trim
   , atEnd
   , nextField
   , nextRow
@@ -57,22 +57,22 @@ countFields :: SvCursor -> Int
 countFields = go 0
   where go n d = if not (atEnd d)
           then let e = nextField d in if not (atEnd e)
-            then let f = nextPosition e in go (n + 1) (trimCursor f)
+            then let f = nextPosition e in go (n + 1) (trim f)
             else n
           else n
         {-# INLINE go #-}
 {-# INLINE countFields #-}
 
-trimCursor :: SvCursor -> SvCursor
-trimCursor c = if svCursorPosition c > 512
-  then trimCursor c
+trim :: SvCursor -> SvCursor
+trim c = if svCursorPosition c > 512
+  then trim c
     { svCursorText      = LBS.drop 512 (svCursorText c)
     , svCursorMarkers   = drop 1 (svCursorMarkers c)
     , svCursorNewlines  = drop 1 (svCursorNewlines c)
     , svCursorPosition  = svCursorPosition c - 512
     }
   else c
-{-# INLINE trimCursor #-}
+{-# INLINE trim #-}
 
 atEnd :: SvCursor -> Bool
 atEnd c = LBS.null (LBS.drop (fromIntegral (svCursorPosition c)) (svCursorText c))
@@ -118,7 +118,7 @@ getRowBetween c d = DV.unfoldrN c2d go c
 
 toListVector :: SvCursor -> [DV.Vector LBS.ByteString]
 toListVector c = if svCursorPosition d > svCursorPosition c && not (atEnd c)
-  then getRowBetween c d:toListVector (trimCursor d)
+  then getRowBetween c d:toListVector (trim d)
   else []
   where d = nextRow c
 {-# INLINE toListVector #-}
