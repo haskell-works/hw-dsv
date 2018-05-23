@@ -13,7 +13,6 @@ module HaskellWorks.Data.Sv.Strict.Load
   , loadDsv
   , countFields
   , loadCursor2FromDsv
-  , makeDv
   ) where
 
 import Data.ByteString                           (ByteString)
@@ -27,7 +26,6 @@ import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv.Internal.Broadword
 
 import qualified Data.ByteString                             as BS
-import qualified Data.Vector                                 as DV
 import qualified Data.Vector.Storable                        as DVS
 import qualified HaskellWorks.Data.FromForeignRegion         as IO
 import qualified HaskellWorks.Data.Sv.Internal.Char          as C
@@ -140,19 +138,3 @@ loadCursor2FromDsv delimiter filePath = do
     , SVS.svCursor2IbDelimiter = makeCsPoppy dv
     , SVS.svCursor2Position    = 1
     }
-
-makeDv :: SVS.SvCursor2 BS.ByteString CsPoppy -> DV.Vector (DV.Vector BS.ByteString)
-makeDv c = DV.constructN rowCount makeRow
-  where rowCount :: Int
-        rowCount = fromIntegral (popCount1 (SVS.svCursor2IbNewline c) + 1)
-        fv = SVS.svCursor2IbDelimiter c
-        makeRow :: DV.Vector (DV.Vector ByteString) -> DV.Vector ByteString
-        makeRow u =
-          let ui = DV.length u
-              makeField :: DV.Vector ByteString -> ByteString
-              makeField = undefined
-              fieldCount = fromIntegral (select1 fv (fromIntegral ui))
-          in if ui > 0
-            then DV.constructN fieldCount makeField
-            else undefined
-

@@ -14,10 +14,12 @@ module HaskellWorks.Data.Sv.Strict.Cursor
   , wordAt
   , nextPosition
   , nextRow
+  , toVectorVector
   ) where
 
 import Control.Lens
 import Data.Word
+import HaskellWorks.Data.Bits.PopCount.PopCount1
 import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.RankSelect.CsPoppy
@@ -25,8 +27,10 @@ import HaskellWorks.Data.Sv.Internal.Char
 import HaskellWorks.Data.Sv.Strict.Cursor.Type
 
 import qualified Data.ByteString                         as BS
+import qualified Data.Vector                             as DV
 import qualified HaskellWorks.Data.AtIndex               as VL
 import qualified HaskellWorks.Data.Sv.Strict.Cursor.Lens as L
+import qualified HaskellWorks.Data.Sv.Strict.Cursor.Type as SVS
 
 next :: (Rank1 s, Select1 s) => SvCursor t s -> SvCursor t s
 next cursor = cursor
@@ -90,3 +94,18 @@ snippet c = BS.take (len `max` 0) $ BS.drop posC $ svCursorText c
         posC = fromIntegral $ svCursorPosition c
         posD = fromIntegral $ svCursorPosition d
         len  = posD - posC - 1
+
+toVectorVector :: SVS.SvCursor2 BS.ByteString CsPoppy -> DV.Vector (DV.Vector BS.ByteString)
+toVectorVector c = DV.constructN rowCount makeRow
+  where rowCount :: Int
+        rowCount = fromIntegral (popCount1 (SVS.svCursor2IbNewline c) + 1)
+        fv = SVS.svCursor2IbDelimiter c
+        makeRow :: DV.Vector (DV.Vector BS.ByteString) -> DV.Vector BS.ByteString
+        makeRow u =
+          let ui = DV.length u
+              makeField :: DV.Vector BS.ByteString -> BS.ByteString
+              makeField = undefined
+              fieldCount = fromIntegral (select1 fv (fromIntegral ui))
+          in if ui > 0
+            then DV.constructN fieldCount makeField
+            else undefined
