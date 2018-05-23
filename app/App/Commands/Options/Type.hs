@@ -1,9 +1,11 @@
 module App.Commands.Options.Type where
 
+import qualified App.Commands.Options.Internal as I
+
 data CreateIndexOptions = CreateIndexOptions
-  { _createIndexOptionsFilePath  :: FilePath
-  , _createIndexOptionsDelimiter :: Char
-  , _createIndexOptionsClassic   :: Bool
+  { _createIndexOptionsFilePath    :: FilePath
+  , _createIndexOptionsDelimiter   :: Char
+  , _createIndexOptionsIndexMethod :: I.IndexMethod
   } deriving (Eq, Show)
 
 data CreateFastIndexOptions = CreateFastIndexOptions
