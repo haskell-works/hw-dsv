@@ -7,7 +7,6 @@ module HaskellWorks.Data.Sv.Strict.Cursor
   ( SvCursor(..)
   , SvCursor2(..)
   , SvMode(..)
-  , next
   , snippet
   , nextField
   , nextInterestingBit
@@ -26,18 +25,12 @@ import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv.Internal.Char
 import HaskellWorks.Data.Sv.Strict.Cursor.Type
 
-import qualified Data.ByteString                         as BS
-import qualified Data.Vector                             as DV
-import qualified HaskellWorks.Data.AtIndex               as VL
-import qualified HaskellWorks.Data.Sv.Strict.Cursor.Lens as L
-import qualified HaskellWorks.Data.Sv.Strict.Cursor.Type as SVS
-
-next :: (Rank1 s, Select1 s) => SvCursor t s -> SvCursor t s
-next cursor = cursor
-  { svCursorPosition = newPos
-  }
-  where currentRank = rank1   (svCursorMarkers cursor) (svCursorPosition cursor)
-        newPos      = select1 (svCursorMarkers cursor) (currentRank + 1)
+import qualified Data.ByteString                             as BS
+import qualified Data.Vector                                 as DV
+import qualified HaskellWorks.Data.AtIndex                   as VL
+import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal as SVS
+import qualified HaskellWorks.Data.Sv.Strict.Cursor.Lens     as L
+import qualified HaskellWorks.Data.Sv.Strict.Cursor.Type     as SVS
 
 nextInterestingBit :: (Rank1 s, Select1 s) => SvCursor t s -> Maybe (SvCursor t s)
 nextInterestingBit cursor = if currentRank < cursor ^. L.popCount
@@ -90,7 +83,7 @@ wordAt c = if pos < fromIntegral (BS.length txt)
 
 snippet :: SvCursor BS.ByteString CsPoppy -> BS.ByteString
 snippet c = BS.take (len `max` 0) $ BS.drop posC $ svCursorText c
-  where d = next c
+  where d = SVS.nextCursor c
         posC = fromIntegral $ svCursorPosition c
         posD = fromIntegral $ svCursorPosition d
         len  = posD - posC - 1

@@ -5,12 +5,14 @@
 module HaskellWorks.Data.Sv.Strict.Cursor.Internal where
 
 import Control.Monad.State
-import Data.Bits                               (popCount)
-import Data.Char                               (ord)
+import Data.Bits                                 (popCount)
+import Data.Char                                 (ord)
 import Data.Word
 import HaskellWorks.Data.AtIndex
 import HaskellWorks.Data.Bits.BitWise
 import HaskellWorks.Data.Positioning
+import HaskellWorks.Data.RankSelect.Base.Rank1
+import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.Sv.Internal.Bits
 import HaskellWorks.Data.Sv.Internal.Broadword
 import HaskellWorks.Data.Sv.Strict.Cursor.Type
@@ -363,3 +365,10 @@ mkDsvIbDlFromStriped sv cpcs = DVS.constructN ((DVS.length sv) `div` 3) go
                     wdl = atIndexOr 0 sv (svi + 2)
                     m   = toggle64 cpc wdq
                 in wdl .&. m
+
+nextCursor :: (Rank1 s, Select1 s) => SvCursor t s -> SvCursor t s
+nextCursor cursor = cursor
+  { svCursorPosition = newPos
+  }
+  where currentRank = rank1   (svCursorMarkers cursor) (svCursorPosition cursor)
+        newPos      = select1 (svCursorMarkers cursor) (currentRank + 1)
