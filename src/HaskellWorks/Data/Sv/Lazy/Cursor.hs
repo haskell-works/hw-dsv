@@ -120,7 +120,7 @@ toListVector :: SvCursor -> [DV.Vector LBS.ByteString]
 toListVector c = if svCursorPosition d > svCursorPosition c && not (atEnd c)
   then getRowBetween c d:toListVector (trim d)
   else []
-  where d = nextRow c
+  where d = nextPosition (nextRow c)
 {-# INLINE toListVector #-}
 
 toVectorVector :: SvCursor -> DV.Vector (DV.Vector LBS.ByteString)
