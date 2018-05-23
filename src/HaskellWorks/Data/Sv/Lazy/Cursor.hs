@@ -7,7 +7,7 @@ module HaskellWorks.Data.Sv.Lazy.Cursor
   , nextField
   , nextRow
   , nextPosition
-  , mkRow
+  , getRowBetween
   , toListVector
   , toVectorVector
   ) where
@@ -103,8 +103,8 @@ nextPosition cursor = cursor
   where newPos  = svCursorPosition cursor + 1
 {-# INLINE nextPosition #-}
 
-mkRow :: SvCursor -> SvCursor -> DV.Vector LBS.ByteString
-mkRow c d = DV.unfoldrN c2d go c
+getRowBetween :: SvCursor -> SvCursor -> DV.Vector LBS.ByteString
+getRowBetween c d = DV.unfoldrN c2d go c
   where cr  = rank1 (svCursorMarkers c) (svCursorPosition c)
         dr  = rank1 (svCursorMarkers d) (svCursorPosition d)
         c2d = fromIntegral (dr - cr)
@@ -114,11 +114,11 @@ mkRow c d = DV.unfoldrN c2d go c
             s -> case nextPosition f of
               g -> Just (s, g)
         {-# INLINE go #-}
-{-# INLINE mkRow #-}
+{-# INLINE getRowBetween #-}
 
 toListVector :: SvCursor -> [DV.Vector LBS.ByteString]
 toListVector c = if svCursorPosition d > svCursorPosition c && not (atEnd c)
-  then mkRow c d:toListVector (trimCursor d)
+  then getRowBetween c d:toListVector (trimCursor d)
   else []
   where d = nextRow c
 {-# INLINE toListVector #-}
