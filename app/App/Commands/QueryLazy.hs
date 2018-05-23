@@ -29,7 +29,7 @@ runQueryLazy :: QueryLazyOptions -> IO ()
 runQueryLazy opts = do
   !bs <- IO.readInputFile (opts ^. L.filePath)
 
-  let !c = SVL.makeLazyCursor (opts ^. L.delimiter) bs
+  let !c = SVL.makeCursor (opts ^. L.delimiter) bs
   let !rows = SVL.toListVector c
   let !outDelimiterBuilder = B.word8 (fromIntegral (ord (opts ^. L.outDelimiter)))
 

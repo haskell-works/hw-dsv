@@ -22,7 +22,7 @@ runLazyCountFields opts = do
 
   !bs <- IO.readInputFile filePath
 
-  let !c = SVL.makeLazyCursor delimiter bs
+  let !c = SVL.makeCursor delimiter bs
 
   putStrLn $ "Number of fields: " <> show (SVL.countFields c)
 

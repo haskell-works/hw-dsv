@@ -1,5 +1,5 @@
 module HaskellWorks.Data.Sv.Lazy.Cursor
-  ( makeLazyCursor
+  ( makeCursor
   , snippet
   , countFields
   , trimCursor
@@ -26,8 +26,8 @@ import qualified Data.Vector                                   as DV
 import qualified HaskellWorks.Data.Sv.Internal.ByteString.Lazy as LBS
 import qualified HaskellWorks.Data.Sv.Internal.Char.Word64     as CW
 
-makeLazyCursor :: Char -> LBS.ByteString -> SvCursor
-makeLazyCursor delimiter lbs = SvCursor
+makeCursor :: Char -> LBS.ByteString -> SvCursor
+makeCursor delimiter lbs = SvCursor
   { svCursorDelimiter = fromIntegral (ord delimiter)
   , svCursorText      = lbs
   , svCursorMarkers   = ib
@@ -43,7 +43,7 @@ makeLazyCursor delimiter lbs = SvCursor
         qm  = makeQuoteMask ibq pcq
         ib  = zip2And ibr qm
         nls = zip2And ibn qm
-{-# INLINE makeLazyCursor #-}
+{-# INLINE makeCursor #-}
 
 snippet :: SvCursor -> LBS.ByteString
 snippet c = LBS.take (len `max` 0) $ LBS.drop posC $ svCursorText c

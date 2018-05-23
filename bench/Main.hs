@@ -127,7 +127,7 @@ loadHwsvLazy :: FilePath -> IO (Vector (Vector LBS.ByteString))
 loadHwsvLazy filePath = do
   !bs <- LBS.readFile filePath
 
-  let c = SVL.makeLazyCursor ',' bs
+  let c = SVL.makeCursor ',' bs
 
   return (SVL.toVectorVector c)
 
