@@ -32,7 +32,7 @@ makeCursor delimiter lbs = SvCursor
   , svCursorText      = lbs
   , svCursorMarkers   = ib
   , svCursorNewlines  = nls
-  , svCursorPosition  = 1
+  , svCursorPosition  = 0
   }
   where ws  = LBS.toVector64Chunks 512 lbs
         ibq = makeIbs CW.doubleQuote                      <$> ws
@@ -48,8 +48,8 @@ makeCursor delimiter lbs = SvCursor
 snippet :: SvCursor -> LBS.ByteString
 snippet c = LBS.take (len `max` 0) $ LBS.drop posC $ svCursorText c
   where d = nextField c
-        posC = fromIntegral $ svCursorPosition c - 1
-        posD = fromIntegral $ svCursorPosition d - 1
+        posC = fromIntegral $ svCursorPosition c
+        posD = fromIntegral $ svCursorPosition d
         len  = posD - posC
 {-# INLINE snippet #-}
 
@@ -83,15 +83,18 @@ nextField cursor = cursor
   { svCursorPosition = newPos
   }
   where currentRank = rank1   (svCursorMarkers cursor) (svCursorPosition cursor)
-        newPos      = select1 (svCursorMarkers cursor) (currentRank + 1)
+        newPos      = select1 (svCursorMarkers cursor) (currentRank + 1) - 1
 {-# INLINE nextField #-}
 
 nextRow :: SvCursor -> SvCursor
 nextRow cursor = cursor
-  { svCursorPosition = newPos
+  { svCursorPosition =  if newPos > svCursorPosition cursor
+                          then newPos
+                          else fromIntegral (LBS.length (svCursorText cursor))
+
   }
   where currentRank = rank1   (svCursorNewlines cursor) (svCursorPosition cursor)
-        newPos      = select1 (svCursorNewlines cursor) (currentRank + 1)
+        newPos      = select1 (svCursorNewlines cursor) (currentRank + 1) - 1
 {-# INLINE nextRow #-}
 
 nextPosition :: SvCursor -> SvCursor
@@ -110,9 +113,9 @@ getRowBetween c d = DV.unfoldrN c2d go c
         c2d = fromIntegral (dr - cr)
         go :: SvCursor -> Maybe (LBS.ByteString, SvCursor)
         go e = case nextField e of
-          f -> case snippet e of
-            s -> case nextPosition f of
-              g -> Just (s, g)
+          f -> case nextPosition f of
+            g -> case snippet e of
+              s -> Just (s, g)
         {-# INLINE go #-}
 {-# INLINE getRowBetween #-}
 
