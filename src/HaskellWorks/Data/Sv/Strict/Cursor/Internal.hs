@@ -7,6 +7,7 @@ module HaskellWorks.Data.Sv.Strict.Cursor.Internal where
 import Control.Monad.State
 import Data.Bits                                 (popCount)
 import Data.Char                                 (ord)
+import Data.Semigroup
 import Data.Word
 import HaskellWorks.Data.AtIndex
 import HaskellWorks.Data.Bits.BitWise
