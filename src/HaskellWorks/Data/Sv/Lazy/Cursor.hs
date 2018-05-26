@@ -19,12 +19,12 @@ import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.Sv.Internal.Bits
 import HaskellWorks.Data.Sv.Lazy.Cursor.Internal
 import HaskellWorks.Data.Sv.Lazy.Cursor.Type
+import HaskellWorks.Data.Vector.AsVector64s
 import Prelude
 
-import qualified Data.ByteString.Lazy                          as LBS
-import qualified Data.Vector                                   as DV
-import qualified HaskellWorks.Data.Sv.Internal.ByteString.Lazy as LBS
-import qualified HaskellWorks.Data.Sv.Internal.Char.Word64     as CW
+import qualified Data.ByteString.Lazy                      as LBS
+import qualified Data.Vector                               as DV
+import qualified HaskellWorks.Data.Sv.Internal.Char.Word64 as CW
 
 makeCursor :: Char -> LBS.ByteString -> SvCursor
 makeCursor delimiter lbs = SvCursor
@@ -34,7 +34,7 @@ makeCursor delimiter lbs = SvCursor
   , svCursorNewlines  = nls
   , svCursorPosition  = 0
   }
-  where ws  = LBS.toVector64Chunks 512 lbs
+  where ws  = asVector64s 64 lbs
         ibq = makeIbs CW.doubleQuote                      <$> ws
         ibn = makeIbs CW.newline                          <$> ws
         ibd = makeIbs (CW.fillWord64WithChar8 delimiter)  <$> ws
