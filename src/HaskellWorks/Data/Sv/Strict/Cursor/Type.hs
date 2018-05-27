@@ -3,7 +3,6 @@
 
 module HaskellWorks.Data.Sv.Strict.Cursor.Type
   ( SvCursor(..)
-  , SvMode(..)
   ) where
 
 import Data.Word
@@ -18,5 +17,3 @@ data SvCursor t s = SvCursor
 
 deriving instance (Eq   (Elem t), Eq   t, Eq   s) => Eq   (SvCursor t s)
 deriving instance (Show (Elem t), Show t, Show s) => Show (SvCursor t s)
-
-data SvMode = SvUnquoted | SvQuoted deriving (Eq, Show)
