@@ -19,7 +19,7 @@ repeatedly f a = a:case f a of
 
 loadCsv :: FilePath -> IO (DV.Vector (DV.Vector ByteString))
 loadCsv filePath = do
-  c <- SVS.mmapDataFile2 ',' True filePath
+  c <- SVS.mmapCursor ',' True filePath
 
   rows <- forM (repeatedly SVS.nextRow c) $ \row -> do
     let fieldCursors = repeatedly SVS.nextField row :: [SVS.SvCursor ByteString CsPoppy]

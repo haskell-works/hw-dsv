@@ -78,18 +78,6 @@ repeatedly f a = a:case f a of
 
 loadHwsv :: FilePath -> IO (Vector (Vector ByteString))
 loadHwsv filePath = do
-  c <- SVS.mmapDataFile2 ',' True filePath
-
-  rows <- forM (repeatedly SVS.nextRow c) $ \row -> do
-    let fieldCursors = repeatedly SVS.nextField row :: [SVS.SvCursor ByteString CsPoppy]
-    let fields = DV.fromList (SVS.snippet <$> fieldCursors)
-
-    return fields
-
-  return (DV.fromList rows)
-
-loadHwsvFast :: FilePath -> IO (Vector (Vector ByteString))
-loadHwsvFast filePath = do
   c <- SVS.mmapCursor ',' True filePath
 
   rows <- forM (repeatedly SVS.nextRow c) $ \row -> do
@@ -141,7 +129,7 @@ makeBenchCsv = do
   benchmarks <- forM files $ \file -> return $ mempty
     <> [bench ("cassava/decode/"            <> file) (nfIO (loadCassava     file))]
     <> [bench ("hw-sv/decode/via-list/"     <> file) (nfIO (loadHwsv      file))]
-    <> [bench ("hw-sv/decode/via-vector/"   <> file) (nfIO (loadHwsvFast    file))]
+    <> [bench ("hw-sv/decode/via-vector/"   <> file) (nfIO (loadHwsv    file))]
     <> [bench ("hw-sv/decode/via-lazy/"     <> file) (nfIO (loadHwsvLazy   file))]
 
     <> [bench ("hw-sv/decode/via-index/"    <> file) (nfIO (loadHwsvIndex   file))]

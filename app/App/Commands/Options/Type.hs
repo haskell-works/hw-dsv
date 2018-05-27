@@ -17,7 +17,6 @@ data QueryOptions = QueryOptions
   , _queryOptionsOutputFilePath   :: FilePath
   , _queryOptionsDelimiter        :: Char
   , _queryOptionsOutputBufferSize :: Maybe Int
-  , _queryOptionsFast             :: Bool
   } deriving (Eq, Show)
 
 data GenerateOptions = GenerateOptions
