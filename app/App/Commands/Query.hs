@@ -23,7 +23,6 @@ import qualified App.IO                             as IO
 import qualified Data.ByteString                    as BS
 import qualified Data.ByteString.Builder            as B
 import qualified HaskellWorks.Data.Sv.Strict.Cursor as SVS
-import qualified HaskellWorks.Data.Sv.Strict.Load   as SVS
 
 repeatedly :: (a -> Maybe a) -> a -> [a]
 repeatedly f a = a:case f a of

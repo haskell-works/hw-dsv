@@ -10,7 +10,6 @@ import qualified Data.ByteString.Lazy               as LBS
 import qualified Data.Csv                           as CSV
 import qualified Data.Vector                        as DV
 import qualified HaskellWorks.Data.Sv.Strict.Cursor as SVS
-import qualified HaskellWorks.Data.Sv.Strict.Load   as SVS
 
 repeatedly :: (a -> Maybe a) -> a -> [a]
 repeatedly f a = a:case f a of

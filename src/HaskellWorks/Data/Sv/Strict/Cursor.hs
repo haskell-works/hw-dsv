@@ -11,10 +11,14 @@ module HaskellWorks.Data.Sv.Strict.Cursor
   , wordAt
   , nextPosition
   , nextRow
+  , mmapCursor
+  , countFields
   ) where
 
 import Control.Lens
+import Data.Char                                 (ord)
 import Data.Word
+import HaskellWorks.Data.Product
 import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.RankSelect.CsPoppy
@@ -22,7 +26,9 @@ import HaskellWorks.Data.Sv.Internal.Char
 import HaskellWorks.Data.Sv.Strict.Cursor.Type
 
 import qualified Data.ByteString                             as BS
+import qualified Data.Vector.Storable                        as DVS
 import qualified HaskellWorks.Data.AtIndex                   as VL
+import qualified HaskellWorks.Data.FromForeignRegion         as IO
 import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal as SVS
 import qualified HaskellWorks.Data.Sv.Strict.Cursor.Lens     as L
 
@@ -79,3 +85,24 @@ snippet c = BS.take (len `max` 0) $ BS.drop posC $ svCursorText c
         posC = fromIntegral $ svCursorPosition c
         posD = fromIntegral $ svCursorPosition d
         len  = posD - posC - 1
+
+mmapCursor :: Char -> Bool -> FilePath -> IO (SvCursor BS.ByteString CsPoppy)
+mmapCursor delimiter createIndex filePath = do
+  (!bs) :*: (!v) <- IO.mmapFromForeignRegion filePath
+  let !_ = v :: DVS.Vector Word64
+  !ibIndex <- makeCsPoppy <$> if createIndex
+    then return $ SVS.mkIbVector delimiter v
+    else IO.mmapFromForeignRegion (filePath ++ ".ib")
+  return SvCursor
+    { svCursorDelimiter = fromIntegral (ord delimiter)
+    , svCursorText      = bs
+    , svCursorMarkers   = ibIndex
+    , svCursorPosition  = 0
+    }
+
+countFields :: forall s. (Rank1 s, Select1 s) => SvCursor BS.ByteString s -> Int
+countFields = go 0
+  where go n d = case nextInterestingBit d of
+          e -> case nextPosition e of
+            Just f  -> go (n + 1) f
+            Nothing -> n
