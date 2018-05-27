@@ -32,9 +32,7 @@ repeatedly f a = a:case f a of
 
 runQuery :: QueryOptions -> IO ()
 runQuery opts = do
-  cursor <- if opts ^. L.fast
-    then SVS.mmapCursor    (opts ^. L.delimiter) (opts ^. L.createIndex) (opts ^. L.filePath)
-    else SVS.mmapDataFile2 (opts ^. L.delimiter) (opts ^. L.createIndex) (opts ^. L.filePath)
+  cursor <- SVS.mmapCursor (opts ^. L.delimiter) (opts ^. L.createIndex) (opts ^. L.filePath)
 
   runResourceT $ do
     (_, hOut) <- IO.openOutputFile (opts ^. L.outputFilePath) (opts ^. L.outputBufferSize)
@@ -85,4 +83,3 @@ optsQuery = QueryOptions
             <>  metavar "BYTES"
             )
           )
-    <*> switch (long "fast")
