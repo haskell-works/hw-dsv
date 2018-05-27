@@ -12,7 +12,6 @@ module HaskellWorks.Data.Sv.Strict.Load
   , mmapCursor
   , loadDsv
   , countFields
-  , loadCursor2FromDsv
   ) where
 
 import Data.ByteString                           (ByteString)
@@ -28,7 +27,6 @@ import qualified Data.ByteString                             as BS
 import qualified Data.Vector.Storable                        as DVS
 import qualified HaskellWorks.Data.FromForeignRegion         as IO
 import qualified HaskellWorks.Data.Sv.Internal.Char          as C
-import qualified HaskellWorks.Data.Sv.Internal.Char.Word64   as CW
 import qualified HaskellWorks.Data.Sv.Strict.Cursor          as SVS
 import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal as SVS
 
@@ -111,23 +109,3 @@ countFields = go 0
           e -> case SVS.nextPosition e of
             Just f  -> go (n + 1) f
             Nothing -> n
-
-loadCursor2FromDsv :: Char -> FilePath -> IO (SVS.SvCursor2 BS.ByteString CsPoppy)
-loadCursor2FromDsv delimiter filePath = do
-  (!bs) :*: (!v) <- IO.mmapFromForeignRegion filePath
-  let !_ = v  :: DVS.Vector Word64
-  let !_ = bs :: BS.ByteString
-  let wdq = CW.doubleQuote
-  let wnl = CW.newline
-  let wdl = SVS.fillWord64WithChar8 delimiter
-  let sv  = SVS.mkStripes wdq wnl wdl v
-  let cv  = SVS.mkCummulativeDqPopCountFromStriped sv
-  let nv  = SVS.mkDsvIbNlFromStriped sv cv
-  let dv  = SVS.mkDsvIbDlFromStriped sv cv
-  return SVS.SvCursor2
-    { SVS.svCursor2Delimiter  = fromIntegral (ord delimiter)
-    , SVS.svCursor2Text       = bs
-    , SVS.svCursor2Newlines   = makeCsPoppy nv
-    , SVS.svCursor2Markers    = makeCsPoppy dv
-    , SVS.svCursor2Position   = 1
-    }
