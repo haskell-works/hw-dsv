@@ -7,7 +7,6 @@ import App.Commands.CreateLazyIndex
 import App.Commands.Generate
 import App.Commands.LazyCountFields
 import App.Commands.Query
-import App.Commands.QueryClassic
 import App.Commands.QueryLazy
 import Data.Semigroup               ((<>))
 import Options.Applicative
@@ -21,5 +20,4 @@ cmdOpts = subparser $ mempty
   <>  cmdGenerate
   <>  cmdLazyCountFields
   <>  cmdQuery
-  <>  cmdQueryClassic
   <>  cmdQueryLazy

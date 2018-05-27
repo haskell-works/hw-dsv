@@ -5,7 +5,6 @@
 
 module HaskellWorks.Data.Sv.Strict.Cursor
   ( SvCursor(..)
-  , SvMode(..)
   , snippet
   , nextField
   , nextInterestingBit

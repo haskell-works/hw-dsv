@@ -1,4 +1,3 @@
-{-# LANGUAGE BangPatterns     #-}
 {-# LANGUAGE ExplicitForAll   #-}
 {-# LANGUAGE FlexibleContexts #-}
 
@@ -23,46 +22,10 @@ import qualified Data.Attoparsec.ByteString                as AP
 import qualified Data.Attoparsec.Lazy                      as APL
 import qualified Data.ByteString                           as BS
 import qualified Data.Vector.Storable                      as DVS
-import qualified HaskellWorks.Data.FromForeignRegion       as IO
 import qualified HaskellWorks.Data.Length                  as V
-import qualified HaskellWorks.Data.Sv.Internal.Char        as C
 import qualified HaskellWorks.Data.Sv.Internal.Char.Word64 as CW
 
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
-
-mkIbVectorViaList :: Char -> BS.ByteString -> DVS.Vector Word64
-mkIbVectorViaList delimiter bs = DVS.fromListN vLen (mkIbList delimiter bs)
-  where vLen = (BS.length bs `div` 64) + 1
-
-toInterestBits :: Word8 -> SvMode -> BS.ByteString -> [Bool]
-toInterestBits delimiter mode text = case BS.uncons text of
-  Just (a, as) -> case mode of
-    SvUnquoted | a == C.doubleQuote -> False:toInterestBits delimiter SvQuoted   as
-    SvUnquoted | a == delimiter     -> True :toInterestBits delimiter SvUnquoted as
-    SvUnquoted | a == C.newline     -> True :toInterestBits delimiter SvUnquoted as
-    SvUnquoted | otherwise          -> False:toInterestBits delimiter SvUnquoted as
-    SvQuoted   | a == C.doubleQuote -> False:toInterestBits delimiter SvUnquoted as
-    SvQuoted   | otherwise          -> False:toInterestBits delimiter SvQuoted   as
-  _            -> []
-
-mkIbList :: Char -> BS.ByteString -> [Word64]
-mkIbList delimiter = go 0 0 SvUnquoted
-  where go :: Int -> Word64 -> SvMode -> BS.ByteString -> [Word64]
-        go n w mode text = case BS.uncons text of
-          Just (a, as) -> case mode of
-            SvUnquoted | a == C.doubleQuote -> cont n w 0 SvQuoted   as
-            SvUnquoted | a == wd     -> cont n w 1 SvUnquoted as
-            SvUnquoted | a == C.newline     -> cont n w 1 SvUnquoted as
-            SvUnquoted | otherwise          -> cont n w 0 SvUnquoted as
-            SvQuoted   | a == C.doubleQuote -> cont n w 0 SvUnquoted as
-            SvQuoted   | otherwise          -> cont n w 0 SvQuoted   as
-          Nothing      -> [w]
-        cont :: Int -> Word64 -> Word64 -> SvMode -> BS.ByteString -> [Word64]
-        cont n w b m bs = let nw = (b .<. fromIntegral n) .|. w in if n < 63
-          then    go (n + 1) nw m bs
-          else nw:go      0  0  m bs
-        wd :: Word8
-        wd = fromIntegral (ord delimiter)
 
 boolsToVector :: Int -> [Bool] -> DVS.Vector Word64
 boolsToVector n = DVS.unfoldrN vLen (go 0 0)
@@ -72,14 +35,6 @@ boolsToVector n = DVS.unfoldrN vLen (go 0 0)
         go _ w []          = Just (w, [])
         go n' w (True :cs) = go (n' + 1) ((1 .<. n') .|. w) cs
         go n' w (False:cs) = go (n' + 1)                 w  cs
-
-mkInterestBits :: Char -> Bool -> FilePath -> IO (DVS.Vector Word64)
-mkInterestBits delimiter createIndex filePath = do
-  !bs <- IO.mmapFromForeignRegion filePath
-  !ibIndex <- if createIndex
-    then return $ mkIbVectorViaList delimiter bs
-    else IO.mmapFromForeignRegion (filePath ++ ".ib")
-  return ibIndex
 
 fillWord64WithChar8 :: Char -> Word64
 fillWord64WithChar8 c = fillWord64 (fromIntegral (ord c) :: Word8)

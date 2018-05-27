@@ -10,4 +10,3 @@ import Control.Lens
 import HaskellWorks.Data.Sv.Strict.Cursor.Type
 
 makeFields ''SvCursor
-makeFields ''SvMode
