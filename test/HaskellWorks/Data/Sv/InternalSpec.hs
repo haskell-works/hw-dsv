@@ -41,14 +41,6 @@ import qualified System.Directory                            as IO
 
 spec :: Spec
 spec = describe "HaskellWorks.Data.Sv.InternalSpec" $ do
-  it "Case 0" $ requireProperty $ do
-    n   <- forAll $ G.int (R.linear 1 64)
-    bss <- forAll $ G.list (R.linear 0 10) (G.bytestring (R.linear 0 24))
-    let actual = SVS.realignByteStrings n bss
-
-    mconcat actual === mconcat bss
-    filter BS.null actual === []
-    filter (\bs -> BS.length bs `mod` n /= 0) (drop 1 (reverse actual)) === []
   it "Case 1" $ requireTest $ do
     entries <- liftIO $ IO.listDirectory "data/bench"
     let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
