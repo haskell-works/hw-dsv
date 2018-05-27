@@ -18,6 +18,7 @@ import qualified Data.ByteString.Builder                     as B
 import qualified Data.Vector.Storable                        as DVS
 import qualified HaskellWorks.Data.FromForeignRegion         as IO
 import qualified HaskellWorks.Data.Sv.Internal.Char.Word64   as C
+import qualified HaskellWorks.Data.Sv.Internal.Char.Word64   as CW
 import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal as SVS
 import qualified System.IO                                   as IO
 
@@ -30,7 +31,7 @@ writeBuilder fp b = do
 runCreateFastIndex :: CreateFastIndexOptions -> IO ()
 runCreateFastIndex opts = do
   let filePath  = opts ^. L.filePath
-  let delimiter = opts ^. L.delimiter & SVS.fillWord64WithChar8
+  let delimiter = opts ^. L.delimiter & CW.fillWord64WithChar8
 
   !(v :: DVS.Vector Word64) <- IO.mmapFromForeignRegion filePath
 

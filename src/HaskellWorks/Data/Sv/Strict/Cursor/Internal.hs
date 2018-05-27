@@ -3,9 +3,7 @@
 
 module HaskellWorks.Data.Sv.Strict.Cursor.Internal where
 
-import Control.Monad.State
 import Data.Bits                                 (popCount)
-import Data.Char                                 (ord)
 import Data.Semigroup
 import Data.Word
 import HaskellWorks.Data.AtIndex
@@ -15,29 +13,15 @@ import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.Sv.Internal.Bits
 import HaskellWorks.Data.Sv.Internal.Broadword
+import HaskellWorks.Data.Sv.Internal.Char.Word64
 import HaskellWorks.Data.Sv.Strict.Cursor.Type
 import Prelude
 
-import qualified Data.Attoparsec.ByteString                as AP
-import qualified Data.Attoparsec.Lazy                      as APL
-import qualified Data.ByteString                           as BS
 import qualified Data.Vector.Storable                      as DVS
 import qualified HaskellWorks.Data.Length                  as V
 import qualified HaskellWorks.Data.Sv.Internal.Char.Word64 as CW
 
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
-
-boolsToVector :: Int -> [Bool] -> DVS.Vector Word64
-boolsToVector n = DVS.unfoldrN vLen (go 0 0)
-  where vLen = (n `div` 64) + 1
-        go :: Word64 -> Word64 -> [Bool] -> Maybe (Word64, [Bool])
-        go 64 w cs         = Just (w, cs)
-        go _ w []          = Just (w, [])
-        go n' w (True :cs) = go (n' + 1) ((1 .<. n') .|. w) cs
-        go n' w (False:cs) = go (n' + 1)                 w  cs
-
-fillWord64WithChar8 :: Char -> Word64
-fillWord64WithChar8 c = fillWord64 (fromIntegral (ord c) :: Word8)
 
 mkDsvInterestBits :: Char -> DVS.Vector Word64 -> DVS.Vector Word64
 mkDsvInterestBits delimiter v = DVS.fromListN ((DVS.length v + 7) `div` 8) $ mkDsvInterestBitsByWord64s
@@ -95,38 +79,6 @@ mkDsvInterestBitsByWord64s rdqs rnls rdls numQuotes n ws | n < V.end ws =
       newNumQuotes = numQuotes + fromIntegral (popCount numWordQuotes)
   in  (comp (wNls .&. wDls) .&. wMask):mkDsvInterestBitsByWord64s rdqs rnls rdls newNumQuotes (n + 8) ws
 mkDsvInterestBitsByWord64s _ _ _ _ _ _ = []
-
-word8To64 :: Word8 -> Word64
-word8To64 = fromIntegral
-
-parserWord64 :: APL.Parser Word64
-parserWord64 = do
-  a <- AP.anyWord8
-  b <- AP.anyWord8
-  c <- AP.anyWord8
-  d <- AP.anyWord8
-  e <- AP.anyWord8
-  f <- AP.anyWord8
-  g <- AP.anyWord8
-  h <- AP.anyWord8
-  return $   fromIntegral  a           .|.
-            (fromIntegral (b .<.  8))  .|.
-            (fromIntegral (c .<. 16))  .|.
-            (fromIntegral (d .<. 24))  .|.
-            (fromIntegral (e .<. 32))  .|.
-            (fromIntegral (f .<. 40))  .|.
-            (fromIntegral (g .<. 48))  .|.
-            (fromIntegral (h .<. 56))
-
-realignByteStrings :: Int -> [BS.ByteString] -> [BS.ByteString]
-realignByteStrings n = go
-  where go (bs:xss)    | BS.length bs == 0 = go xss
-        go (bs:xss)    | BS.length bs `mod` n == 0 = bs:go xss
-        go (bs:xss)    | BS.length bs > n = case BS.splitAt n bs of (cs, ds) -> cs:go (ds:xss)
-        go (bs:cs:css) | BS.length bs + BS.length cs <= n = go (BS.append bs cs:css)
-        go (bs:cs:css) = case BS.splitAt (n - BS.length bs) cs of (ds, es) -> BS.append bs ds:go (es:css)
-        go [bs]        | BS.length bs > 0 = [bs]
-        go _           = []
 
 unsafeIndex :: DVS.Vector Word64 -> Int -> Word64
 unsafeIndex v i | i < 0                           = error $ "Invalid index: " <> show i <> " for vector sized " <> show (DVS.length v)
