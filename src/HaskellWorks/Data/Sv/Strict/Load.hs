@@ -7,11 +7,9 @@ module HaskellWorks.Data.Sv.Strict.Load
   , FillWord64(..)
   , mmapDataFile2
   , mmapCursor
-  , loadDsv
   , countFields
   ) where
 
-import Data.ByteString                           (ByteString)
 import Data.Char                                 (ord)
 import Data.Word
 import HaskellWorks.Data.Product
@@ -23,7 +21,6 @@ import HaskellWorks.Data.Sv.Internal.Broadword
 import qualified Data.ByteString                             as BS
 import qualified Data.Vector.Storable                        as DVS
 import qualified HaskellWorks.Data.FromForeignRegion         as IO
-import qualified HaskellWorks.Data.Sv.Internal.Char          as C
 import qualified HaskellWorks.Data.Sv.Strict.Cursor          as SVS
 import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal as SVS
 
@@ -56,25 +53,6 @@ mmapCursor delimiter createIndex filePath = do
     , SVS.svCursorMarkers   = ibIndex
     , SVS.svCursorPosition  = 0
     }
-
-extractRows :: forall s. (Rank1 s, Select1 s) => SVS.SvCursor BS.ByteString s -> [[BS.ByteString]]
-extractRows = go []
-  where go :: [BS.ByteString] -> SVS.SvCursor BS.ByteString s -> [[BS.ByteString]]
-        go fs c = case SVS.nextInterestingBit c of
-          ibc -> case SVS.wordAt ibc of
-            Just ibw -> case SVS.nextPosition ibc of
-              Just newCursor ->
-                let start = fromIntegral (SVS.svCursorPosition c)
-                    len   = (fromIntegral (SVS.svCursorPosition ibc) - start) `max` 0
-                    text  = BS.take len $ BS.drop start $ SVS.svCursorText c
-                in if ibw == C.newline
-                  then reverse (text:fs):go [] newCursor
-                  else go (text:fs) newCursor
-              Nothing -> [reverse fs]
-            Nothing -> [reverse fs]
-
-loadDsv :: Char -> Bool -> FilePath -> IO [[ByteString]]
-loadDsv delimiter createIndex filePath = extractRows <$> mmapCursor delimiter createIndex filePath
 
 countFields :: forall s. (Rank1 s, Select1 s) => SVS.SvCursor BS.ByteString s -> Int
 countFields = go 0

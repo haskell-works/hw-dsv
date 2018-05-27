@@ -106,17 +106,6 @@ loadHwsvIndex filePath = do
 
   return DV.empty
 
-loadHwsvFaster :: FilePath -> IO (Vector (Vector ByteString))
-loadHwsvFaster filePath = do
-  bsss <- SVS.loadDsv ',' True filePath
-
-  rows <- forM bsss $ \bss -> do
-    let fields = DV.fromList bss
-
-    return fields
-
-  return (DV.fromList rows)
-
 loadHwsvCount :: FilePath -> IO Int
 loadHwsvCount filePath = do
   !c <- SVS.mmapCursor ',' True filePath
@@ -151,14 +140,12 @@ makeBenchCsv = do
   let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
   benchmarks <- forM files $ \file -> return $ mempty
     <> [bench ("cassava/decode/"            <> file) (nfIO (loadCassava     file))]
-
     <> [bench ("hw-sv/decode/via-list/"     <> file) (nfIO (loadHwsv      file))]
     <> [bench ("hw-sv/decode/via-vector/"   <> file) (nfIO (loadHwsvFast    file))]
-    <> [bench ("hw-sv/decode/via-faster/"   <> file) (nfIO (loadHwsvFaster  file))]
+    <> [bench ("hw-sv/decode/via-lazy/"     <> file) (nfIO (loadHwsvLazy   file))]
+
     <> [bench ("hw-sv/decode/via-index/"    <> file) (nfIO (loadHwsvIndex   file))]
     <> [bench ("hw-sv/decode/via-count/"    <> file) (nfIO (loadHwsvCount   file))]
-
-    <> [bench ("hw-sv/decode/via-lazy/"     <> file) (nfIO (loadHwsvLazy   file))]
     <> [bench ("hw-sv/decode/via-fake/"     <> file) (nfIO (loadHwsvFake    file))]
   return (join benchmarks)
 
