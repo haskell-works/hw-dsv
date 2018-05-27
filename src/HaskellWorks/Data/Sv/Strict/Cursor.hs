@@ -32,12 +32,10 @@ import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal as SVS
 import qualified HaskellWorks.Data.Sv.Strict.Cursor.Lens     as L
 import qualified HaskellWorks.Data.Sv.Strict.Cursor.Type     as SVS
 
-nextInterestingBit :: (Rank1 s, Select1 s) => SvCursor t s -> Maybe (SvCursor t s)
-nextInterestingBit cursor = if currentRank < cursor ^. L.popCount
-  then Just cursor
-    { svCursorPosition = newPos
-    }
-  else Nothing
+nextInterestingBit :: (Rank1 s, Select1 s) => SvCursor t s -> SvCursor t s
+nextInterestingBit cursor = cursor
+  { svCursorPosition = newPos
+  }
   where currentRank = rank1   (svCursorMarkers cursor) (svCursorPosition cursor)
         newPos      = select1 (svCursorMarkers cursor) (currentRank + 1) - 1
 
@@ -51,7 +49,7 @@ nextPosition cursor = if newPos < fromIntegral (VL.length (svCursorText cursor))
 
 nextField :: (Rank1 s, Select1 s) => SvCursor BS.ByteString s -> Maybe (SvCursor BS.ByteString s)
 nextField c = do
-  ibCursor <- nextInterestingBit c
+  let ibCursor = nextInterestingBit c
   ibWord <- wordAt ibCursor
   if ibWord == c ^. L.delimiter
     then nextPosition ibCursor
@@ -59,7 +57,7 @@ nextField c = do
 
 nextRow :: (Rank1 s, Select1 s) => SvCursor BS.ByteString s -> Maybe (SvCursor BS.ByteString s)
 nextRow c = do
-  !ibCursor <- nextInterestingBit c
+  let !ibCursor = nextInterestingBit c
   !ibWord <- wordAt ibCursor
   !newCursor <- nextPosition ibCursor
   if ibWord == newline

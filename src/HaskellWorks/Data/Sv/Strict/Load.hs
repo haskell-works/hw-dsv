@@ -18,7 +18,6 @@ module HaskellWorks.Data.Sv.Strict.Load
 import Data.ByteString                           (ByteString)
 import Data.Char                                 (ord)
 import Data.Word
-import HaskellWorks.Data.Bits.PopCount.PopCount1
 import HaskellWorks.Data.Product
 import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
@@ -44,7 +43,6 @@ loadFileWithNewIndex delimiter filePath = do
     , SVS.svCursorText      = text
     , SVS.svCursorMarkers   = ibIndex
     , SVS.svCursorPosition  = 1
-    , SVS.svCursorPopCount  = popCount1 ibIndex
     }
 
 mmapDataFile :: Char -> Bool -> FilePath -> IO (SVS.SvCursor BS.ByteString CsPoppy)
@@ -58,7 +56,6 @@ mmapDataFile delimiter createIndex filePath = do
     , SVS.svCursorText      = bs
     , SVS.svCursorMarkers   = ibIndex
     , SVS.svCursorPosition  = 0
-    , SVS.svCursorPopCount  = popCount1 ibIndex
     }
 
 mmapDataFile2 :: Char -> Bool -> FilePath -> IO (SVS.SvCursor BS.ByteString CsPoppy)
@@ -73,7 +70,6 @@ mmapDataFile2 delimiter createIndex filePath = do
     , SVS.svCursorText      = bs
     , SVS.svCursorMarkers   = ibIndex
     , SVS.svCursorPosition  = 0
-    , SVS.svCursorPopCount  = popCount1 ibIndex
     }
 
 mmapCursor :: Char -> Bool -> FilePath -> IO (SVS.SvCursor BS.ByteString CsPoppy)
@@ -88,14 +84,13 @@ mmapCursor delimiter createIndex filePath = do
     , SVS.svCursorText      = bs
     , SVS.svCursorMarkers   = ibIndex
     , SVS.svCursorPosition  = 0
-    , SVS.svCursorPopCount  = popCount1 ibIndex
     }
 
 extractRows :: forall s. (Rank1 s, Select1 s) => SVS.SvCursor BS.ByteString s -> [[BS.ByteString]]
 extractRows = go []
   where go :: [BS.ByteString] -> SVS.SvCursor BS.ByteString s -> [[BS.ByteString]]
         go fs c = case SVS.nextInterestingBit c of
-          Just ibc -> case SVS.wordAt ibc of
+          ibc -> case SVS.wordAt ibc of
             Just ibw -> case SVS.nextPosition ibc of
               Just newCursor ->
                 let start = fromIntegral (SVS.svCursorPosition c)
@@ -106,7 +101,6 @@ extractRows = go []
                   else go (text:fs) newCursor
               Nothing -> [reverse fs]
             Nothing -> [reverse fs]
-          Nothing -> [reverse fs]
 
 loadDsv :: Char -> Bool -> FilePath -> IO [[ByteString]]
 loadDsv delimiter createIndex filePath = extractRows <$> mmapCursor delimiter createIndex filePath
@@ -114,10 +108,9 @@ loadDsv delimiter createIndex filePath = extractRows <$> mmapCursor delimiter cr
 countFields :: forall s. (Rank1 s, Select1 s) => SVS.SvCursor BS.ByteString s -> Int
 countFields = go 0
   where go n d = case SVS.nextInterestingBit d of
-          Just e -> case SVS.nextPosition e of
+          e -> case SVS.nextPosition e of
             Just f  -> go (n + 1) f
             Nothing -> n
-          Nothing -> n
 
 loadCursor2FromDsv :: Char -> FilePath -> IO (SVS.SvCursor2 BS.ByteString CsPoppy)
 loadCursor2FromDsv delimiter filePath = do
