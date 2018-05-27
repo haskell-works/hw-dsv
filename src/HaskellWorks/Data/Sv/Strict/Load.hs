@@ -125,9 +125,9 @@ loadCursor2FromDsv delimiter filePath = do
   let nv  = SVS.mkDsvIbNlFromStriped sv cv
   let dv  = SVS.mkDsvIbDlFromStriped sv cv
   return SVS.SvCursor2
-    { SVS.svCursor2Delimiter   = fromIntegral (ord delimiter)
-    , SVS.svCursor2Text        = bs
-    , SVS.svCursor2IbNewline   = makeCsPoppy nv
-    , SVS.svCursor2IbDelimiter = makeCsPoppy dv
-    , SVS.svCursor2Position    = 1
+    { SVS.svCursor2Delimiter  = fromIntegral (ord delimiter)
+    , SVS.svCursor2Text       = bs
+    , SVS.svCursor2Newlines   = makeCsPoppy nv
+    , SVS.svCursor2Markers    = makeCsPoppy dv
+    , SVS.svCursor2Position   = 1
     }
