@@ -89,8 +89,8 @@ snippet c = BS.take (len `max` 0) $ BS.drop posC $ svCursorText c
 toVectorVector :: SVS.SvCursor2 BS.ByteString CsPoppy -> DV.Vector (DV.Vector BS.ByteString)
 toVectorVector c = DV.constructN rowCount makeRow
   where rowCount :: Int
-        rowCount = fromIntegral (popCount1 (SVS.svCursor2IbNewline c) + 1)
-        fv = SVS.svCursor2IbDelimiter c
+        rowCount = fromIntegral (popCount1 (SVS.svCursor2Newlines c) + 1)
+        fv = SVS.svCursor2Markers c
         makeRow :: DV.Vector (DV.Vector BS.ByteString) -> DV.Vector BS.ByteString
         makeRow u =
           let ui = DV.length u

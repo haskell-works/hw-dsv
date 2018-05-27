@@ -21,11 +21,11 @@ deriving instance (Eq   (Elem t), Eq   t, Eq   s) => Eq   (SvCursor t s)
 deriving instance (Show (Elem t), Show t, Show s) => Show (SvCursor t s)
 
 data SvCursor2 t s = SvCursor2
-  { svCursor2Delimiter   :: Elem t
-  , svCursor2Text        :: !t
-  , svCursor2IbNewline   :: !s
-  , svCursor2IbDelimiter :: !s
-  , svCursor2Position    :: !Word64
+  { svCursor2Delimiter :: Elem t
+  , svCursor2Text      :: !t
+  , svCursor2Newlines  :: !s
+  , svCursor2Markers   :: !s
+  , svCursor2Position  :: !Word64
   }
 
 deriving instance (Eq   (Elem t), Eq   t, Eq   s) => Eq   (SvCursor2 t s)
