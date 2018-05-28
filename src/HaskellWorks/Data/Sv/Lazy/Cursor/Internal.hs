@@ -90,4 +90,3 @@ makeCummulativePopCount = go 0
         go c (v:vs) = let (u, c') = makeCummulativePopCount2 c v in u:go c' vs
         go _ []     = []
 {-# INLINE makeCummulativePopCount #-}
-
