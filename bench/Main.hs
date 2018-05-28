@@ -22,19 +22,21 @@ import HaskellWorks.Data.Sv.Internal.Char.Word64
 import System.Directory
 import Weigh
 
-import qualified Data.ByteString                             as BS
-import qualified Data.ByteString.Internal                    as BSI
-import qualified Data.ByteString.Lazy                        as LBS
-import qualified Data.Csv                                    as CSV
-import qualified Data.Vector                                 as DV
-import qualified Data.Vector.Storable                        as DVS
-import qualified HaskellWorks.Data.FromForeignRegion         as IO
-import qualified HaskellWorks.Data.Sv.Internal.Char.Word64   as C
-import qualified HaskellWorks.Data.Sv.Lazy.Cursor            as SVL
-import qualified HaskellWorks.Data.Sv.Strict.Cursor          as SVS
-import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal as SVS
-import qualified System.IO                                   as IO
-import qualified System.IO.MMap                              as IO
+import qualified Data.ByteString                              as BS
+import qualified Data.ByteString.Internal                     as BSI
+import qualified Data.ByteString.Lazy                         as LBS
+import qualified Data.Csv                                     as CSV
+import qualified Data.Vector                                  as DV
+import qualified Data.Vector.Storable                         as DVS
+import qualified HaskellWorks.Data.FromForeignRegion          as IO
+import qualified HaskellWorks.Data.Sv.Internal.Char.Word64    as C
+import qualified HaskellWorks.Data.Sv.Lazy.Cursor             as SVL
+import qualified HaskellWorks.Data.Sv.Strict.Cursor           as SVS
+import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal  as SVS
+import qualified HaskellWorks.Data.Sv.Strict1.Cursor          as SVS1
+import qualified HaskellWorks.Data.Sv.Strict1.Cursor.Internal as SVS1
+import qualified System.IO                                    as IO
+import qualified System.IO.MMap                               as IO
 
 setupEnvByteString :: FilePath -> IO BS.ByteString
 setupEnvByteString filepath = do
@@ -74,18 +76,6 @@ repeatedly f a = a:case f a of
   Just b  -> repeatedly f b
   Nothing -> []
 
-loadHwsv :: FilePath -> IO (Vector (Vector ByteString))
-loadHwsv filePath = do
-  c <- SVS.mmapCursor ',' True filePath
-
-  rows <- forM (repeatedly SVS.nextRow c) $ \row -> do
-    let fieldCursors = repeatedly SVS.nextField row :: [SVS.SvCursor ByteString CsPoppy]
-    let fields = DV.fromList (SVS.snippet <$> fieldCursors)
-
-    return fields
-
-  return (DV.fromList rows)
-
 loadHwsvIndex :: FilePath -> IO (Vector (Vector ByteString))
 loadHwsvIndex filePath = do
   !c <- SVS.mmapCursor ',' True filePath
@@ -94,9 +84,12 @@ loadHwsvIndex filePath = do
 
 loadHwsvCount :: FilePath -> IO Int
 loadHwsvCount filePath = do
-  !c <- SVS.mmapCursor ',' True filePath
+  !c <- SVS1.mmapCursor ',' True filePath
 
-  return (SVS.countFields c)
+  return (SVS1.countFields c)
+
+loadHwsvStrict :: FilePath -> IO (Vector (Vector ByteString))
+loadHwsvStrict filePath = SVS.toVectorVector <$> SVS.mmapCursor ',' True filePath
 
 loadHwsvLazy :: FilePath -> IO (Vector (Vector LBS.ByteString))
 loadHwsvLazy filePath = do
@@ -126,9 +119,8 @@ makeBenchCsv = do
   let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
   benchmarks <- forM files $ \file -> return $ mempty
     <> [bench ("cassava/decode/"            <> file) (nfIO (loadCassava     file))]
-    <> [bench ("hw-sv/decode/via-list/"     <> file) (nfIO (loadHwsv      file))]
-    <> [bench ("hw-sv/decode/via-vector/"   <> file) (nfIO (loadHwsv    file))]
-    <> [bench ("hw-sv/decode/via-lazy/"     <> file) (nfIO (loadHwsvLazy   file))]
+    <> [bench ("hw-sv/decode/via-vector/"   <> file) (nfIO (loadHwsvStrict        file))]
+    <> [bench ("hw-sv/decode/via-lazy/"     <> file) (nfIO (loadHwsvLazy    file))]
 
     <> [bench ("hw-sv/decode/via-index/"    <> file) (nfIO (loadHwsvIndex   file))]
     <> [bench ("hw-sv/decode/via-count/"    <> file) (nfIO (loadHwsvCount   file))]
@@ -141,7 +133,7 @@ makeBenchW64s = do
   let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
   benchmarks <- forM files $ \file -> return
     [ env (IO.mmapFromForeignRegion file) $ \v -> bgroup "Creating bit index from mmaped file" $ mempty
-      <> [bench ("mkIbVector                  with sum" <> file) (whnf (DVS.foldl (+) 0 . SVS.mkIbVector ',') v)]
+      <> [bench ("mkIbVector                  with sum" <> file) (whnf (DVS.foldl (+) 0 . SVS1.mkIbVector ',') v)]
     ]
   return (join benchmarks)
 
@@ -151,8 +143,8 @@ makeBenchMkInterestBits = do
   let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
   benchmarks <- forM files $ \file -> return
     [ env (IO.mmapFromForeignRegion file) $ \(v :: DVS.Vector Word64) -> bgroup "Loading lazy byte string into Word64s" $ mempty
-      <> [bench ("mkIbVector                  with sum" <> file) (whnf (DVS.foldr (+) 0 . SVS.mkIbVector        '|') v)]
-      <> [bench ("mkDsvInterestBitsByWord64s  with sum" <> file) (whnf (DVS.foldr (+) 0 . SVS.mkDsvInterestBits '|') v)]
+      <> [bench ("mkIbVector                  with sum" <> file) (whnf (DVS.foldr (+) 0 . SVS1.mkIbVector        '|') v)]
+      <> [bench ("mkDsvInterestBitsByWord64s  with sum" <> file) (whnf (DVS.foldr (+) 0 . SVS1.mkDsvInterestBits '|') v)]
       <> [bench ("makeIndexes                 with sum" <> file) (whnf (DVS.foldr (+) 0 . fst . SVS.makeIndexes '|') v)]
     ]
   return (join benchmarks)

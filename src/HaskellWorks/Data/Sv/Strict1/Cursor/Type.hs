@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleContexts   #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
-module HaskellWorks.Data.Sv.Strict.Cursor.Type
+module HaskellWorks.Data.Sv.Strict1.Cursor.Type
   ( SvCursor(..)
   ) where
 
@@ -12,7 +12,6 @@ data SvCursor t s = SvCursor
   { svCursorDelimiter :: Elem t
   , svCursorText      :: !t
   , svCursorMarkers   :: !s
-  , svCursorNewlines  :: !s
   , svCursorPosition  :: !Word64
   }
 

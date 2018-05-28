@@ -18,11 +18,11 @@ import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv.Internal.Char
 import Options.Applicative                  hiding (columns)
 
-import qualified App.Commands.Options.Lens          as L
-import qualified App.IO                             as IO
-import qualified Data.ByteString                    as BS
-import qualified Data.ByteString.Builder            as B
-import qualified HaskellWorks.Data.Sv.Strict.Cursor as SVS
+import qualified App.Commands.Options.Lens           as L
+import qualified App.IO                              as IO
+import qualified Data.ByteString                     as BS
+import qualified Data.ByteString.Builder             as B
+import qualified HaskellWorks.Data.Sv.Strict1.Cursor as SVS
 
 repeatedly :: (a -> Maybe a) -> a -> [a]
 repeatedly f a = a:case f a of
