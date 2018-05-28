@@ -2,7 +2,7 @@
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module HaskellWorks.Data.Sv.InternalSpec (spec) where
+module HaskellWorks.Data.Sv.Strict.Cursor.InternalSpec (spec) where
 
 import Control.Concurrent
 import Control.Monad
@@ -40,7 +40,7 @@ import qualified System.Directory                            as IO
 {-# ANN module ("HLint: ignore Redundant bracket"   :: String) #-}
 
 spec :: Spec
-spec = describe "HaskellWorks.Data.Sv.InternalSpec" $ do
+spec = describe "HaskellWorks.Data.Sv.Strict.Cursor.InternalSpec" $ do
   it "Case 1" $ requireTest $ do
     entries <- liftIO $ IO.listDirectory "data/bench"
     let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
