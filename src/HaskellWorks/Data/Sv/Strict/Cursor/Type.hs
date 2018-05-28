@@ -12,6 +12,7 @@ data SvCursor t s = SvCursor
   { svCursorDelimiter :: Elem t
   , svCursorText      :: !t
   , svCursorMarkers   :: !s
+  , svCursorNewlines  :: !s
   , svCursorPosition  :: !Word64
   }
 

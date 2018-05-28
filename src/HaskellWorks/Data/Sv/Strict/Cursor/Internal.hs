@@ -20,7 +20,6 @@ import Prelude
 
 import qualified Data.Vector.Storable                      as DVS
 import qualified Data.Vector.Storable.Mutable              as DVSM
-import qualified HaskellWorks.Data.Length                  as V
 import qualified HaskellWorks.Data.Sv.Internal.Char.Word64 as CW
 
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}

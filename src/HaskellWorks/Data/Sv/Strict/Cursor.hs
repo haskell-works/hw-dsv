@@ -90,13 +90,16 @@ mmapCursor :: Char -> Bool -> FilePath -> IO (SvCursor BS.ByteString CsPoppy)
 mmapCursor delimiter createIndex filePath = do
   (!bs) :*: (!v) <- IO.mmapFromForeignRegion filePath
   let !_ = v :: DVS.Vector Word64
-  !ibIndex <- makeCsPoppy <$> if createIndex
-    then return $ fst $ SVS.makeIndexes delimiter v
-    else IO.mmapFromForeignRegion (filePath ++ ".ib")
+  (!markers, !newlines) <- if createIndex
+    then return $ SVS.makeIndexes delimiter v
+    else (,)
+      <$> IO.mmapFromForeignRegion (filePath ++ ".markers.idx")
+      <*> IO.mmapFromForeignRegion (filePath ++ ".newlines.idx")
   return SvCursor
     { svCursorDelimiter = fromIntegral (ord delimiter)
     , svCursorText      = bs
-    , svCursorMarkers   = ibIndex
+    , svCursorMarkers   = makeCsPoppy markers
+    , svCursorNewlines  = makeCsPoppy newlines
     , svCursorPosition  = 0
     }
 
