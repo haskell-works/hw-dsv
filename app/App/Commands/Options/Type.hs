@@ -16,6 +16,7 @@ data QueryOptions = QueryOptions
   , _queryOptionsFilePath         :: FilePath
   , _queryOptionsOutputFilePath   :: FilePath
   , _queryOptionsDelimiter        :: Char
+  , _queryOptionsOutDelimiter     :: Char
   , _queryOptionsOutputBufferSize :: Maybe Int
   } deriving (Eq, Show)
 

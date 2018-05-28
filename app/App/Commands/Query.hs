@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns        #-}
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
@@ -9,44 +10,42 @@ import App.Commands.Options.Type
 import Control.Applicative
 import Control.Lens
 import Control.Monad
-import Control.Monad.IO.Class               (liftIO)
+import Control.Monad.IO.Class             (liftIO)
 import Control.Monad.Trans.Resource
+import Data.Char                          (ord)
 import Data.List
-import Data.Maybe
-import Data.Semigroup                       ((<>))
-import HaskellWorks.Data.RankSelect.CsPoppy
+import Data.Semigroup                     ((<>))
 import HaskellWorks.Data.Sv.Internal.Char
-import Options.Applicative                  hiding (columns)
+import Options.Applicative                hiding (columns)
 
-import qualified App.Commands.Options.Lens           as L
-import qualified App.IO                              as IO
-import qualified Data.ByteString                     as BS
-import qualified Data.ByteString.Builder             as B
-import qualified HaskellWorks.Data.Sv.Strict1.Cursor as SVS
-
-repeatedly :: (a -> Maybe a) -> a -> [a]
-repeatedly f a = a:case f a of
-  Just b  -> repeatedly f b
-  Nothing -> []
+import qualified App.Commands.Options.Lens          as L
+import qualified App.IO                             as IO
+import qualified Data.ByteString                    as BS
+import qualified Data.ByteString.Builder            as B
+import qualified Data.Vector                        as DV
+import qualified HaskellWorks.Data.Sv.Strict.Cursor as SVS
 
 runQuery :: QueryOptions -> IO ()
 runQuery opts = do
-  cursor <- SVS.mmapCursor (opts ^. L.delimiter) (opts ^. L.createIndex) (opts ^. L.filePath)
+  c <- SVS.mmapCursor (opts ^. L.delimiter) (opts ^. L.createIndex) (opts ^. L.filePath)
+
+  let !rows = SVS.toListVector c
+  let !outDelimiterBuilder = B.word8 (fromIntegral (ord (opts ^. L.outDelimiter)))
 
   runResourceT $ do
-    (_, hOut) <- IO.openOutputFile (opts ^. L.outputFilePath) (opts ^. L.outputBufferSize)
+    (_, hOut) <- IO.openOutputFile (opts ^. L.outputFilePath) Nothing
+    forM_ rows $ \row -> do
+      let fieldStrings = columnToFieldString row <$> (opts ^. L.columns)
 
-    forM_ (repeatedly SVS.nextRow cursor) $ \row -> do
-      let fieldCursors = repeatedly SVS.nextField row
-      let fieldStrings = columnToFieldString fieldCursors <$> (opts ^. L.columns)
-
-      liftIO $ B.hPutBuilder hOut $ mconcat (intersperse "|" fieldStrings) <> B.word8 10
+      liftIO $ B.hPutBuilder hOut $ mconcat (intersperse outDelimiterBuilder fieldStrings) <> B.word8 10
 
       return ()
+  return ()
 
-    return ()
-  where columnToFieldString :: [SVS.SvCursor BS.ByteString CsPoppy] -> Int -> B.Builder
-        columnToFieldString fields column = maybe mempty (B.byteString . SVS.snippet) (drop column fields & listToMaybe)
+  where columnToFieldString :: DV.Vector BS.ByteString -> Int -> B.Builder
+        columnToFieldString fields i = if i >= 0 && i < DV.length fields
+          then B.byteString (DV.unsafeIndex fields i)
+          else B.byteString (BS.empty)
 
 cmdQuery :: Mod CommandFields (IO ())
 cmdQuery = command "query" $ flip info idm $ runQuery <$> optsQuery
@@ -72,6 +71,11 @@ optsQuery = QueryOptions
           )
     <*> option readChar
           (   long "delimiter"
+          <>  help "DSV delimiter"
+          <>  metavar "CHAR"
+          )
+    <*> option readChar
+          (   long "out-delimiter"
           <>  help "DSV delimiter"
           <>  metavar "CHAR"
           )
