@@ -11,6 +11,8 @@ import qualified Data.Csv                            as CSV
 import qualified Data.Vector                         as DV
 import qualified HaskellWorks.Data.Sv.Strict1.Cursor as SVS
 
+{-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
+
 repeatedly :: (a -> Maybe a) -> a -> [a]
 repeatedly f a = a:case f a of
   Just b  -> repeatedly f b
