@@ -3,7 +3,7 @@
 {-# LANGUAGE MultiWayIf          #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module HaskellWorks.Data.Sv.Strict2.Cursor
+module HaskellWorks.Data.Sv.Strict1.Cursor
   ( SvCursor(..)
   , snippet
   , nextField
@@ -23,14 +23,14 @@ import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.RankSelect.CsPoppy
 import HaskellWorks.Data.Sv.Internal.Char
-import HaskellWorks.Data.Sv.Strict2.Cursor.Type
+import HaskellWorks.Data.Sv.Strict1.Cursor.Type
 
 import qualified Data.ByteString                              as BS
 import qualified Data.Vector.Storable                         as DVS
 import qualified HaskellWorks.Data.AtIndex                    as VL
 import qualified HaskellWorks.Data.FromForeignRegion          as IO
-import qualified HaskellWorks.Data.Sv.Strict2.Cursor.Internal as SVS
-import qualified HaskellWorks.Data.Sv.Strict2.Cursor.Lens     as L
+import qualified HaskellWorks.Data.Sv.Strict1.Cursor.Internal as SVS
+import qualified HaskellWorks.Data.Sv.Strict1.Cursor.Lens     as L
 
 nextInterestingBit :: (Rank1 s, Select1 s) => SvCursor t s -> SvCursor t s
 nextInterestingBit cursor = cursor
@@ -91,7 +91,7 @@ mmapCursor delimiter createIndex filePath = do
   (!bs) :*: (!v) <- IO.mmapFromForeignRegion filePath
   let !_ = v :: DVS.Vector Word64
   !ibIndex <- makeCsPoppy <$> if createIndex
-    then return $ fst $ SVS.makeIndexes delimiter v
+    then return $ SVS.mkIbVector delimiter v
     else IO.mmapFromForeignRegion (filePath ++ ".ib")
   return SvCursor
     { svCursorDelimiter = fromIntegral (ord delimiter)

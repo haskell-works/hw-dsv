@@ -91,7 +91,7 @@ mmapCursor delimiter createIndex filePath = do
   (!bs) :*: (!v) <- IO.mmapFromForeignRegion filePath
   let !_ = v :: DVS.Vector Word64
   !ibIndex <- makeCsPoppy <$> if createIndex
-    then return $ SVS.mkIbVector delimiter v
+    then return $ fst $ SVS.makeIndexes delimiter v
     else IO.mmapFromForeignRegion (filePath ++ ".ib")
   return SvCursor
     { svCursorDelimiter = fromIntegral (ord delimiter)

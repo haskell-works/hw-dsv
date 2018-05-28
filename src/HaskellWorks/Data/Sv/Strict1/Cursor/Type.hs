@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleContexts   #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
-module HaskellWorks.Data.Sv.Strict2.Cursor.Type
+module HaskellWorks.Data.Sv.Strict1.Cursor.Type
   ( SvCursor(..)
   ) where
 

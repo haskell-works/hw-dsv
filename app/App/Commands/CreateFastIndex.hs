@@ -13,14 +13,14 @@ import HaskellWorks.Data.Bits.BitWise
 import HaskellWorks.Data.Sv.Internal.Char
 import Options.Applicative                hiding (columns)
 
-import qualified App.Commands.Options.Lens                   as L
-import qualified Data.ByteString.Builder                     as B
-import qualified Data.Vector.Storable                        as DVS
-import qualified HaskellWorks.Data.FromForeignRegion         as IO
-import qualified HaskellWorks.Data.Sv.Internal.Char.Word64   as C
-import qualified HaskellWorks.Data.Sv.Internal.Char.Word64   as CW
-import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal as SVS
-import qualified System.IO                                   as IO
+import qualified App.Commands.Options.Lens                    as L
+import qualified Data.ByteString.Builder                      as B
+import qualified Data.Vector.Storable                         as DVS
+import qualified HaskellWorks.Data.FromForeignRegion          as IO
+import qualified HaskellWorks.Data.Sv.Internal.Char.Word64    as C
+import qualified HaskellWorks.Data.Sv.Internal.Char.Word64    as CW
+import qualified HaskellWorks.Data.Sv.Strict1.Cursor.Internal as SVS
+import qualified System.IO                                    as IO
 
 writeBuilder :: FilePath -> B.Builder -> IO ()
 writeBuilder fp b = do
