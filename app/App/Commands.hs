@@ -1,7 +1,6 @@
 module App.Commands where
 
 import App.Commands.Cat
-import App.Commands.CreateFastIndex
 import App.Commands.CreateIndex
 import App.Commands.CreateLazyIndex
 import App.Commands.Generate
@@ -14,7 +13,6 @@ import Options.Applicative
 cmdOpts :: Parser (IO ())
 cmdOpts = subparser $ mempty
   <>  cmdCat
-  <>  cmdCreateFastIndex
   <>  cmdCreateIndex
   <>  cmdCreateLazyIndex
   <>  cmdGenerate

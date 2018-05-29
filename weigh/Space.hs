@@ -1,15 +1,13 @@
 module Main where
 
-import Control.Monad
-import Data.ByteString                      (ByteString)
-import Data.Vector                          (Vector)
-import HaskellWorks.Data.RankSelect.CsPoppy
+import Data.ByteString (ByteString)
+import Data.Vector     (Vector)
 import Weigh
 
-import qualified Data.ByteString.Lazy                as LBS
-import qualified Data.Csv                            as CSV
-import qualified Data.Vector                         as DV
-import qualified HaskellWorks.Data.Sv.Strict1.Cursor as SVS
+import qualified Data.ByteString.Lazy               as LBS
+import qualified Data.Csv                           as CSV
+import qualified Data.Vector                        as DV
+import qualified HaskellWorks.Data.Sv.Strict.Cursor as SVS
 
 {-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
 
@@ -22,13 +20,7 @@ loadCsv :: FilePath -> IO (DV.Vector (DV.Vector ByteString))
 loadCsv filePath = do
   c <- SVS.mmapCursor ',' True filePath
 
-  rows <- forM (repeatedly SVS.nextRow c) $ \row -> do
-    let fieldCursors = repeatedly SVS.nextField row :: [SVS.SvCursor ByteString CsPoppy]
-    let fields = DV.fromList (SVS.snippet <$> fieldCursors)
-
-    return fields
-
-  return (DV.fromList rows)
+  return $ SVS.toVectorVector c
 
 main :: IO ()
 main = do
