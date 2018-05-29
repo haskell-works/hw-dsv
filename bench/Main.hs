@@ -38,43 +38,12 @@ import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal.Reference as SVS
 import qualified System.IO                                             as IO
 import qualified System.IO.MMap                                        as IO
 
-setupEnvByteString :: FilePath -> IO BS.ByteString
-setupEnvByteString filepath = do
-  (fptr :: ForeignPtr Word8, offset, size) <- IO.mmapFileForeignPtr filepath IO.ReadOnly Nothing
-  let !bs = BSI.fromForeignPtr (castForeignPtr fptr) offset size
-  return bs
-
-sumFileByteString :: FilePath -> IO ()
-sumFileByteString filePath = do
-  !(bs :: BS.ByteString) <- IO.mmapFromForeignRegion filePath
-  let !_ = BS.foldl' (+) 0 bs
-  return ()
-
-sumFileVectorWord64 :: FilePath -> IO ()
-sumFileVectorWord64 filePath = do
-  !(v :: DVS.Vector Word64) <- IO.mmapFromForeignRegion filePath
-  let !_ = DVS.foldl' (+) 0 v
-  return ()
-
-benchRankJson40Conduits :: [Benchmark]
-benchRankJson40Conduits =
-  [ env (return ()) $ \_ -> bgroup "medium.csv"
-    [ bench "Foldl' over ByteString"    (whnfIO (sumFileByteString   "corpus/medium.csv"))
-    , bench "Foldl' over Vector Word64" (whnfIO (sumFileVectorWord64 "corpus/medium.csv"))
-    ]
-  ]
-
 loadCassava :: FilePath -> IO (Vector (Vector ByteString))
 loadCassava filePath = do
   r <- fmap (CSV.decode CSV.HasHeader) (LBS.readFile filePath) :: IO (Either String (Vector (Vector ByteString)))
   case r of
     Left _  -> error "Unexpected parse error"
     Right v -> pure v
-
-repeatedly :: (a -> Maybe a) -> a -> [a]
-repeatedly f a = a:case f a of
-  Just b  -> repeatedly f b
-  Nothing -> []
 
 loadHwsvStrictIndex :: FilePath -> IO (Vector (Vector ByteString))
 loadHwsvStrictIndex filePath = do
