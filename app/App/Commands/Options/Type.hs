@@ -25,11 +25,6 @@ data CatOptions = CatOptions
   , _catOptionsTarget :: FilePath
   } deriving (Eq, Show)
 
-data LazyCountFieldsOptions = LazyCountFieldsOptions
-  { _lazyCountFieldsOptionsFilePath  :: FilePath
-  , _lazyCountFieldsOptionsDelimiter :: Char
-  } deriving (Eq, Show)
-
 data QueryLazyOptions = QueryLazyOptions
   { _queryLazyOptionsColumns        :: [Int]
   , _queryLazyOptionsFilePath       :: FilePath

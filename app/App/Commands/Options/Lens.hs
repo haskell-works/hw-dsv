@@ -12,6 +12,5 @@ import Control.Lens
 makeFields ''CatOptions
 makeFields ''CreateIndexOptions
 makeFields ''GenerateOptions
-makeFields ''LazyCountFieldsOptions
 makeFields ''QueryLazyOptions
 makeFields ''QueryOptions
