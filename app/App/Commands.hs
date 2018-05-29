@@ -8,10 +8,19 @@ import App.Commands.QueryLazy
 import Data.Semigroup           ((<>))
 import Options.Applicative
 
-cmdOpts :: Parser (IO ())
-cmdOpts = subparser $ mempty
-  <>  cmdCat
+commands :: Parser (IO ())
+commands = commandsGeneral <|> commandsDebugging
+
+commandsGeneral :: Parser (IO ())
+commandsGeneral = subparser $ mempty
+  <>  commandGroup "Commands:"
   <>  cmdCreateIndex
-  <>  cmdGenerate
   <>  cmdQuery
   <>  cmdQueryLazy
+
+commandsDebugging :: Parser (IO ())
+commandsDebugging = subparser $ mempty
+  <>  commandGroup "Debugging commands:"
+  <>  cmdCat
+  <>  cmdGenerate
+  <>  hidden
