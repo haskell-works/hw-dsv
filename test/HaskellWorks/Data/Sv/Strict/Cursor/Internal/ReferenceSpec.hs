@@ -2,7 +2,7 @@
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module HaskellWorks.Data.Sv.Strict1.Cursor.InternalSpec (spec) where
+module HaskellWorks.Data.Sv.Strict.Cursor.Internal.ReferenceSpec (spec) where
 
 import Control.Concurrent
 import Control.Monad
@@ -22,25 +22,25 @@ import HaskellWorks.Hspec.Hedgehog
 import Hedgehog
 import Test.Hspec
 
-import qualified Data.ByteString                              as BS
-import qualified Data.Text                                    as T
-import qualified Data.Text.Encoding                           as T
-import qualified Data.Vector.Storable                         as DVS
-import qualified HaskellWorks.Data.FromForeignRegion          as IO
-import qualified HaskellWorks.Data.Sv.Gen                     as G
-import qualified HaskellWorks.Data.Sv.Internal.Char.Word64    as C
-import qualified HaskellWorks.Data.Sv.Strict1.Cursor          as SVS
-import qualified HaskellWorks.Data.Sv.Strict1.Cursor.Internal as SVS
-import qualified Hedgehog.Gen                                 as G
-import qualified Hedgehog.Range                               as R
-import qualified System.Directory                             as IO
+import qualified Data.ByteString                                       as BS
+import qualified Data.Text                                             as T
+import qualified Data.Text.Encoding                                    as T
+import qualified Data.Vector.Storable                                  as DVS
+import qualified HaskellWorks.Data.FromForeignRegion                   as IO
+import qualified HaskellWorks.Data.Sv.Gen                              as G
+import qualified HaskellWorks.Data.Sv.Internal.Char.Word64             as C
+import qualified HaskellWorks.Data.Sv.Strict.Cursor                    as SVS
+import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal.Reference as SVS
+import qualified Hedgehog.Gen                                          as G
+import qualified Hedgehog.Range                                        as R
+import qualified System.Directory                                      as IO
 
 {-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
 {-# ANN module ("HLint: ignore Redundant bracket"   :: String) #-}
 
 spec :: Spec
-spec = describe "HaskellWorks.Data.Sv.Strict1.Cursor.InternalSpec" $ do
+spec = describe "HaskellWorks.Data.Sv.Strict.Cursor.Internal.ReferenceSpec" $ do
   it "Case 1" $ requireTest $ do
     entries <- liftIO $ IO.listDirectory "data/bench"
     let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries

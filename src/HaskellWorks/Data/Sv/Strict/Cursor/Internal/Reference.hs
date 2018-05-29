@@ -2,7 +2,7 @@
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module HaskellWorks.Data.Sv.Strict1.Cursor.Internal where
+module HaskellWorks.Data.Sv.Strict.Cursor.Internal.Reference where
 
 import Data.Bits                                 (popCount)
 import Data.Semigroup
@@ -15,7 +15,7 @@ import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.Sv.Internal.Bits
 import HaskellWorks.Data.Sv.Internal.Broadword
 import HaskellWorks.Data.Sv.Internal.Char.Word64
-import HaskellWorks.Data.Sv.Strict1.Cursor.Type
+import HaskellWorks.Data.Sv.Strict.Cursor.Type
 import Prelude
 
 import qualified Data.Vector.Storable                      as DVS
