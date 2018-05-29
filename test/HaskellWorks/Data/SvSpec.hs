@@ -36,7 +36,7 @@ spec = describe "HaskellWorks.Data.SvSpec" $ do
           \00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
 
     let v = fromByteString bs
-    let actual = SVS.mkDsvInterestBits ',' v
+    let actual = SVS.mkIbVector ',' v
 
     bitShow actual ===  "00000000 10000000 01000000 10000000 00000000 00000000 00010000 00001000 \
                         \00000100 00001000 00000000 00000000 00000001 00000000 10000000 01000000 \
@@ -54,7 +54,7 @@ spec = describe "HaskellWorks.Data.SvSpec" $ do
           \00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
 
     let v = fromByteString bs
-    let !actual = SVS.mkDsvInterestBits ',' v
+    let !actual = SVS.mkIbVector ',' v
 
     bitShow actual ===  "00000000 10000000 01000000 10000000 00000000 00000000 00010000 00001000 \
                         \00000100 00001000 00000000 00000000 00000001 00000000 10000000 01000000 \
@@ -72,7 +72,7 @@ spec = describe "HaskellWorks.Data.SvSpec" $ do
           \00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
 
     let v = fromByteString bs
-    let !actual = SVS.mkDsvInterestBits ',' v
+    let !actual = SVS.mkIbVector ',' v
 
     bitShow actual ===  "00000000 10000000 01000000 10000000 00000000 00000000 00010000 00001000 \
                         \00000100 00001000 00000000 00000000 00000001 00000000 10000000 01000000 \
