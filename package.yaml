@@ -79,6 +79,8 @@ tests:
     - hspec
     - hw-hspec-hedgehog
     - text
+    verbatim:
+      build-tool-depends: hspec-discover:hspec-discover
 
   hw-sv-space:
     main:               Space.hs
@@ -103,6 +105,8 @@ tests:
       - text
       - vector
       - weigh
+    verbatim:
+      build-tool-depends: hspec-discover:hspec-discover
 
 benchmarks:
   bench:
