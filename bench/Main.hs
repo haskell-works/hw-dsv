@@ -31,6 +31,7 @@ import qualified Data.Vector.Storable                                  as DVS
 import qualified HaskellWorks.Data.FromForeignRegion                   as IO
 import qualified HaskellWorks.Data.Sv.Internal.Char.Word64             as C
 import qualified HaskellWorks.Data.Sv.Lazy.Cursor                      as SVL
+import qualified HaskellWorks.Data.Sv.Lazy.Cursor.Type                 as SVL
 import qualified HaskellWorks.Data.Sv.Strict.Cursor                    as SVS
 import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal           as SVS
 import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal.Reference as SVS
@@ -75,20 +76,24 @@ repeatedly f a = a:case f a of
   Just b  -> repeatedly f b
   Nothing -> []
 
-loadHwsvIndex :: FilePath -> IO (Vector (Vector ByteString))
-loadHwsvIndex filePath = do
+loadHwsvStrictIndex :: FilePath -> IO (Vector (Vector ByteString))
+loadHwsvStrictIndex filePath = do
   !c <- SVS.mmapCursor ',' True filePath
 
   return DV.empty
 
-loadHwsvCount :: FilePath -> IO Int
-loadHwsvCount filePath = do
-  !c <- SVS.mmapCursor ',' True filePath
-
-  return (SVS.countFields c)
-
 loadHwsvStrict :: FilePath -> IO (Vector (Vector ByteString))
 loadHwsvStrict filePath = SVS.toVectorVector <$> SVS.mmapCursor ',' True filePath
+
+loadHwsvLazyIndex :: FilePath -> IO (Vector (Vector ByteString))
+loadHwsvLazyIndex filePath = do
+  !bs <- LBS.readFile filePath
+
+  let c = SVL.makeCursor ',' bs
+  let zipIndexes = zip (SVL.svCursorMarkers c) (SVL.svCursorNewlines c)
+  let !n = length zipIndexes
+
+  return DV.empty
 
 loadHwsvLazy :: FilePath -> IO (Vector (Vector LBS.ByteString))
 loadHwsvLazy filePath = do
@@ -98,32 +103,17 @@ loadHwsvLazy filePath = do
 
   return (SVL.toVectorVector c)
 
-loadHwsvFake :: FilePath -> IO (Vector (Vector ByteString))
-loadHwsvFake filePath = do
-  bs <- BS.readFile filePath
-
-  let rawRows = DV.unfoldrN ((BS.length bs + 79) `div` 80) (go 80) bs
-  let rows = DV.map (\bs -> DV.unfoldrN ((BS.length bs + 4) `div` 5) (go 80) bs) rawRows
-
-  return rows
-
-  where go :: Int -> ByteString -> Maybe (ByteString, ByteString)
-        go n bs = case BS.splitAt 80 bs of
-          (as, cs) | BS.length as > n -> Just (as, cs)
-          (as, cs) | BS.length cs > n -> Nothing
-
 makeBenchCsv :: IO [Benchmark]
 makeBenchCsv = do
   entries <- listDirectory "data/bench"
   let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
   benchmarks <- forM files $ \file -> return $ mempty
-    <> [bench ("cassava/decode/"            <> file) (nfIO (loadCassava     file))]
-    <> [bench ("hw-sv/decode/via-vector/"   <> file) (nfIO (loadHwsvStrict        file))]
-    <> [bench ("hw-sv/decode/via-lazy/"     <> file) (nfIO (loadHwsvLazy    file))]
+    <> [bench ("cassava/decode/"                <> file) (nfIO (loadCassava         file))]
+    <> [bench ("hw-sv/decode/via-strict/"       <> file) (nfIO (loadHwsvStrict      file))]
+    <> [bench ("hw-sv/decode/via-lazy/"         <> file) (nfIO (loadHwsvLazy        file))]
 
-    <> [bench ("hw-sv/decode/via-index/"    <> file) (nfIO (loadHwsvIndex   file))]
-    <> [bench ("hw-sv/decode/via-count/"    <> file) (nfIO (loadHwsvCount   file))]
-    <> [bench ("hw-sv/decode/via-fake/"     <> file) (nfIO (loadHwsvFake    file))]
+    <> [bench ("hw-sv/decode/via-strict/index/" <> file) (nfIO (loadHwsvStrictIndex file))]
+    <> [bench ("hw-sv/decode/via-lazy/index/"   <> file) (nfIO (loadHwsvLazyIndex   file))]
   return (join benchmarks)
 
 makeBenchW64s :: IO [Benchmark]

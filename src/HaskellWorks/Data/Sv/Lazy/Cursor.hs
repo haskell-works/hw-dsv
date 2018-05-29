@@ -1,7 +1,6 @@
 module HaskellWorks.Data.Sv.Lazy.Cursor
   ( makeCursor
   , snippet
-  , countFields
   , trim
   , atEnd
   , nextField
@@ -52,16 +51,6 @@ snippet c = LBS.take (len `max` 0) $ LBS.drop posC $ svCursorText c
         posD = fromIntegral $ svCursorPosition d
         len  = posD - posC
 {-# INLINE snippet #-}
-
-countFields :: SvCursor -> Int
-countFields = go 0
-  where go n d = if not (atEnd d)
-          then let e = nextField d in if not (atEnd e)
-            then let f = nextPosition e in go (n + 1) (trim f)
-            else n
-          else n
-        {-# INLINE go #-}
-{-# INLINE countFields #-}
 
 trim :: SvCursor -> SvCursor
 trim c = if svCursorPosition c > 512
