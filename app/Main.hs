@@ -8,4 +8,4 @@ import Options.Applicative
 main :: IO ()
 main = join $ customExecParser
   (prefs $ showHelpOnEmpty <> showHelpOnError)
-  (info (cmdOpts <**> helper) idm)
+  (info (commands <**> helper) idm)
