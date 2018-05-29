@@ -9,7 +9,6 @@ import Data.Semigroup
 import Data.Word
 import HaskellWorks.Data.AtIndex
 import HaskellWorks.Data.Bits.BitWise
-import HaskellWorks.Data.Positioning
 import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.Sv.Internal.Bits
@@ -19,67 +18,9 @@ import HaskellWorks.Data.Sv.Strict.Cursor.Type
 import Prelude
 
 import qualified Data.Vector.Storable                      as DVS
-import qualified HaskellWorks.Data.Length                  as V
 import qualified HaskellWorks.Data.Sv.Internal.Char.Word64 as CW
 
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
-
-mkDsvInterestBits :: Char -> DVS.Vector Word64 -> DVS.Vector Word64
-mkDsvInterestBits delimiter v = DVS.fromListN ((DVS.length v + 7) `div` 8) $ mkDsvInterestBitsByWord64s
-  CW.doubleQuote
-  CW.newline
-  (fillWord64WithChar8 delimiter)
-  0
-  0
-  v
-
--- rdqs: repeated double quotes
--- rnls: repeated new lines
--- rdls: repeated delimiters
--- numQuotes: Number of quotes since beginning
--- n: Number of rank select bit string words since beginning
-mkDsvInterestBitsByWord64s :: Word64 -> Word64 -> Word64 -> Count -> Position -> DVS.Vector Word64 -> [Word64]
-mkDsvInterestBitsByWord64s rdqs rnls rdls numQuotes n ws | n < V.end ws =
-  let w0    = atIndexOr 0 ws n
-      w0Dqs = testWord8s (w0 .^. rdqs)
-      w0Nls = testWord8s (w0 .^. rnls)
-      w0Dls = testWord8s (w0 .^. rdls)
-      w1    = atIndexOr 0 ws (n + 1)
-      w1Dqs = testWord8s (w1 .^. rdqs)
-      w1Nls = testWord8s (w1 .^. rnls)
-      w1Dls = testWord8s (w1 .^. rdls)
-      w2    = atIndexOr 0 ws (n + 2)
-      w2Dqs = testWord8s (w2 .^. rdqs)
-      w2Nls = testWord8s (w2 .^. rnls)
-      w2Dls = testWord8s (w2 .^. rdls)
-      w3    = atIndexOr 0 ws (n + 3)
-      w3Dqs = testWord8s (w3 .^. rdqs)
-      w3Nls = testWord8s (w3 .^. rnls)
-      w3Dls = testWord8s (w3 .^. rdls)
-      w4    = atIndexOr 0 ws (n + 4)
-      w4Dqs = testWord8s (w4 .^. rdqs)
-      w4Nls = testWord8s (w4 .^. rnls)
-      w4Dls = testWord8s (w4 .^. rdls)
-      w5    = atIndexOr 0 ws (n + 5)
-      w5Dqs = testWord8s (w5 .^. rdqs)
-      w5Nls = testWord8s (w5 .^. rnls)
-      w5Dls = testWord8s (w5 .^. rdls)
-      w6    = atIndexOr 0 ws (n + 6)
-      w6Dqs = testWord8s (w6 .^. rdqs)
-      w6Nls = testWord8s (w6 .^. rnls)
-      w6Dls = testWord8s (w6 .^. rdls)
-      w7    = atIndexOr 0 ws (n + 7)
-      w7Dqs = testWord8s (w7 .^. rdqs)
-      w7Nls = testWord8s (w7 .^. rnls)
-      w7Dls = testWord8s (w7 .^. rdls)
-      wDqs  = (w7Dqs  .<. 56) .|. (w6Dqs .<. 48) .|. (w5Dqs .<. 40) .|. (w4Dqs .<. 32) .|. (w3Dqs .<. 24) .|. (w2Dqs .<. 16) .|. (w1Dqs .<. 8) .|. w0Dqs
-      wNls  = (w7Nls  .<. 56) .|. (w6Nls .<. 48) .|. (w5Nls .<. 40) .|. (w4Nls .<. 32) .|. (w3Nls .<. 24) .|. (w2Nls .<. 16) .|. (w1Nls .<. 8) .|. w0Nls
-      wDls  = (w7Dls  .<. 56) .|. (w6Dls .<. 48) .|. (w5Dls .<. 40) .|. (w4Dls .<. 32) .|. (w3Dls .<. 24) .|. (w2Dls .<. 16) .|. (w1Dls .<. 8) .|. w0Dls
-      numWordQuotes = comp wDqs
-      wMask = toggle64 numQuotes numWordQuotes
-      newNumQuotes = numQuotes + fromIntegral (popCount numWordQuotes)
-  in  (comp (wNls .&. wDls) .&. wMask):mkDsvInterestBitsByWord64s rdqs rnls rdls newNumQuotes (n + 8) ws
-mkDsvInterestBitsByWord64s _ _ _ _ _ _ = []
 
 unsafeIndex :: DVS.Vector Word64 -> Int -> Word64
 unsafeIndex v i | i < 0                           = error $ "Invalid index: " <> show i <> " for vector sized " <> show (DVS.length v)

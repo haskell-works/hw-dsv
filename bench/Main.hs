@@ -102,7 +102,6 @@ makeBenchMkInterestBits = do
   benchmarks <- forM files $ \file -> return
     [ env (IO.mmapFromForeignRegion file) $ \(v :: DVS.Vector Word64) -> bgroup "Loading lazy byte string into Word64s" $ mempty
       <> [bench ("mkIbVector                  with sum" <> file) (whnf (DVS.foldr (+) 0 . SVS.mkIbVector        '|') v)]
-      <> [bench ("mkDsvInterestBitsByWord64s  with sum" <> file) (whnf (DVS.foldr (+) 0 . SVS.mkDsvInterestBits '|') v)]
       <> [bench ("makeIndexes                 with sum" <> file) (whnf (DVS.foldr (+) 0 . fst . SVS.makeIndexes '|') v)]
     ]
   return (join benchmarks)
