@@ -5,11 +5,6 @@ data CreateIndexOptions = CreateIndexOptions
   , _createIndexOptionsDelimiter :: Char
   } deriving (Eq, Show)
 
-data CreateFastIndexOptions = CreateFastIndexOptions
-  { _createFastIndexOptionsFilePath  :: FilePath
-  , _createFastIndexOptionsDelimiter :: Char
-  } deriving (Eq, Show)
-
 data QueryOptions = QueryOptions
   { _queryOptionsCreateIndex      :: Bool
   , _queryOptionsColumns          :: [Int]
@@ -28,11 +23,6 @@ data GenerateOptions = GenerateOptions
 data CatOptions = CatOptions
   { _catOptionsSource :: FilePath
   , _catOptionsTarget :: FilePath
-  } deriving (Eq, Show)
-
-data CreateLazyIndexOptions = CreateLazyIndexOptions
-  { _createLazyIndexOptionsFilePath  :: FilePath
-  , _createLazyIndexOptionsDelimiter :: Char
   } deriving (Eq, Show)
 
 data LazyCountFieldsOptions = LazyCountFieldsOptions
