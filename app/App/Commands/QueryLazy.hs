@@ -62,12 +62,16 @@ optsQueryLazy = QueryLazyOptions
     <*> strOption
           (   long "source"
           <>  help "Separated Value file"
-          <>  metavar "STRING"
+          <>  metavar "FILE"
+          <>  showDefault
+          <>  value "-"
           )
     <*> strOption
           (   long "target"
           <>  help "Separated Value file"
-          <>  metavar "STRING"
+          <>  metavar "FILE"
+          <>  showDefault
+          <>  value "-"
           )
     <*> option readChar
           (   long "delimiter"

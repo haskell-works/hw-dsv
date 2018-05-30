@@ -38,16 +38,16 @@ With BMI2 disabled:
 
 ```text
 $ stack build
-$ time stack exec -- hw-dsv query --file corpus/medium.csv --create-index --column 0 --column 2 --column 4 --column 6 --column 8 --column 20 --column 22 --delimiter , > /dev/null
-stack exec -- hw-dsv query --file corpus/medium.csv --create-index --column 0   184.04s user 15.66s system 137% cpu 2:25.67 total
+cat corpus/medium.csv | time stack exec -- hw-dsv query-lazy -k 0 -k 2 -k 4 -k 6 -k 8 -k 20 -k 22 --delimiter , --out-delimiter , > /dev/null
+39.15s user 5.79s system 184% cpu 24.325 total
 ```
 
 With BMI2 enabled:
 
 ```text
 $ stack build --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2
-$ time stack exec -- hw-dsv query --file corpus/medium.csv --create-index --column 0 --column 2 --column 4 --column 6 --column 8 --column 20 --column 22 --delimiter , > /dev/null
-stack exec -- hw-dsv query --file corpus/medium.csv --create-index --column 0   97.60s user 13.96s system 182% cpu 1:01.03 total
+$ cat corpus/medium.csv | time stack exec -- hw-dsv query-lazy -k 0 -k 2 -k 4 -k 6 -k 8 -k 20 -k 22 --delimiter , --out-delimiter , > /dev/null
+144.53s user 11.33s system 131% cpu 1:58.88 total
 ```
 
 ## References
