@@ -53,7 +53,7 @@ snippet c = LBS.take (len `max` 0) $ LBS.drop posC $ svCursorText c
 {-# INLINE snippet #-}
 
 trim :: SvCursor -> SvCursor
-trim c = if svCursorPosition c > 512
+trim c = if svCursorPosition c >= 512
   then trim c
     { svCursorText      = LBS.drop 512 (svCursorText c)
     , svCursorMarkers   = drop 1 (svCursorMarkers c)
