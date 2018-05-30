@@ -8,31 +8,31 @@ module HaskellWorks.Data.Sv.Lazy.Cursor.Internal
   ) where
 
 import Data.Word
+import HaskellWorks.Data.AtIndex
 import HaskellWorks.Data.Bits.BitWise
 import HaskellWorks.Data.Bits.PopCount.PopCount1
 import HaskellWorks.Data.Sv.Internal.Bits
 import HaskellWorks.Data.Sv.Internal.Broadword
 import Prelude
 
-import qualified Data.Vector.Storable                          as DVS
-import qualified HaskellWorks.Data.Sv.Internal.Vector.Storable as DVS
+import qualified Data.Vector.Storable as DVS
 
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
 
 makeIbs :: Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
 makeIbs iw v = DVS.constructN ((DVS.length v + 7) `div` 8) go
   where go :: DVS.Vector Word64 -> Word64
-        go u = let ui = DVS.length u in
-          if ui * 8 + 8 < DVS.length v
+        go u = let ui = end u in
+          if ui * 8 + 8 < end v
             then  let vi  = ui * 8
-                      w0  = testWord8s (DVS.unsafeIndex v (vi + 0) .^. iw)
-                      w1  = testWord8s (DVS.unsafeIndex v (vi + 1) .^. iw)
-                      w2  = testWord8s (DVS.unsafeIndex v (vi + 2) .^. iw)
-                      w3  = testWord8s (DVS.unsafeIndex v (vi + 3) .^. iw)
-                      w4  = testWord8s (DVS.unsafeIndex v (vi + 4) .^. iw)
-                      w5  = testWord8s (DVS.unsafeIndex v (vi + 5) .^. iw)
-                      w6  = testWord8s (DVS.unsafeIndex v (vi + 6) .^. iw)
-                      w7  = testWord8s (DVS.unsafeIndex v (vi + 7) .^. iw)
+                      w0  = testWord8s ((v !!! (vi + 0)) .^. iw)
+                      w1  = testWord8s ((v !!! (vi + 1)) .^. iw)
+                      w2  = testWord8s ((v !!! (vi + 2)) .^. iw)
+                      w3  = testWord8s ((v !!! (vi + 3)) .^. iw)
+                      w4  = testWord8s ((v !!! (vi + 4)) .^. iw)
+                      w5  = testWord8s ((v !!! (vi + 5)) .^. iw)
+                      w6  = testWord8s ((v !!! (vi + 6)) .^. iw)
+                      w7  = testWord8s ((v !!! (vi + 7)) .^. iw)
                       w   = (w7 .<. 56) .|.
                             (w6 .<. 48) .|.
                             (w5 .<. 40) .|.
@@ -43,14 +43,14 @@ makeIbs iw v = DVS.constructN ((DVS.length v + 7) `div` 8) go
                              w0
                   in comp w
             else  let vi  = ui * 8
-                      w0  = testWord8s (DVS.atIndexOr 0 v (vi + 0) .^. iw)
-                      w1  = testWord8s (DVS.atIndexOr 0 v (vi + 1) .^. iw)
-                      w2  = testWord8s (DVS.atIndexOr 0 v (vi + 2) .^. iw)
-                      w3  = testWord8s (DVS.atIndexOr 0 v (vi + 3) .^. iw)
-                      w4  = testWord8s (DVS.atIndexOr 0 v (vi + 4) .^. iw)
-                      w5  = testWord8s (DVS.atIndexOr 0 v (vi + 5) .^. iw)
-                      w6  = testWord8s (DVS.atIndexOr 0 v (vi + 6) .^. iw)
-                      w7  = testWord8s (DVS.atIndexOr 0 v (vi + 7) .^. iw)
+                      w0  = testWord8s (atIndexOr 0 v (vi + 0) .^. iw)
+                      w1  = testWord8s (atIndexOr 0 v (vi + 1) .^. iw)
+                      w2  = testWord8s (atIndexOr 0 v (vi + 2) .^. iw)
+                      w3  = testWord8s (atIndexOr 0 v (vi + 3) .^. iw)
+                      w4  = testWord8s (atIndexOr 0 v (vi + 4) .^. iw)
+                      w5  = testWord8s (atIndexOr 0 v (vi + 5) .^. iw)
+                      w6  = testWord8s (atIndexOr 0 v (vi + 6) .^. iw)
+                      w7  = testWord8s (atIndexOr 0 v (vi + 7) .^. iw)
                       w   = (w7 .<. 56) .|.
                             (w6 .<. 48) .|.
                             (w5 .<. 40) .|.
@@ -66,8 +66,8 @@ makeQuoteMask1 :: DVS.Vector Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
 makeQuoteMask1 ibv pcv = DVS.constructN (DVS.length ibv) go
   where go :: DVS.Vector Word64 -> Word64
         go u =
-          let ui = DVS.length u in
-          toggle64 (DVS.unsafeIndex pcv ui) (DVS.unsafeIndex ibv ui)
+          let ui = end u in
+          toggle64 (pcv !!! ui) (ibv !!! ui)
 {-# INLINE makeQuoteMask1 #-}
 
 makeQuoteMask :: [DVS.Vector Word64] -> [DVS.Vector Word64] -> [DVS.Vector Word64]
@@ -78,9 +78,9 @@ makeQuoteMask _ _                   = []
 makeCummulativePopCount2 :: Word64 -> DVS.Vector Word64 -> (DVS.Vector Word64, Word64)
 makeCummulativePopCount2 c v = let r = DVS.constructN (DVS.length v + 1) go in (DVS.unsafeInit r, DVS.unsafeLast r)
   where go :: DVS.Vector Word64 -> Word64
-        go u = let ui = DVS.length u in
+        go u = let ui = end u in
           if ui > 0
-            then popCount1 (DVS.unsafeIndex v (ui - 1)) + DVS.unsafeIndex u (ui - 1)
+            then popCount1 (v !!! (ui - 1)) + (u !!! (ui - 1))
             else c
 {-# INLINE makeCummulativePopCount2 #-}
 

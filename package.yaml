@@ -27,7 +27,7 @@ dependencies:
 - hw-bits
 - hw-rankselect
 - hw-rankselect-base
-- hw-prim
+- hw-prim               >= 0.6.2.0
 - lens
 - mmap
 - mtl
