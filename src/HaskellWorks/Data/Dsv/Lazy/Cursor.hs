@@ -1,4 +1,4 @@
-module HaskellWorks.Data.Sv.Lazy.Cursor
+module HaskellWorks.Data.Dsv.Lazy.Cursor
   ( makeCursor
   , snippet
   , trim
@@ -11,19 +11,19 @@ module HaskellWorks.Data.Sv.Lazy.Cursor
   , toVectorVector
   ) where
 
-import Data.Char                                 (ord)
+import Data.Char                                  (ord)
 import Data.Function
+import HaskellWorks.Data.Dsv.Internal.Bits
+import HaskellWorks.Data.Dsv.Lazy.Cursor.Internal
+import HaskellWorks.Data.Dsv.Lazy.Cursor.Type
 import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
-import HaskellWorks.Data.Sv.Internal.Bits
-import HaskellWorks.Data.Sv.Lazy.Cursor.Internal
-import HaskellWorks.Data.Sv.Lazy.Cursor.Type
 import HaskellWorks.Data.Vector.AsVector64s
 import Prelude
 
-import qualified Data.ByteString.Lazy                      as LBS
-import qualified Data.Vector                               as DV
-import qualified HaskellWorks.Data.Sv.Internal.Char.Word64 as CW
+import qualified Data.ByteString.Lazy                       as LBS
+import qualified Data.Vector                                as DV
+import qualified HaskellWorks.Data.Dsv.Internal.Char.Word64 as CW
 
 makeCursor :: Char -> LBS.ByteString -> SvCursor
 makeCursor delimiter lbs = SvCursor

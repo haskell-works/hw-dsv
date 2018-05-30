@@ -17,7 +17,7 @@
       "taskName": "stack build",
       "isBuildCommand": true,
       "args": [
-        "echo START_STACK_BUILD && cd ${workspaceRoot} && stack build --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-sv:bmi2 && echo END_STACK_BUILD "
+        "echo START_STACK_BUILD && cd ${workspaceRoot} && stack build --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2 && echo END_STACK_BUILD "
       ],
       "problemMatcher": {
         "owner": "haskell",
@@ -56,9 +56,9 @@
     },
     {
       "isTestCommand": true,
-      "taskName": "stack build --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-sv:bmi2",
+      "taskName": "stack build --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2",
       "args": [
-        "echo START_STACK_TEST && cd ${workspaceRoot} && stack test --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-sv:bmi2 && echo END_STACK_TEST "
+        "echo START_STACK_TEST && cd ${workspaceRoot} && stack test --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2 && echo END_STACK_TEST "
       ],
       "problemMatcher": {
         "owner": "haskell",

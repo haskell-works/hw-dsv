@@ -1,4 +1,4 @@
-module HaskellWorks.Data.Sv.Gen where
+module HaskellWorks.Data.Dsv.Gen where
 
 import Hedgehog
 

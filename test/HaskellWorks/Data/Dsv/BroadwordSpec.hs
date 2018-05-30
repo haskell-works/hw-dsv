@@ -1,29 +1,29 @@
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module HaskellWorks.Data.Sv.BroadwordSpec (spec) where
+module HaskellWorks.Data.Dsv.BroadwordSpec (spec) where
 
 import Control.Concurrent
 import Control.Monad.IO.Class
-import Data.Maybe                              (fromJust)
+import Data.Maybe                               (fromJust)
 import Data.Word
 import HaskellWorks.Data.Bits.BitRead
 import HaskellWorks.Data.Bits.BitShow
+import HaskellWorks.Data.Dsv.Internal.Broadword
 import HaskellWorks.Data.FromByteString
-import HaskellWorks.Data.Sv.Internal.Broadword
 import HaskellWorks.Hspec.Hedgehog
 import Hedgehog
 import Test.Hspec
 
-import qualified Data.Vector.Storable                                  as DVS
-import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal.Reference as SVS
+import qualified Data.Vector.Storable                                   as DVS
+import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal.Reference as SVS
 
 {-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
 {-# ANN module ("HLint: redundant bracket"          :: String) #-}
 
 spec :: Spec
-spec = describe "HaskellWorks.Data.Sv.BroadwordSpec" $ do
+spec = describe "HaskellWorks.Data.Dsv.BroadwordSpec" $ do
   it "Case 0" $ requireProperty $ do
     let actual    = toggle64 0 $ fromJust $ bitRead "00100100 00000000 00000000 00000000 00000000 00000000 00000000 00000000" :: Word64
     let expected  =              fromJust $ bitRead "11000111 11111111 11111111 11111111 11111111 11111111 11111111 11111111" :: Word64

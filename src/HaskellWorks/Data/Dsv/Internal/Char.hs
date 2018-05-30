@@ -1,4 +1,4 @@
-module HaskellWorks.Data.Sv.Internal.Char where
+module HaskellWorks.Data.Dsv.Internal.Char where
 
 import Data.Char
 import Data.Semigroup      ((<>))

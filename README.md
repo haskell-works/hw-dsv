@@ -1,5 +1,5 @@
-# hw-sv
-[![CircleCI](https://circleci.com/gh/haskell-works/hw-sv.svg?style=svg)](https://circleci.com/gh/haskell-works/hw-sv)
+# hw-dsv
+[![CircleCI](https://circleci.com/gh/haskell-works/hw-dsv.svg?style=svg)](https://circleci.com/gh/haskell-works/hw-dsv)
 
 Unbelievably fast DSV file parser that readers based on succinct data structures.
 
@@ -21,9 +21,9 @@ stack bench
 For best perform, add the `bmi2` flag to target the BMI2 instruction set:
 
 ```text
-stack build --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-sv:bmi2
-stack test  --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-sv:bmi2
-stack bench --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-sv:bmi2
+stack build --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2
+stack test  --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2
+stack bench --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2
 ```
 
 ## Benchmark results
@@ -37,16 +37,16 @@ With BMI2 disabled:
 
 ```text
 $ stack build
-$ time stack exec -- hw-sv query --file corpus/medium.csv --create-index --column 0 --column 2 --column 4 --column 6 --column 8 --column 20 --column 22 --delimiter , > /dev/null
-stack exec -- hw-sv query --file corpus/medium.csv --create-index --column 0   184.04s user 15.66s system 137% cpu 2:25.67 total
+$ time stack exec -- hw-dsv query --file corpus/medium.csv --create-index --column 0 --column 2 --column 4 --column 6 --column 8 --column 20 --column 22 --delimiter , > /dev/null
+stack exec -- hw-dsv query --file corpus/medium.csv --create-index --column 0   184.04s user 15.66s system 137% cpu 2:25.67 total
 ```
 
 With BMI2 enabled:
 
 ```text
-$ stack build --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-sv:bmi2
-$ time stack exec -- hw-sv query --file corpus/medium.csv --create-index --column 0 --column 2 --column 4 --column 6 --column 8 --column 20 --column 22 --delimiter , > /dev/null
-stack exec -- hw-sv query --file corpus/medium.csv --create-index --column 0   97.60s user 13.96s system 182% cpu 1:01.03 total
+$ stack build --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2
+$ time stack exec -- hw-dsv query --file corpus/medium.csv --create-index --column 0 --column 2 --column 4 --column 6 --column 8 --column 20 --column 22 --delimiter , > /dev/null
+stack exec -- hw-dsv query --file corpus/medium.csv --create-index --column 0   97.60s user 13.96s system 182% cpu 1:01.03 total
 ```
 
 ## References

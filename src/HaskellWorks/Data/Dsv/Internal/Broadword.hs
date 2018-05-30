@@ -1,4 +1,4 @@
-module HaskellWorks.Data.Sv.Internal.Broadword where
+module HaskellWorks.Data.Dsv.Internal.Broadword where
 
 import Data.Bits.Pdep
 import Data.Word

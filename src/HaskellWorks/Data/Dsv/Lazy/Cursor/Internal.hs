@@ -1,7 +1,7 @@
 {-# LANGUAGE ExplicitForAll   #-}
 {-# LANGUAGE FlexibleContexts #-}
 
-module HaskellWorks.Data.Sv.Lazy.Cursor.Internal
+module HaskellWorks.Data.Dsv.Lazy.Cursor.Internal
   ( makeIbs
   , makeCummulativePopCount
   , makeQuoteMask
@@ -11,8 +11,8 @@ import Data.Word
 import HaskellWorks.Data.AtIndex
 import HaskellWorks.Data.Bits.BitWise
 import HaskellWorks.Data.Bits.PopCount.PopCount1
-import HaskellWorks.Data.Sv.Internal.Bits
-import HaskellWorks.Data.Sv.Internal.Broadword
+import HaskellWorks.Data.Dsv.Internal.Bits
+import HaskellWorks.Data.Dsv.Internal.Broadword
 import Prelude
 
 import qualified Data.Vector.Storable as DVS

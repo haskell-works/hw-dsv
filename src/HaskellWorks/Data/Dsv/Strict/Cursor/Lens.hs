@@ -4,9 +4,9 @@
 {-# LANGUAGE TypeFamilies           #-}
 {-# LANGUAGE UndecidableInstances   #-}
 
-module HaskellWorks.Data.Sv.Strict.Cursor.Lens where
+module HaskellWorks.Data.Dsv.Strict.Cursor.Lens where
 
 import Control.Lens
-import HaskellWorks.Data.Sv.Strict.Cursor.Type
+import HaskellWorks.Data.Dsv.Strict.Cursor.Type
 
 makeFields ''SvCursor

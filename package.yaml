@@ -1,10 +1,10 @@
-name:                hw-sv
+name:                hw-dsv
 version:             0.1.0.0
-github:              "newhoggy/hw-sv"
+github:              "haskell-works/hw-dsv"
 license:             BSD3
 author:              "John Ky"
 maintainer:          "newhoggy@gmail.com"
-copyright:           "2016 John Ky"
+copyright:           "2018 John Ky"
 
 extra-source-files:
 - README.md
@@ -17,7 +17,7 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on Github at <https://github.com/newhoggy/hw-sv#readme>
+description:         Please see the README on Github at <https://github.com/newhoggy/hw-dsv#readme>
 
 dependencies:
 - base >= 4.7 && < 5
@@ -47,7 +47,7 @@ library:
   - -O2
 
 executables:
-  hw-sv:
+  hw-dsv:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -61,11 +61,11 @@ executables:
     - -Wredundant-constraints
     - -O2
     dependencies:
-    - hw-sv
+    - hw-dsv
     - hedgehog
 
 tests:
-  hw-sv-test:
+  hw-dsv-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
@@ -74,7 +74,7 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - directory
-    - hw-sv
+    - hw-dsv
     - hedgehog
     - hspec
     - hw-hspec-hedgehog
@@ -82,7 +82,7 @@ tests:
     verbatim:
       build-tool-depends: hspec-discover:hspec-discover
 
-  hw-sv-space:
+  hw-dsv-space:
     main:               Space.hs
     source-dirs:        weigh
     ghc-options:
@@ -97,7 +97,7 @@ tests:
       - deepseq
       - directory
       - ghc-prim
-      - hw-sv
+      - hw-dsv
       - lazy-csv
       - parsec
       - random
@@ -119,7 +119,7 @@ benchmarks:
     - cassava
     - criterion
     - directory
-    - hw-sv
+    - hw-dsv
     - weigh
 
 when:

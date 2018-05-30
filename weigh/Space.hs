@@ -4,10 +4,10 @@ import Data.ByteString (ByteString)
 import Data.Vector     (Vector)
 import Weigh
 
-import qualified Data.ByteString.Lazy               as LBS
-import qualified Data.Csv                           as CSV
-import qualified Data.Vector                        as DV
-import qualified HaskellWorks.Data.Sv.Strict.Cursor as SVS
+import qualified Data.ByteString.Lazy                as LBS
+import qualified Data.Csv                            as CSV
+import qualified Data.Vector                         as DV
+import qualified HaskellWorks.Data.Dsv.Strict.Cursor as SVS
 
 {-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
 

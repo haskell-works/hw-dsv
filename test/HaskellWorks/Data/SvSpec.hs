@@ -2,7 +2,7 @@
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module HaskellWorks.Data.SvSpec (spec) where
+module HaskellWorks.Data.DsvSpec (spec) where
 
 import Control.Concurrent
 import Control.Monad.IO.Class
@@ -14,16 +14,16 @@ import HaskellWorks.Hspec.Hedgehog
 import Hedgehog
 import Test.Hspec
 
-import qualified Data.Vector.Storable                                  as DVS
-import qualified HaskellWorks.Data.Sv.Strict.Cursor                    as SVS
-import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal.Reference as SVS
+import qualified Data.Vector.Storable                                   as DVS
+import qualified HaskellWorks.Data.Dsv.Strict.Cursor                    as SVS
+import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal.Reference as SVS
 
 {-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
 {-# ANN module ("HLint: redundant bracket"          :: String) #-}
 
 spec :: Spec
-spec = describe "HaskellWorks.Data.SvSpec" $ do
+spec = describe "HaskellWorks.Data.DsvSpec" $ do
   it "Parsing Basic DSV" $ requireTest $ do
     let bs =  "12345678,12345678,123456,abcdefghijklmnopqrstuvwxyz\n\
               \12345678,12345678,123456,abcdefghijklmnopqrstuvwxyz\n\

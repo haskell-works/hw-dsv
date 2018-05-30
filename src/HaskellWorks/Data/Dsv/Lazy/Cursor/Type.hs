@@ -1,4 +1,4 @@
-module HaskellWorks.Data.Sv.Lazy.Cursor.Type where
+module HaskellWorks.Data.Dsv.Lazy.Cursor.Type where
 
 import Data.Word
 

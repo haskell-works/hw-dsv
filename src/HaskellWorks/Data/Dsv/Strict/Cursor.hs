@@ -2,7 +2,7 @@
 {-# LANGUAGE MultiWayIf          #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module HaskellWorks.Data.Sv.Strict.Cursor
+module HaskellWorks.Data.Dsv.Strict.Cursor
   ( SvCursor(..)
   , snippet
   , nextField
@@ -15,17 +15,17 @@ module HaskellWorks.Data.Sv.Strict.Cursor
 
 import Data.Char                                 (ord)
 import Data.Word
+import HaskellWorks.Data.Dsv.Strict.Cursor.Type
 import HaskellWorks.Data.Product
 import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.RankSelect.CsPoppy
-import HaskellWorks.Data.Sv.Strict.Cursor.Type
 
-import qualified Data.ByteString                             as BS
-import qualified Data.Vector                                 as DV
-import qualified Data.Vector.Storable                        as DVS
-import qualified HaskellWorks.Data.FromForeignRegion         as IO
-import qualified HaskellWorks.Data.Sv.Strict.Cursor.Internal as SVS
+import qualified Data.ByteString                              as BS
+import qualified Data.Vector                                  as DV
+import qualified Data.Vector.Storable                         as DVS
+import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal as SVS
+import qualified HaskellWorks.Data.FromForeignRegion          as IO
 
 mmapCursor :: Char -> Bool -> FilePath -> IO (SvCursor BS.ByteString CsPoppy)
 mmapCursor delimiter createIndex filePath = do

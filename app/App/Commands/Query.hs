@@ -10,20 +10,20 @@ import App.Commands.Options.Type
 import Control.Applicative
 import Control.Lens
 import Control.Monad
-import Control.Monad.IO.Class             (liftIO)
+import Control.Monad.IO.Class              (liftIO)
 import Control.Monad.Trans.Resource
-import Data.Char                          (ord)
+import Data.Char                           (ord)
 import Data.List
-import Data.Semigroup                     ((<>))
-import HaskellWorks.Data.Sv.Internal.Char
-import Options.Applicative                hiding (columns)
+import Data.Semigroup                      ((<>))
+import HaskellWorks.Data.Dsv.Internal.Char
+import Options.Applicative                 hiding (columns)
 
-import qualified App.Commands.Options.Lens          as L
-import qualified App.IO                             as IO
-import qualified Data.ByteString                    as BS
-import qualified Data.ByteString.Builder            as B
-import qualified Data.Vector                        as DV
-import qualified HaskellWorks.Data.Sv.Strict.Cursor as SVS
+import qualified App.Commands.Options.Lens           as L
+import qualified App.IO                              as IO
+import qualified Data.ByteString                     as BS
+import qualified Data.ByteString.Builder             as B
+import qualified Data.Vector                         as DV
+import qualified HaskellWorks.Data.Dsv.Strict.Cursor as SVS
 
 runQuery :: QueryOptions -> IO ()
 runQuery opts = do

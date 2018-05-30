@@ -2,25 +2,25 @@
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module HaskellWorks.Data.Sv.Strict.Cursor.Internal where
+module HaskellWorks.Data.Dsv.Strict.Cursor.Internal where
 
 import Control.Monad.ST
-import Data.Bits                                 (popCount)
+import Data.Bits                                  (popCount)
 import Data.Word
 import HaskellWorks.Data.AtIndex
 import HaskellWorks.Data.Bits.BitWise
+import HaskellWorks.Data.Dsv.Internal.Bits
+import HaskellWorks.Data.Dsv.Internal.Broadword
+import HaskellWorks.Data.Dsv.Internal.Char.Word64
+import HaskellWorks.Data.Dsv.Strict.Cursor.Type
 import HaskellWorks.Data.Positioning
 import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
-import HaskellWorks.Data.Sv.Internal.Bits
-import HaskellWorks.Data.Sv.Internal.Broadword
-import HaskellWorks.Data.Sv.Internal.Char.Word64
-import HaskellWorks.Data.Sv.Strict.Cursor.Type
 import Prelude
 
-import qualified Data.Vector.Storable                      as DVS
-import qualified Data.Vector.Storable.Mutable              as DVSM
-import qualified HaskellWorks.Data.Sv.Internal.Char.Word64 as CW
+import qualified Data.Vector.Storable                       as DVS
+import qualified Data.Vector.Storable.Mutable               as DVSM
+import qualified HaskellWorks.Data.Dsv.Internal.Char.Word64 as CW
 
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
 

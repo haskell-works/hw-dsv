@@ -7,17 +7,17 @@ module App.Commands.CreateIndex
 import App.Commands.Options.Type
 import Control.Lens
 import Control.Monad
-import Data.Semigroup                     ((<>))
-import HaskellWorks.Data.Sv.Internal.Char
-import Options.Applicative                hiding (columns)
+import Data.Semigroup                      ((<>))
+import HaskellWorks.Data.Dsv.Internal.Char
+import Options.Applicative                 hiding (columns)
 
-import qualified App.Commands.Options.Lens             as L
-import qualified App.IO                                as IO
-import qualified Data.ByteString.Builder               as B
-import qualified Data.Vector.Storable                  as DVS
-import qualified HaskellWorks.Data.Sv.Lazy.Cursor      as SVL
-import qualified HaskellWorks.Data.Sv.Lazy.Cursor.Lens as SVLL
-import qualified System.IO                             as IO
+import qualified App.Commands.Options.Lens              as L
+import qualified App.IO                                 as IO
+import qualified Data.ByteString.Builder                as B
+import qualified Data.Vector.Storable                   as DVS
+import qualified HaskellWorks.Data.Dsv.Lazy.Cursor      as SVL
+import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Lens as SVLL
+import qualified System.IO                              as IO
 
 runCreateIndex :: CreateIndexOptions -> IO ()
 runCreateIndex opts = do
