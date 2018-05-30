@@ -101,7 +101,6 @@ tests:
       - lazy-csv
       - parsec
       - random
-      - sv
       - text
       - vector
       - weigh

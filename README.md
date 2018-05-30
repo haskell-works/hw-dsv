@@ -1,5 +1,6 @@
 # hw-dsv
 [![CircleCI](https://circleci.com/gh/haskell-works/hw-dsv.svg?style=svg)](https://circleci.com/gh/haskell-works/hw-dsv)
+[![Travis](https://travis-ci.org/haskell-works/hw-dsv.svg?branch=master)](https://travis-ci.org/haskell-works/hw-dsv)
 
 Unbelievably fast DSV file parser that readers based on succinct data structures.
 
