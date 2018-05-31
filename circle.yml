@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/project
     docker:
-      - image: quay.io/haskell_works/stack-build-cabal:2018-01-29
+      - image: quay.io/haskell_works/stack-build-cabal:2018-05-31
 
     steps:
       - checkout
@@ -15,6 +15,13 @@ jobs:
             mkdir -p ~/.local/bin
             cp ./scripts/* ~/.local/bin
 
+      - run:
+          name: Delete cabal files & query resolver & ghc version
+          command: |
+            rm -f *.cabal
+            resolver > resolver.conf
+            ghc-version $(cat resolver.conf) >  ghc-version.conf
+
       ##### Updating cabval package list
       - run:
           name: Updating cabal package list date stamp
@@ -22,7 +29,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - dot-cabal-{{ checksum "dot-cabal-cache-date" }}
+            - dot-cabal-{{ checksum "dot-cabal-cache-date" }}-gz8vvsw
             - dot-cabal
 
       - run:
@@ -30,7 +37,7 @@ jobs:
           command: cabal update
 
       - save_cache:
-          key: dot-cabal-{{ checksum "dot-cabal-cache-date" }}
+          key: dot-cabal-{{ checksum "dot-cabal-cache-date" }}-gz8vvsw
           paths:
             - ~/.cabal
       - save_cache:
@@ -40,9 +47,12 @@ jobs:
 
       - restore_cache:
           keys:
-            - dot-stack-{{ checksum "stack.yaml" }}-{{ checksum "package.yaml" }}
-            - dot-stack-{{ checksum "stack.yaml" }}-build
-            - dot-stack-{{ checksum "stack.yaml" }}-setup
+            - dot-stack-{{ checksum "resolver.conf"      }}-{{ checksum "package.yaml" }}-gz8vvsw
+            - dot-stack-{{ checksum "ghc-version.conf"   }}-{{ checksum "package.yaml" }}-gz8vvsw
+            - dot-stack-{{ checksum "resolver.conf"      }}-build-gz8vvsw
+            - dot-stack-{{ checksum "ghc-version.conf"   }}-build-gz8vvsw
+            - dot-stack-{{ checksum "resolver.conf"      }}-setup-gz8vvsw
+            - dot-stack-{{ checksum "ghc-version.conf"   }}-setup-gz8vvsw
 
       - run:
           name: Fetching latest organisation package versions
@@ -52,16 +62,20 @@ jobs:
             cat stack-ci.yaml
 
       - restore_cache:
-          key: dot-stack-work-{{ checksum "stack.yaml" }}
+          keys:
+            - dot-stack-work-{{ checksum "resolver.conf"      }}-gz8vvsw
+            - dot-stack-work-{{ checksum "ghc-version.conf"   }}-gz8vvsw
 
       - run:
           name: Stack setup
           command: stack setup
 
       - save_cache:
-          key: dot-stack-{{ checksum "stack.yaml" }}-setup
-          paths:
-            - ~/.stack
+          key:    dot-stack-{{ checksum "resolver.conf"      }}-setup-gz8vvsw
+          paths:  ~/.stack
+      - save_cache:
+          key:    dot-stack-{{ checksum "ghc-version.conf"   }}-setup-gz8vvsw
+          paths:  ~/.stack
 
       - run:
           name: Building dependencies
@@ -72,17 +86,20 @@ jobs:
           command: stack --stack-yaml stack-ci.yaml build --test --no-run-tests --bench --no-run-benchmarks
 
       - save_cache:
-          key: dot-stack-{{ checksum "stack.yaml" }}-{{ checksum "package.yaml" }}
-          paths:
-            - ~/.stack
+          key:    dot-stack-{{ checksum "resolver.conf"      }}-{{ checksum "package.yaml" }}-gz8vvsw
+          paths:  ~/.stack
       - save_cache:
-          key: dot-stack-{{ checksum "stack.yaml" }}-build
-          paths:
-            - ~/.stack
-
+          key:    dot-stack-{{ checksum "ghc-version.conf"   }}-{{ checksum "package.yaml" }}-gz8vvsw
+          paths:  ~/.stack
       - save_cache:
-          key: dot-stack-work-{{ checksum "stack.yaml" }}
-          paths: ~/project/.stack-work
+          key:    dot-stack-{{ checksum "resolver.conf"      }}-build-gz8vvsw
+          paths:  ~/.stack
+      - save_cache:
+          key:    dot-stack-{{ checksum "ghc-version.conf"   }}-build-gz8vvsw
+          paths:  ~/.stack
+      - save_cache:
+          key:    dot-stack-work-{{ checksum "resolver.conf" }}-gz8vvsw
+          paths:  ~/project/.stack-work
 
       ##### Running tests
       - run:
