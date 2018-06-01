@@ -62,12 +62,12 @@ optsQuery = QueryOptions
     <*> strOption
           (   long "source"
           <>  help "Separated Value file"
-          <>  metavar "STRING"
+          <>  metavar "FILE"
           )
     <*> strOption
           (   long "target"
           <>  help "Separated Value file"
-          <>  metavar "STRING"
+          <>  metavar "FILE"
           )
     <*> option readChar
           (   long "delimiter"
