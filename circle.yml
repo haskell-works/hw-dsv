@@ -47,7 +47,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - dot-stack-{{ checksum "resolver.conf"      }}-{{ checksum "package.yaml" }}-gz8vvsw
+            - dot-stack-{{ checksum "stack.yaml"         }}-{{ checksum "package.yaml" }}-gz8vvsw
             - dot-stack-{{ checksum "resolver.conf"      }}-build-gz8vvsw
             - dot-stack-{{ checksum "ghc-version.conf"   }}-build-gz8vvsw
             - dot-stack-{{ checksum "resolver.conf"      }}-setup-gz8vvsw
@@ -85,7 +85,7 @@ jobs:
           command: stack --stack-yaml stack-ci.yaml build --test --no-run-tests --bench --no-run-benchmarks
 
       - save_cache:
-          key:    dot-stack-{{ checksum "resolver.conf"      }}-{{ checksum "package.yaml" }}-gz8vvsw
+          key:    dot-stack-{{ checksum "stack.yaml"         }}-{{ checksum "package.yaml" }}-gz8vvsw
           paths:  ~/.stack
       - save_cache:
           key:    dot-stack-{{ checksum "resolver.conf"      }}-build-gz8vvsw
