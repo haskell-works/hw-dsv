@@ -25,13 +25,13 @@ import qualified Data.ByteString.Lazy                       as LBS
 import qualified Data.Vector                                as DV
 import qualified HaskellWorks.Data.Dsv.Internal.Char.Word64 as CW
 
-makeCursor :: Char -> LBS.ByteString -> SvCursor
-makeCursor delimiter lbs = SvCursor
-  { svCursorDelimiter = fromIntegral (ord delimiter)
-  , svCursorText      = lbs
-  , svCursorMarkers   = ib
-  , svCursorNewlines  = nls
-  , svCursorPosition  = 0
+makeCursor :: Char -> LBS.ByteString -> DsvCursor
+makeCursor delimiter lbs = DsvCursor
+  { dsvCursorDelimiter = fromIntegral (ord delimiter)
+  , dsvCursorText      = lbs
+  , dsvCursorMarkers   = ib
+  , dsvCursorNewlines  = nls
+  , dsvCursorPosition  = 0
   }
   where ws  = asVector64s 64 lbs
         ibq = makeIbs CW.doubleQuote                      <$> ws
@@ -44,63 +44,63 @@ makeCursor delimiter lbs = SvCursor
         nls = zip2And ibn qm
 {-# INLINE makeCursor #-}
 
-snippet :: SvCursor -> LBS.ByteString
-snippet c = LBS.take (len `max` 0) $ LBS.drop posC $ svCursorText c
+snippet :: DsvCursor -> LBS.ByteString
+snippet c = LBS.take (len `max` 0) $ LBS.drop posC $ dsvCursorText c
   where d = nextField c
-        posC = fromIntegral $ svCursorPosition c
-        posD = fromIntegral $ svCursorPosition d
+        posC = fromIntegral $ dsvCursorPosition c
+        posD = fromIntegral $ dsvCursorPosition d
         len  = posD - posC
 {-# INLINE snippet #-}
 
-trim :: SvCursor -> SvCursor
-trim c = if svCursorPosition c >= 512
+trim :: DsvCursor -> DsvCursor
+trim c = if dsvCursorPosition c >= 512
   then trim c
-    { svCursorText      = LBS.drop 512 (svCursorText c)
-    , svCursorMarkers   = drop 1 (svCursorMarkers c)
-    , svCursorNewlines  = drop 1 (svCursorNewlines c)
-    , svCursorPosition  = svCursorPosition c - 512
+    { dsvCursorText     = LBS.drop 512 (dsvCursorText c)
+    , dsvCursorMarkers  = drop 1 (dsvCursorMarkers c)
+    , dsvCursorNewlines = drop 1 (dsvCursorNewlines c)
+    , dsvCursorPosition = dsvCursorPosition c - 512
     }
   else c
 {-# INLINE trim #-}
 
-atEnd :: SvCursor -> Bool
-atEnd c = LBS.null (LBS.drop (fromIntegral (svCursorPosition c)) (svCursorText c))
+atEnd :: DsvCursor -> Bool
+atEnd c = LBS.null (LBS.drop (fromIntegral (dsvCursorPosition c)) (dsvCursorText c))
 {-# INLINE atEnd #-}
 
-nextField :: SvCursor -> SvCursor
+nextField :: DsvCursor -> DsvCursor
 nextField cursor = cursor
-  { svCursorPosition = newPos
+  { dsvCursorPosition = newPos
   }
-  where currentRank = rank1   (svCursorMarkers cursor) (svCursorPosition cursor)
-        newPos      = select1 (svCursorMarkers cursor) (currentRank + 1) - 1
+  where currentRank = rank1   (dsvCursorMarkers cursor) (dsvCursorPosition cursor)
+        newPos      = select1 (dsvCursorMarkers cursor) (currentRank + 1) - 1
 {-# INLINE nextField #-}
 
-nextRow :: SvCursor -> SvCursor
+nextRow :: DsvCursor -> DsvCursor
 nextRow cursor = cursor
-  { svCursorPosition =  if newPos > svCursorPosition cursor
+  { dsvCursorPosition = if newPos > dsvCursorPosition cursor
                           then newPos
-                          else fromIntegral (LBS.length (svCursorText cursor))
+                          else fromIntegral (LBS.length (dsvCursorText cursor))
 
   }
-  where currentRank = rank1   (svCursorNewlines cursor) (svCursorPosition cursor)
-        newPos      = select1 (svCursorNewlines cursor) (currentRank + 1) - 1
+  where currentRank = rank1   (dsvCursorNewlines cursor) (dsvCursorPosition cursor)
+        newPos      = select1 (dsvCursorNewlines cursor) (currentRank + 1) - 1
 {-# INLINE nextRow #-}
 
-nextPosition :: SvCursor -> SvCursor
+nextPosition :: DsvCursor -> DsvCursor
 nextPosition cursor = cursor
-    { svCursorPosition = if LBS.null (LBS.drop (fromIntegral newPos) (svCursorText cursor))
-                            then fromIntegral (LBS.length (svCursorText cursor))
+    { dsvCursorPosition = if LBS.null (LBS.drop (fromIntegral newPos) (dsvCursorText cursor))
+                            then fromIntegral (LBS.length (dsvCursorText cursor))
                             else newPos
     }
-  where newPos  = svCursorPosition cursor + 1
+  where newPos  = dsvCursorPosition cursor + 1
 {-# INLINE nextPosition #-}
 
-getRowBetween :: SvCursor -> SvCursor -> DV.Vector LBS.ByteString
+getRowBetween :: DsvCursor -> DsvCursor -> DV.Vector LBS.ByteString
 getRowBetween c d = DV.unfoldrN c2d go c
-  where cr  = rank1 (svCursorMarkers c) (svCursorPosition c)
-        dr  = rank1 (svCursorMarkers d) (svCursorPosition d)
+  where cr  = rank1 (dsvCursorMarkers c) (dsvCursorPosition c)
+        dr  = rank1 (dsvCursorMarkers d) (dsvCursorPosition d)
         c2d = fromIntegral (dr - cr)
-        go :: SvCursor -> Maybe (LBS.ByteString, SvCursor)
+        go :: DsvCursor -> Maybe (LBS.ByteString, DsvCursor)
         go e = case nextField e of
           f -> case nextPosition f of
             g -> case snippet e of
@@ -108,13 +108,13 @@ getRowBetween c d = DV.unfoldrN c2d go c
         {-# INLINE go #-}
 {-# INLINE getRowBetween #-}
 
-toListVector :: SvCursor -> [DV.Vector LBS.ByteString]
-toListVector c = if svCursorPosition d > svCursorPosition c && not (atEnd c)
+toListVector :: DsvCursor -> [DV.Vector LBS.ByteString]
+toListVector c = if dsvCursorPosition d > dsvCursorPosition c && not (atEnd c)
   then getRowBetween c d:toListVector (trim d)
   else []
   where d = nextPosition (nextRow c)
 {-# INLINE toListVector #-}
 
-toVectorVector :: SvCursor -> DV.Vector (DV.Vector LBS.ByteString)
+toVectorVector :: DsvCursor -> DV.Vector (DV.Vector LBS.ByteString)
 toVectorVector = DV.fromList . toListVector
 {-# INLINE toVectorVector #-}

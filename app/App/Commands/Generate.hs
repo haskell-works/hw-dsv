@@ -10,10 +10,10 @@ import Data.List
 import Data.Semigroup            ((<>))
 import Options.Applicative       hiding (columns)
 
-import qualified App.Commands.Options.Lens as L
-import qualified App.Gen                   as G
-import qualified Hedgehog.Gen              as G
-import qualified Hedgehog.Range            as R
+import qualified App.Gen        as G
+import qualified App.Lens       as L
+import qualified Hedgehog.Gen   as G
+import qualified Hedgehog.Range as R
 
 printField :: String -> String
 printField cs = if any invalid cs

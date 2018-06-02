@@ -6,20 +6,20 @@ module App.Commands.Query
   ( cmdQuery
   ) where
 
+import App.Char
 import App.Commands.Options.Type
 import Control.Applicative
 import Control.Lens
 import Control.Monad
-import Control.Monad.IO.Class              (liftIO)
+import Control.Monad.IO.Class       (liftIO)
 import Control.Monad.Trans.Resource
-import Data.Char                           (ord)
+import Data.Char                    (ord)
 import Data.List
-import Data.Semigroup                      ((<>))
-import HaskellWorks.Data.Dsv.Internal.Char
-import Options.Applicative                 hiding (columns)
+import Data.Semigroup               ((<>))
+import Options.Applicative
 
-import qualified App.Commands.Options.Lens           as L
 import qualified App.IO                              as IO
+import qualified App.Lens                            as L
 import qualified Data.ByteString                     as BS
 import qualified Data.ByteString.Builder             as B
 import qualified Data.Vector                         as DV
@@ -45,7 +45,7 @@ runQuery opts = do
   where columnToFieldString :: DV.Vector BS.ByteString -> Int -> B.Builder
         columnToFieldString fields i = if i >= 0 && i < DV.length fields
           then B.byteString (DV.unsafeIndex fields i)
-          else B.byteString (BS.empty)
+          else B.byteString  BS.empty
 
 cmdQuery :: Mod CommandFields (IO ())
 cmdQuery = command "query" $ flip info idm $ runQuery <$> optsQuery

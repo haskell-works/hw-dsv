@@ -216,9 +216,9 @@ mkDsvIbDlFromStriped sv cpcs = DVS.constructN ((DVS.length sv) `div` 3) go
                     m   = toggle64 cpc wdq
                 in wdl .&. m
 
-nextCursor :: (Rank1 s, Select1 s) => SvCursor t s -> SvCursor t s
+nextCursor :: (Rank1 s, Select1 s) => DsvCursor t s -> DsvCursor t s
 nextCursor cursor = cursor
-  { svCursorPosition = newPos
+  { dsvCursorPosition = newPos
   }
-  where currentRank = rank1   (svCursorMarkers cursor) (svCursorPosition cursor)
-        newPos      = select1 (svCursorMarkers cursor) (currentRank + 1)
+  where currentRank = rank1   (dsvCursorMarkers cursor) (dsvCursorPosition cursor)
+        newPos      = select1 (dsvCursorMarkers cursor) (currentRank + 1)

@@ -7,9 +7,9 @@ import Control.Lens
 import Data.Semigroup            ((<>))
 import Options.Applicative       hiding (columns)
 
-import qualified App.Commands.Options.Lens as L
-import qualified App.IO                    as IO
-import qualified Data.ByteString.Lazy      as LBS
+import qualified App.IO               as IO
+import qualified App.Lens             as L
+import qualified Data.ByteString.Lazy as LBS
 
 runCat :: CatOptions -> IO ()
 runCat opts = do

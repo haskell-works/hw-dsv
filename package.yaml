@@ -21,7 +21,6 @@ description:         Please see the README on Github at <https://github.com/newh
 
 dependencies:
 - base >= 4.7 && < 5
-- attoparsec
 - bits-extra
 - bytestring
 - hw-bits
@@ -29,11 +28,6 @@ dependencies:
 - hw-rankselect-base
 - hw-prim               >= 0.6.2.0
 - lens
-- mmap
-- mtl
-- optparse-applicative
-- resourcet
-- transformers
 - vector
 
 library:
@@ -63,6 +57,8 @@ executables:
     dependencies:
     - hw-dsv
     - hedgehog
+    - optparse-applicative
+    - resourcet
 
 tests:
   hw-dsv-test:
@@ -89,20 +85,8 @@ tests:
       - -O2
       - -Wall
     dependencies:
-      - base
-      - bytestring
       - cassava
-      - conduit
-      - csv
-      - deepseq
-      - directory
-      - ghc-prim
       - hw-dsv
-      - lazy-csv
-      - parsec
-      - random
-      - text
-      - vector
       - weigh
     verbatim:
       build-tool-depends: hspec-discover:hspec-discover
@@ -119,6 +103,7 @@ benchmarks:
     - criterion
     - directory
     - hw-dsv
+    - mmap
     - weigh
 
 when:

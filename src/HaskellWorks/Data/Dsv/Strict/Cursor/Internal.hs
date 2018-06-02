@@ -126,9 +126,9 @@ makeIndexes' rdqs rnls rdls ws = do
             DVSM.unsafeWrite markers  (fromIntegral ui) (comp (wNls .&. wDls) .&. wMask)
             DVSM.unsafeWrite newlines (fromIntegral ui) (comp  wNls           .&. wMask)
 
-nextCursor :: (Rank1 s, Select1 s) => SvCursor t s -> SvCursor t s
+nextCursor :: (Rank1 s, Select1 s) => DsvCursor t s -> DsvCursor t s
 nextCursor cursor = cursor
-  { svCursorPosition = newPos
+  { dsvCursorPosition = newPos
   }
-  where currentRank = rank1   (svCursorMarkers cursor) (svCursorPosition cursor)
-        newPos      = select1 (svCursorMarkers cursor) (currentRank + 1)
+  where currentRank = rank1   (dsvCursorMarkers cursor) (dsvCursorPosition cursor)
+        newPos      = select1 (dsvCursorMarkers cursor) (currentRank + 1)

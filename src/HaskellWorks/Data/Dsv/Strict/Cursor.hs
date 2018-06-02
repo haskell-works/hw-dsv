@@ -3,7 +3,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module HaskellWorks.Data.Dsv.Strict.Cursor
-  ( SvCursor(..)
+  ( DsvCursor(..)
   , snippet
   , nextField
   , nextPosition
@@ -27,7 +27,7 @@ import qualified Data.Vector.Storable                         as DVS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal as SVS
 import qualified HaskellWorks.Data.FromForeignRegion          as IO
 
-mmapCursor :: Char -> Bool -> FilePath -> IO (SvCursor BS.ByteString CsPoppy)
+mmapCursor :: Char -> Bool -> FilePath -> IO (DsvCursor BS.ByteString CsPoppy)
 mmapCursor delimiter createIndex filePath = do
   (!bs) :*: (!v) <- IO.mmapFromForeignRegion filePath
   let !_ = v :: DVS.Vector Word64
@@ -36,60 +36,60 @@ mmapCursor delimiter createIndex filePath = do
     else (,)
       <$> IO.mmapFromForeignRegion (filePath ++ ".markers.idx")
       <*> IO.mmapFromForeignRegion (filePath ++ ".newlines.idx")
-  return SvCursor
-    { svCursorDelimiter = fromIntegral (ord delimiter)
-    , svCursorText      = bs
-    , svCursorMarkers   = makeCsPoppy markers
-    , svCursorNewlines  = makeCsPoppy newlines
-    , svCursorPosition  = 0
+  return DsvCursor
+    { dsvCursorDelimiter = fromIntegral (ord delimiter)
+    , dsvCursorText      = bs
+    , dsvCursorMarkers   = makeCsPoppy markers
+    , dsvCursorNewlines  = makeCsPoppy newlines
+    , dsvCursorPosition  = 0
     }
 
-snippet :: SvCursor BS.ByteString CsPoppy -> BS.ByteString
-snippet c = BS.take (len `max` 0) $ BS.drop posC $ svCursorText c
+snippet :: DsvCursor BS.ByteString CsPoppy -> BS.ByteString
+snippet c = BS.take (len `max` 0) $ BS.drop posC $ dsvCursorText c
   where d = nextField c
-        posC = fromIntegral $ svCursorPosition c
-        posD = fromIntegral $ svCursorPosition d
+        posC = fromIntegral $ dsvCursorPosition c
+        posD = fromIntegral $ dsvCursorPosition d
         len  = posD - posC
 {-# INLINE snippet #-}
 
-atEnd :: SvCursor BS.ByteString CsPoppy -> Bool
-atEnd c = BS.null (BS.drop (fromIntegral (svCursorPosition c)) (svCursorText c))
+atEnd :: DsvCursor BS.ByteString CsPoppy -> Bool
+atEnd c = BS.null (BS.drop (fromIntegral (dsvCursorPosition c)) (dsvCursorText c))
 {-# INLINE atEnd #-}
 
-nextField :: SvCursor BS.ByteString CsPoppy -> SvCursor BS.ByteString CsPoppy
+nextField :: DsvCursor BS.ByteString CsPoppy -> DsvCursor BS.ByteString CsPoppy
 nextField cursor = cursor
-  { svCursorPosition = newPos
+  { dsvCursorPosition = newPos
   }
-  where currentRank = rank1   (svCursorMarkers cursor) (svCursorPosition cursor)
-        newPos      = select1 (svCursorMarkers cursor) (currentRank + 1) - 1
+  where currentRank = rank1   (dsvCursorMarkers cursor) (dsvCursorPosition cursor)
+        newPos      = select1 (dsvCursorMarkers cursor) (currentRank + 1) - 1
 {-# INLINE nextField #-}
 
-nextRow :: SvCursor BS.ByteString CsPoppy -> SvCursor BS.ByteString CsPoppy
+nextRow :: DsvCursor BS.ByteString CsPoppy -> DsvCursor BS.ByteString CsPoppy
 nextRow cursor = cursor
-  { svCursorPosition =  if newPos > svCursorPosition cursor
+  { dsvCursorPosition = if newPos > dsvCursorPosition cursor
                           then newPos
-                          else fromIntegral (BS.length (svCursorText cursor))
+                          else fromIntegral (BS.length (dsvCursorText cursor))
 
   }
-  where currentRank = rank1   (svCursorNewlines cursor) (svCursorPosition cursor)
-        newPos      = select1 (svCursorNewlines cursor) (currentRank + 1) - 1
+  where currentRank = rank1   (dsvCursorNewlines cursor) (dsvCursorPosition cursor)
+        newPos      = select1 (dsvCursorNewlines cursor) (currentRank + 1) - 1
 {-# INLINE nextRow #-}
 
-nextPosition :: SvCursor BS.ByteString CsPoppy -> SvCursor BS.ByteString CsPoppy
+nextPosition :: DsvCursor BS.ByteString CsPoppy -> DsvCursor BS.ByteString CsPoppy
 nextPosition cursor = cursor
-    { svCursorPosition = if BS.null (BS.drop (fromIntegral newPos) (svCursorText cursor))
-                            then fromIntegral (BS.length (svCursorText cursor))
+    { dsvCursorPosition = if BS.null (BS.drop (fromIntegral newPos) (dsvCursorText cursor))
+                            then fromIntegral (BS.length (dsvCursorText cursor))
                             else newPos
     }
-  where newPos  = svCursorPosition cursor + 1
+  where newPos  = dsvCursorPosition cursor + 1
 {-# INLINE nextPosition #-}
 
-getRowBetween :: SvCursor BS.ByteString CsPoppy -> SvCursor BS.ByteString CsPoppy -> DV.Vector BS.ByteString
+getRowBetween :: DsvCursor BS.ByteString CsPoppy -> DsvCursor BS.ByteString CsPoppy -> DV.Vector BS.ByteString
 getRowBetween c d = DV.unfoldrN c2d go c
-  where cr  = rank1 (svCursorMarkers c) (svCursorPosition c)
-        dr  = rank1 (svCursorMarkers d) (svCursorPosition d)
+  where cr  = rank1 (dsvCursorMarkers c) (dsvCursorPosition c)
+        dr  = rank1 (dsvCursorMarkers d) (dsvCursorPosition d)
         c2d = fromIntegral (dr - cr)
-        go :: SvCursor BS.ByteString CsPoppy -> Maybe (BS.ByteString, SvCursor BS.ByteString CsPoppy)
+        go :: DsvCursor BS.ByteString CsPoppy -> Maybe (BS.ByteString, DsvCursor BS.ByteString CsPoppy)
         go e = case nextField e of
           f -> case nextPosition f of
             g -> case snippet e of
@@ -97,13 +97,13 @@ getRowBetween c d = DV.unfoldrN c2d go c
         {-# INLINE go #-}
 {-# INLINE getRowBetween #-}
 
-toListVector :: SvCursor BS.ByteString CsPoppy -> [DV.Vector BS.ByteString]
-toListVector c = if svCursorPosition d > svCursorPosition c && not (atEnd c)
+toListVector :: DsvCursor BS.ByteString CsPoppy -> [DV.Vector BS.ByteString]
+toListVector c = if dsvCursorPosition d > dsvCursorPosition c && not (atEnd c)
   then getRowBetween c d:toListVector d
   else []
   where d = nextPosition (nextRow c)
 {-# INLINE toListVector #-}
 
-toVectorVector :: SvCursor BS.ByteString CsPoppy -> DV.Vector (DV.Vector BS.ByteString)
+toVectorVector :: DsvCursor BS.ByteString CsPoppy -> DV.Vector (DV.Vector BS.ByteString)
 toVectorVector = DV.fromList . toListVector
 {-# INLINE toVectorVector #-}

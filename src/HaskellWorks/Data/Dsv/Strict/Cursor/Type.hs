@@ -2,19 +2,19 @@
 {-# LANGUAGE StandaloneDeriving #-}
 
 module HaskellWorks.Data.Dsv.Strict.Cursor.Type
-  ( SvCursor(..)
+  ( DsvCursor(..)
   ) where
 
 import Data.Word
 import HaskellWorks.Data.Container
 
-data SvCursor t s = SvCursor
-  { svCursorDelimiter :: Elem t
-  , svCursorText      :: !t
-  , svCursorMarkers   :: !s
-  , svCursorNewlines  :: !s
-  , svCursorPosition  :: !Word64
+data DsvCursor t s = DsvCursor
+  { dsvCursorDelimiter :: Elem t
+  , dsvCursorText      :: !t
+  , dsvCursorMarkers   :: !s
+  , dsvCursorNewlines  :: !s
+  , dsvCursorPosition  :: !Word64
   }
 
-deriving instance (Eq   (Elem t), Eq   t, Eq   s) => Eq   (SvCursor t s)
-deriving instance (Show (Elem t), Show t, Show s) => Show (SvCursor t s)
+deriving instance (Eq   (Elem t), Eq   t, Eq   s) => Eq   (DsvCursor t s)
+deriving instance (Show (Elem t), Show t, Show s) => Show (DsvCursor t s)

@@ -2,9 +2,10 @@
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE MultiParamTypeClasses  #-}
 {-# LANGUAGE TemplateHaskell        #-}
+{-# LANGUAGE TypeFamilies           #-}
 {-# LANGUAGE TypeSynonymInstances   #-}
 
-module App.Commands.Options.Lens where
+module App.Lens where
 
 import App.Commands.Options.Type
 import Control.Lens

@@ -59,7 +59,7 @@ loadHwsvLazyIndex filePath = do
   !bs <- LBS.readFile filePath
 
   let c = SVL.makeCursor ',' bs
-  let zipIndexes = zip (SVL.svCursorMarkers c) (SVL.svCursorNewlines c)
+  let zipIndexes = zip (SVL.dsvCursorMarkers c) (SVL.dsvCursorNewlines c)
   let !n = length zipIndexes
 
   return DV.empty
