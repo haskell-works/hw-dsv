@@ -50,6 +50,22 @@ $ cat corpus/medium.csv | time stack exec -- hw-dsv query-lazy -k 0 -k 2 -k 4 -k
 144.53s user 11.33s system 131% cpu 1:58.88 total
 ```
 
-## References
+## Using `hw-dsv` as a library
 
-* [Space-Efficient, High-Performance Rank & Select Structures on Uncompressed Bit Sequences](http://www.cs.cmu.edu/~./dga/papers/zhou-sea2013.pdf)
+```haskell
+{-# LANGUAGE ScopedTypeVariables #-}
+
+module Example where
+
+import qualified Data.ByteString.Lazy              as LBS
+import qualified Data.Vector                       as DV
+import qualified HaskellWorks.Data.Dsv.Lazy.Cursor as SVL
+
+example :: IO ()
+example = do
+  bs <- LBS.readFile "sample.csv"
+  let c = SVL.makeCursor ',' bs
+  let rows :: [DV.Vector LBS.ByteString] = SVL.toListVector c
+
+  return ()
+```
