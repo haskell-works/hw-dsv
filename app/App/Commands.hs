@@ -14,7 +14,7 @@ commands = commandsGeneral <|> commandsDebugging
 commandsGeneral :: Parser (IO ())
 commandsGeneral = subparser $ mempty
   <>  commandGroup "Commands:"
-  <>  cmdCreateIndex
+  -- <>  cmdCreateIndex
   <>  cmdQuery
   <>  cmdQueryLazy
 

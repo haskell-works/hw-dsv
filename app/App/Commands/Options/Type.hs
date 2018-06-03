@@ -11,7 +11,7 @@ data QueryOptions = QueryOptions
   , _queryOptionsOutputFilePath :: FilePath
   , _queryOptionsDelimiter      :: Char
   , _queryOptionsOutDelimiter   :: Char
-  , _queryOptionsUseIndex       :: Bool
+  -- , _queryOptionsUseIndex       :: Bool
   } deriving (Eq, Show)
 
 data GenerateOptions = GenerateOptions
