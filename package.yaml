@@ -37,7 +37,6 @@ library:
   - -Wincomplete-record-updates
   - -Wincomplete-uni-patterns
   - -Wredundant-constraints
-  - -O2
 
 executables:
   hw-dsv:
@@ -52,7 +51,6 @@ executables:
     - -Wincomplete-record-updates
     - -Wincomplete-uni-patterns
     - -Wredundant-constraints
-    - -O2
     dependencies:
     - hw-dsv
     - hedgehog                >= 0.6        && < 0.7
@@ -82,7 +80,6 @@ tests:
     main:               Space.hs
     source-dirs:        weigh
     ghc-options:
-      - -O2
       - -Wall
     dependencies:
       - cassava               >= 0.5.1.0    && < 0.6
@@ -96,7 +93,6 @@ benchmarks:
     main: Main.hs
     source-dirs: bench
     ghc-options:
-    - -O2
     - -msse4.2
     dependencies:
     - cassava               >= 0.5.1.0    && < 0.6
@@ -106,13 +102,24 @@ benchmarks:
     - mmap                  >= 0.5.9      && < 0.6
     - weigh                 >= 0.0.11     && < 0.1
 
+ghc-options:
+- -O2
+
 when:
+- condition: flag(sse42)
+  ghc-options:
+  - -msse4.2
 - condition: (flag(bmi2)) && (impl(ghc >=8.4.1))
   ghc-options:
   - -mbmi2
   - -msse4.2
 
 flags:
+  sse42:
+    description: Enable SSE 4.2 optimisations.
+    manual: false
+    default: true
+
   bmi2:
     description: Enable bmi2 instruction set
     manual: false
