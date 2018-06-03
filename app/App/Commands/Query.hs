@@ -27,7 +27,7 @@ import qualified HaskellWorks.Data.Dsv.Strict.Cursor as SVS
 
 runQuery :: QueryOptions -> IO ()
 runQuery opts = do
-  c <- SVS.mmapCursor (opts ^. L.delimiter) (opts ^. L.createIndex) (opts ^. L.filePath)
+  c <- SVS.mmapCursor (opts ^. L.delimiter) (opts ^. L.useIndex) (opts ^. L.filePath)
 
   let !rows = SVS.toListVector c
   let !outDelimiterBuilder = B.word8 (fromIntegral (ord (opts ^. L.outDelimiter)))
@@ -52,37 +52,34 @@ cmdQuery = command "query" $ flip info idm $ runQuery <$> optsQuery
 
 optsQuery :: Parser QueryOptions
 optsQuery = QueryOptions
-    <$> switch (long "create-index")
-    <*> many
+    <$> many
         ( option auto
           (   long "column"
           <>  short 'k'
           <>  help "Column to select"
           <>  metavar "COLUMN INDEX" ))
     <*> strOption
-          (   long "source"
-          <>  help "Separated Value file"
+          (   long "input"
+          <>  short 'i'
+          <>  help "Input DSV file"
           <>  metavar "FILE"
           )
     <*> strOption
-          (   long "target"
-          <>  help "Separated Value file"
+          (   long "output"
+          <>  short 'o'
+          <>  help "Output DSV file"
           <>  metavar "FILE"
           )
     <*> option readChar
-          (   long "delimiter"
-          <>  help "DSV delimiter"
+          (   long "input-delimiter"
+          <>  short 'd'
+          <>  help "DSV delimiter to read in the input"
           <>  metavar "CHAR"
           )
     <*> option readChar
-          (   long "out-delimiter"
-          <>  help "DSV delimiter"
+          (   long "output-delimiter"
+          <>  short 'e'
+          <>  help "DSV delimiter to write in the output"
           <>  metavar "CHAR"
           )
-    <*> optional
-          ( option auto
-            (   long "output-buffer-size"
-            <>  help "Output buffer size"
-            <>  metavar "BYTES"
-            )
-          )
+    <*> switch (long "use-index")

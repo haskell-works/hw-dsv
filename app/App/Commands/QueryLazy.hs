@@ -60,26 +60,30 @@ optsQueryLazy = QueryLazyOptions
           <>  help "Column to select"
           <>  metavar "COLUMN INDEX" ))
     <*> strOption
-          (   long "source"
-          <>  help "Separated Value file"
+          (   long "input"
+          <>  short 'i'
+          <>  help "Input DSV file"
           <>  metavar "FILE"
           <>  showDefault
           <>  value "-"
           )
     <*> strOption
-          (   long "target"
-          <>  help "Separated Value file"
+          (   long "output"
+          <>  short 'o'
+          <>  help "Output DSV file"
           <>  metavar "FILE"
           <>  showDefault
           <>  value "-"
           )
     <*> option readChar
-          (   long "delimiter"
-          <>  help "DSV delimiter"
+          (   long "input-delimiter"
+          <>  short 'd'
+          <>  help "Input DSV delimiter"
           <>  metavar "CHAR"
           )
     <*> option readChar
-          (   long "out-delimiter"
-          <>  help "DSV delimiter"
+          (   long "output-delimiter"
+          <>  short 'e'
+          <>  help "Output DSV delimiter"
           <>  metavar "CHAR"
           )

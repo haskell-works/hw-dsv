@@ -6,13 +6,12 @@ data CreateIndexOptions = CreateIndexOptions
   } deriving (Eq, Show)
 
 data QueryOptions = QueryOptions
-  { _queryOptionsCreateIndex      :: Bool
-  , _queryOptionsColumns          :: [Int]
-  , _queryOptionsFilePath         :: FilePath
-  , _queryOptionsOutputFilePath   :: FilePath
-  , _queryOptionsDelimiter        :: Char
-  , _queryOptionsOutDelimiter     :: Char
-  , _queryOptionsOutputBufferSize :: Maybe Int
+  { _queryOptionsColumns        :: [Int]
+  , _queryOptionsFilePath       :: FilePath
+  , _queryOptionsOutputFilePath :: FilePath
+  , _queryOptionsDelimiter      :: Char
+  , _queryOptionsOutDelimiter   :: Char
+  , _queryOptionsUseIndex       :: Bool
   } deriving (Eq, Show)
 
 data GenerateOptions = GenerateOptions

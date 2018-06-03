@@ -25,14 +25,14 @@ runCat opts = do
 optsCat :: Parser CatOptions
 optsCat = CatOptions
   <$> strOption
-        (   long "source"
-        <>  help "Source file"
-        <>  metavar "INT"
+        (   long "input"
+        <>  help "Input file"
+        <>  metavar "FILE"
         )
   <*> strOption
-        (   long "target"
-        <>  help "Target"
-        <>  metavar "INT"
+        (   long "output"
+        <>  help "Output file"
+        <>  metavar "FILE"
         )
 
 cmdCat :: Mod CommandFields (IO ())

@@ -28,14 +28,14 @@ import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal as SVS
 import qualified HaskellWorks.Data.FromForeignRegion          as IO
 
 mmapCursor :: Char -> Bool -> FilePath -> IO (DsvCursor BS.ByteString CsPoppy)
-mmapCursor delimiter createIndex filePath = do
+mmapCursor delimiter useIndex filePath = do
   (!bs) :*: (!v) <- IO.mmapFromForeignRegion filePath
   let !_ = v :: DVS.Vector Word64
-  (!markers, !newlines) <- if createIndex
-    then return $ SVS.makeIndexes delimiter v
-    else (,)
+  (!markers, !newlines) <- if useIndex
+    then (,)
       <$> IO.mmapFromForeignRegion (filePath ++ ".markers.idx")
       <*> IO.mmapFromForeignRegion (filePath ++ ".newlines.idx")
+    else return $ SVS.makeIndexes delimiter v
   return DsvCursor
     { dsvCursorDelimiter = fromIntegral (ord delimiter)
     , dsvCursorText      = bs

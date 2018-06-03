@@ -45,12 +45,14 @@ runCreateIndex opts = do
 optsCreateIndex :: Parser CreateIndexOptions
 optsCreateIndex = CreateIndexOptions
   <$> strOption
-        (   long "file"
-        <>  help "Separated Value file"
+        (   long "input"
+        <>  short 'i'
+        <>  help "Input DSV file"
         <>  metavar "STRING"
         )
   <*> option readChar
-        (   long "delimiter"
+        (   long "input-delimiter"
+        <>  short 'd'
         <>  help "DSV delimiter"
         <>  metavar "CHAR"
         )
