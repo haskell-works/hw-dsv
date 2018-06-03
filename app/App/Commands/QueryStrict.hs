@@ -2,8 +2,8 @@
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module App.Commands.Query
-  ( cmdQuery
+module App.Commands.QueryStrict
+  ( cmdQueryStrict
   ) where
 
 import App.Char
@@ -25,8 +25,8 @@ import qualified Data.ByteString.Builder             as B
 import qualified Data.Vector                         as DV
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor as SVS
 
-runQuery :: QueryOptions -> IO ()
-runQuery opts = do
+runQueryStrict :: QueryStrictOptions -> IO ()
+runQueryStrict opts = do
   let delimiter     = opts ^. L.delimiter
   let inputFilePath = opts ^. L.filePath
   let useIndex      = False -- opts ^. L.useIndex
@@ -50,11 +50,11 @@ runQuery opts = do
           then B.byteString (DV.unsafeIndex fields i)
           else B.byteString  BS.empty
 
-cmdQuery :: Mod CommandFields (IO ())
-cmdQuery = command "query" $ flip info idm $ runQuery <$> optsQuery
+cmdQueryStrict :: Mod CommandFields (IO ())
+cmdQueryStrict = command "query-strict" $ flip info idm $ runQueryStrict <$> optsQueryStrict
 
-optsQuery :: Parser QueryOptions
-optsQuery = QueryOptions
+optsQueryStrict :: Parser QueryStrictOptions
+optsQueryStrict = QueryStrictOptions
     <$> many
         ( option auto
           (   long "column"

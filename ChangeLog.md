@@ -1,3 +1,3 @@
-# Changelog for hw-sv
+# Changelog for hw-dsv
 
 ## Unreleased changes

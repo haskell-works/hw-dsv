@@ -5,12 +5,12 @@ data CreateIndexOptions = CreateIndexOptions
   , _createIndexOptionsDelimiter :: Char
   } deriving (Eq, Show)
 
-data QueryOptions = QueryOptions
-  { _queryOptionsColumns        :: [Int]
-  , _queryOptionsFilePath       :: FilePath
-  , _queryOptionsOutputFilePath :: FilePath
-  , _queryOptionsDelimiter      :: Char
-  , _queryOptionsOutDelimiter   :: Char
+data QueryStrictOptions = QueryStrictOptions
+  { _queryStrictOptionsColumns        :: [Int]
+  , _queryStrictOptionsFilePath       :: FilePath
+  , _queryStrictOptionsOutputFilePath :: FilePath
+  , _queryStrictOptionsDelimiter      :: Char
+  , _queryStrictOptionsOutDelimiter   :: Char
   -- , _queryOptionsUseIndex       :: Bool
   } deriving (Eq, Show)
 

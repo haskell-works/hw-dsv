@@ -77,12 +77,12 @@ makeBenchCsv = do
   entries <- listDirectory "data/bench"
   let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
   benchmarks <- forM files $ \file -> return $ mempty
-    <> [bench ("cassava/decode/"                <> file) (nfIO (loadCassava         file))]
-    <> [bench ("hw-sv/decode/via-strict/"       <> file) (nfIO (loadHwsvStrict      file))]
-    <> [bench ("hw-sv/decode/via-lazy/"         <> file) (nfIO (loadHwsvLazy        file))]
+    <> [bench ("cassava/decode/"                  <> file) (nfIO (loadCassava         file))]
+    <> [bench ("hw-dsv/decode/via-strict/"        <> file) (nfIO (loadHwsvStrict      file))]
+    <> [bench ("hw-dsv/decode/via-lazy/"          <> file) (nfIO (loadHwsvLazy        file))]
 
-    <> [bench ("hw-sv/decode/via-strict/index/" <> file) (nfIO (loadHwsvStrictIndex file))]
-    <> [bench ("hw-sv/decode/via-lazy/index/"   <> file) (nfIO (loadHwsvLazyIndex   file))]
+    <> [bench ("hw-dsv/decode/via-strict/index/"  <> file) (nfIO (loadHwsvStrictIndex file))]
+    <> [bench ("hw-dsv/decode/via-lazy/index/"    <> file) (nfIO (loadHwsvLazyIndex   file))]
   return (join benchmarks)
 
 makeBenchW64s :: IO [Benchmark]

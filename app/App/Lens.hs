@@ -14,4 +14,4 @@ makeFields ''CatOptions
 makeFields ''CreateIndexOptions
 makeFields ''GenerateOptions
 makeFields ''QueryLazyOptions
-makeFields ''QueryOptions
+makeFields ''QueryStrictOptions

@@ -18,7 +18,7 @@ repeatedly f a = a:case f a of
 
 loadCsv :: FilePath -> IO (DV.Vector (DV.Vector ByteString))
 loadCsv filePath = do
-  c <- SVS.mmapCursor ',' True filePath
+  c <- SVS.mmapCursor ',' False filePath
 
   return $ SVS.toVectorVector c
 
@@ -33,7 +33,7 @@ main = do
           case r of
             Left _  -> error "Unexpected parse error"
             Right v -> pure v
-      , action "hw-sv/decode/Vector ByteString" $ do
+      , action "hw-dsv/decode/Vector ByteString" $ do
           v <- loadCsv infp :: IO (Vector (Vector ByteString))
           pure v
       ]
