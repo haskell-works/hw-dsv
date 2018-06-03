@@ -23,7 +23,7 @@ stack test
 stack bench
 ```
 
-For best perform, add the `bmi2` flag to target the BMI2 instruction set:
+For best performance, add the `bmi2` flag to target the BMI2 instruction set:
 
 ```text
 stack build   --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2

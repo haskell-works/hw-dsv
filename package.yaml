@@ -17,7 +17,7 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on Github at <https://github.com/newhoggy/hw-dsv#readme>
+description:         Please see the README on Github at <https://github.com/haskell-works/hw-dsv#readme>
 
 dependencies:
 - base                  >= 4.7      && < 5
