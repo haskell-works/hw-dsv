@@ -9,6 +9,7 @@ copyright:           "2018 John Ky"
 extra-source-files:
 - README.md
 - ChangeLog.md
+- data/bench/data-0001000.csv
 
 # Metadata used when publishing your package
 synopsis:            Unbelievably fast streaming DSV file parser

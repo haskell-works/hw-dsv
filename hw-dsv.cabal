@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 1fe949e38c2e6ebc3cf78889f318e51eb20e753791e133ba9960825203155974
+-- hash: 669564e2fa3da11b7191c1372f2500ce39213c344d3cc354627598dc2e8ecffa
 
 name:           hw-dsv
 version:        0.1.0.1
@@ -22,6 +22,7 @@ cabal-version:  >= 1.10
 
 extra-source-files:
     ChangeLog.md
+    data/bench/data-0001000.csv
     README.md
 
 source-repository head
