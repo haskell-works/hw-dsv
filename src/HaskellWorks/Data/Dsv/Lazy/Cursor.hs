@@ -1,5 +1,6 @@
 module HaskellWorks.Data.Dsv.Lazy.Cursor
   ( makeCursor
+  , getDelimiter
   , snippet
   , trim
   , atEnd
@@ -13,6 +14,7 @@ module HaskellWorks.Data.Dsv.Lazy.Cursor
 
 import Data.Char                                  (ord)
 import Data.Function
+import GHC.Base                                   (unsafeChr)
 import HaskellWorks.Data.Dsv.Internal.Bits
 import HaskellWorks.Data.Dsv.Lazy.Cursor.Internal
 import HaskellWorks.Data.Dsv.Lazy.Cursor.Type
@@ -43,6 +45,10 @@ makeCursor delimiter lbs = DsvCursor
         ib  = zip2And ibr qm
         nls = zip2And ibn qm
 {-# INLINE makeCursor #-}
+
+getDelimiter :: DsvCursor -> Char
+getDelimiter = unsafeChr . fromIntegral . dsvCursorDelimiter
+{-# INLINE getDelimiter #-}
 
 snippet :: DsvCursor -> LBS.ByteString
 snippet c = LBS.take (len `max` 0) $ LBS.drop posC $ dsvCursorText c
