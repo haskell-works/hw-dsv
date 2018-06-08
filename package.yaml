@@ -9,20 +9,23 @@ copyright:           "2018 John Ky"
 extra-source-files:
 - README.md
 - ChangeLog.md
+- data/bench/data-0001000.csv
 
 # Metadata used when publishing your package
-# synopsis:            Short description of your package
-# category:            Web
+synopsis:            Unbelievably fast streaming DSV file parser
+category:            Text, Web, CSV
 
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
 description:         Please see the README on Github at <https://github.com/haskell-works/hw-dsv#readme>
 
+tested-with:         GHC == 8.4.3, GHC == 8.2.2, GHC == 8.0.2
+
 dependencies:
 - base                  >= 4.7      && < 5
 - bits-extra            >= 0.0.1.2  && < 0.1
-- bytestring            >= 0.10.8.2 && < 0.11
+- bytestring            >= 0.10     && < 0.11
 - hw-bits               >= 0.7.0.2  && < 0.8
 - hw-rankselect         >= 0.12.0.2 && < 0.13
 - hw-rankselect-base    >= 0.3.2.0  && < 0.4
