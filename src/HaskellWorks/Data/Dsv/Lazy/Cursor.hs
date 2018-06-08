@@ -11,7 +11,6 @@ module HaskellWorks.Data.Dsv.Lazy.Cursor
   , toVectorVector
   ) where
 
-import Data.Char                                  (ord)
 import Data.Function
 import HaskellWorks.Data.Dsv.Internal.Bits
 import HaskellWorks.Data.Dsv.Lazy.Cursor.Internal
@@ -27,8 +26,7 @@ import qualified HaskellWorks.Data.Dsv.Internal.Char.Word64 as CW
 
 makeCursor :: Char -> LBS.ByteString -> DsvCursor
 makeCursor delimiter lbs = DsvCursor
-  { dsvCursorDelimiter = fromIntegral (ord delimiter)
-  , dsvCursorText      = lbs
+  { dsvCursorText      = lbs
   , dsvCursorMarkers   = ib
   , dsvCursorNewlines  = nls
   , dsvCursorPosition  = 0
