@@ -93,11 +93,12 @@ nextPosition cursor = cursor
   where newPos  = dsvCursorPosition cursor + 1
 {-# INLINE nextPosition #-}
 
-getRowBetween :: DsvCursor -> DsvCursor -> DV.Vector LBS.ByteString
-getRowBetween c d = DV.unfoldrN c2d go c
+getRowBetween :: DsvCursor -> DsvCursor -> Bool -> DV.Vector LBS.ByteString
+getRowBetween c d dEnd = DV.unfoldrN fields go c
   where cr  = rank1 (dsvCursorMarkers c) (dsvCursorPosition c)
         dr  = rank1 (dsvCursorMarkers d) (dsvCursorPosition d)
         c2d = fromIntegral (dr - cr)
+        fields = if dEnd then c2d +1 else c2d
         go :: DsvCursor -> Maybe (LBS.ByteString, DsvCursor)
         go e = case nextField e of
           f -> case nextPosition f of
@@ -108,9 +109,11 @@ getRowBetween c d = DV.unfoldrN c2d go c
 
 toListVector :: DsvCursor -> [DV.Vector LBS.ByteString]
 toListVector c = if dsvCursorPosition d > dsvCursorPosition c && not (atEnd c)
-  then getRowBetween c d:toListVector (trim d)
+  then getRowBetween c d dEnd:toListVector (trim d)
   else []
-  where d = nextPosition (nextRow c)
+  where nr = nextRow c
+        d = nextPosition nr
+        dEnd = atEnd nr
 {-# INLINE toListVector #-}
 
 toVectorVector :: DsvCursor -> DV.Vector (DV.Vector LBS.ByteString)
