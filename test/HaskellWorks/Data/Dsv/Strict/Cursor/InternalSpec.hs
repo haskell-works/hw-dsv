@@ -11,6 +11,7 @@ import Data.ByteString                           (ByteString)
 import Data.Char
 import Data.List                                 (isSuffixOf)
 import Data.Maybe                                (fromJust)
+import Data.Monoid                               ((<>))
 import Data.Text                                 (Text)
 import Data.Word
 import HaskellWorks.Data.Bits.BitRead
