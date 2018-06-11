@@ -17,6 +17,7 @@ cabal.sandbox.config
 
 /*.submodules
 /.stack-work/
+/.stack-work-*/
 /result
 /deps
 /data

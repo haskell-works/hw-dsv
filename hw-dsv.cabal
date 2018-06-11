@@ -1,8 +1,8 @@
--- This file has been generated from package.yaml by hpack version 0.27.0.
+-- This file has been generated from package.yaml by hpack version 0.28.2.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4565a91bcbec0aa01b47e2c32713e1b3d20f7005941dd13b18c7fb1c096854a9
+-- hash: dfad7d5b5a92e9add31158a5fd8012acc84468f6f61f31a4ea5c20d03c68edbc
 
 name:           hw-dsv
 version:        0.1.0.1
@@ -19,7 +19,6 @@ license-file:   LICENSE
 tested-with:    GHC == 8.4.3, GHC == 8.2.2, GHC == 8.0.2
 build-type:     Simple
 cabal-version:  >= 1.10
-
 extra-source-files:
     ChangeLog.md
     data/bench/data-0001000.csv
@@ -143,6 +142,7 @@ test-suite hw-dsv-test
   other-modules:
       HaskellWorks.Data.Dsv.BroadwordSpec
       HaskellWorks.Data.Dsv.Gen
+      HaskellWorks.Data.Dsv.Lazy.CursorSpec
       HaskellWorks.Data.Dsv.Strict.Cursor.InternalSpec
       HaskellWorks.Data.DsvSpec
       Paths_hw_dsv
