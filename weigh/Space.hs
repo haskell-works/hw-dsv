@@ -6,6 +6,8 @@ import Weigh
 
 import qualified Data.ByteString.Lazy                as LBS
 import qualified Data.Csv                            as CSV
+import qualified Data.Csv.Streaming                  as CSS
+import qualified Data.Foldable                       as F
 import qualified Data.Vector                         as DV
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor as SVS
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor   as SVL
@@ -36,11 +38,13 @@ main = do
   mainWith $ do
     setColumns [Case, Allocated, Max, Live, GCs]
     sequence_
-      [ action "cassava/decode/Vector ByteString" $ do
+      [ action "cassava/decode/strict/Vector ByteString" $ do
           r <- fmap (CSV.decode CSV.HasHeader) (LBS.readFile infp) :: IO (Either String (Vector (Vector ByteString)))
           case r of
             Left _  -> error "Unexpected parse error"
             Right v -> pure v
+      , action "cassava/decode/streaming/Vector ByteString" $ do
+          fmap (DV.fromList . F.toList . CSS.decode CSS.HasHeader) (LBS.readFile infp) :: IO (Vector (Vector ByteString))
       , action "hw-dsv/decode/strict/Vector ByteString" $ do
           v <- loadCsvStrict infp :: IO (Vector (Vector ByteString))
           pure v
