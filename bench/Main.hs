@@ -26,6 +26,8 @@ import qualified Data.ByteString                                        as BS
 import qualified Data.ByteString.Internal                               as BSI
 import qualified Data.ByteString.Lazy                                   as LBS
 import qualified Data.Csv                                               as CSV
+import qualified Data.Csv.Streaming                                     as CSS
+import qualified Data.Foldable                                          as F
 import qualified Data.Vector                                            as DV
 import qualified Data.Vector.Storable                                   as DVS
 import qualified HaskellWorks.Data.Dsv.Internal.Char.Word64             as C
@@ -38,12 +40,19 @@ import qualified HaskellWorks.Data.FromForeignRegion                    as IO
 import qualified System.IO                                              as IO
 import qualified System.IO.MMap                                         as IO
 
-loadCassava :: FilePath -> IO (Vector (Vector ByteString))
-loadCassava filePath = do
-  r <- fmap (CSV.decode CSV.HasHeader) (LBS.readFile filePath) :: IO (Either String (Vector (Vector ByteString)))
+loadCassavaStrict :: FilePath -> IO (Vector (Vector ByteString))
+loadCassavaStrict filePath = do
+  !bs <- LBS.readFile filePath
+  let r = CSV.decode CSS.HasHeader bs :: Either String (Vector (Vector ByteString))
   case r of
     Left _  -> error "Unexpected parse error"
     Right v -> pure v
+
+loadCassavaStreaming :: FilePath -> IO (Vector (Vector ByteString))
+loadCassavaStreaming filePath = do
+  !bs <- LBS.readFile filePath
+  let r = CSS.decode CSV.HasHeader bs :: CSS.Records (Vector ByteString)
+  pure (DV.fromList (F.toList r))
 
 loadHwsvStrictIndex :: FilePath -> IO (Vector (Vector ByteString))
 loadHwsvStrictIndex filePath = do
@@ -77,12 +86,13 @@ makeBenchCsv = do
   entries <- listDirectory "data/bench"
   let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
   benchmarks <- forM files $ \file -> return $ mempty
-    <> [bench ("cassava/decode/"                  <> file) (nfIO (loadCassava         file))]
-    <> [bench ("hw-dsv/decode/via-strict/"        <> file) (nfIO (loadHwsvStrict      file))]
-    <> [bench ("hw-dsv/decode/via-lazy/"          <> file) (nfIO (loadHwsvLazy        file))]
+    <> [bench ("cassava/decode/via-strict/"       <> file) (nfIO (loadCassavaStrict    file))]
+    <> [bench ("cassava/decode/via-streaming/"    <> file) (nfIO (loadCassavaStreaming file))]
+    <> [bench ("hw-dsv/decode/via-strict/"        <> file) (nfIO (loadHwsvStrict       file))]
+    <> [bench ("hw-dsv/decode/via-lazy/"          <> file) (nfIO (loadHwsvLazy         file))]
 
-    <> [bench ("hw-dsv/decode/via-strict/index/"  <> file) (nfIO (loadHwsvStrictIndex file))]
-    <> [bench ("hw-dsv/decode/via-lazy/index/"    <> file) (nfIO (loadHwsvLazyIndex   file))]
+    <> [bench ("hw-dsv/decode/via-strict/index/"  <> file) (nfIO (loadHwsvStrictIndex  file))]
+    <> [bench ("hw-dsv/decode/via-lazy/index/"    <> file) (nfIO (loadHwsvLazyIndex    file))]
   return (join benchmarks)
 
 makeBenchW64s :: IO [Benchmark]
