@@ -7,38 +7,22 @@ import Control.Monad
 import Criterion.Main
 import Data.ByteString                            (ByteString)
 import Data.List
-import Data.Monoid
+import Data.Monoid                                ((<>))
 import Data.Vector                                (Vector)
 import Data.Word
-import Foreign
-import HaskellWorks.Data.Bits.BitShown
-import HaskellWorks.Data.Dsv.Internal.Char.Word64
-import HaskellWorks.Data.FromByteString
-import HaskellWorks.Data.FromForeignRegion
-import HaskellWorks.Data.Product
-import HaskellWorks.Data.RankSelect.Base.Rank1
-import HaskellWorks.Data.RankSelect.Base.Select1
-import HaskellWorks.Data.RankSelect.CsPoppy
 import System.Directory
-import Weigh
 
-import qualified Data.ByteString                                        as BS
-import qualified Data.ByteString.Internal                               as BSI
 import qualified Data.ByteString.Lazy                                   as LBS
 import qualified Data.Csv                                               as CSV
 import qualified Data.Csv.Streaming                                     as CSS
-import qualified Data.Foldable                                          as F
 import qualified Data.Vector                                            as DV
 import qualified Data.Vector.Storable                                   as DVS
-import qualified HaskellWorks.Data.Dsv.Internal.Char.Word64             as C
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor                      as SVL
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Type                 as SVL
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor                    as SVS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal           as SVS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal.Reference as SVS
 import qualified HaskellWorks.Data.FromForeignRegion                    as IO
-import qualified System.IO                                              as IO
-import qualified System.IO.MMap                                         as IO
 
 loadCassavaStrict :: FilePath -> IO (Vector (Vector ByteString))
 loadCassavaStrict filePath = do
