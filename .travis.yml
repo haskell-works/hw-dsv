@@ -4,9 +4,6 @@ sudo: false
 git:
   submodules: false  # whether to recursively clone submodules
 
-env:
-  - PACKAGE_NAME=hw-dsv
-
 cache:
   directories:
     - $HOME/.cabal/packages
@@ -34,9 +31,9 @@ matrix:
     - compiler: "ghc-8.0.2"
     # env: TEST=--disable-tests BENCH=--disable-benchmarks
       addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.2,ghc-8.0.2], sources: [hvr-ghc]}}
-    - compiler: "ghc-7.10.3"
-    # env: TEST=--disable-tests BENCH=--disable-benchmarks
-      addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.2,ghc-7.10.3], sources: [hvr-ghc]}}
+#    - compiler: "ghc-7.10.3"
+#    # env: TEST=--disable-tests BENCH=--disable-benchmarks
+#      addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.2,ghc-7.10.3], sources: [hvr-ghc]}}
 
 before_install:
   - HC=${CC}
@@ -81,10 +78,10 @@ script:
   # test that source-distributions can be generated
   - hpack
   - (cd "." && cabal sdist)
-  - mv "."/dist/$PACKAGE_NAME-*.tar.gz ${DISTDIR}/
+  - mv "."/dist/hw-dsv-*.tar.gz ${DISTDIR}/
   - cd ${DISTDIR} || false
   - find . -maxdepth 1 -name '*.tar.gz' -exec tar -xvf '{}' \;
-  - "printf 'packages: $PACKAGE_NAME-*/*.cabal\\n' > cabal.project"
+  - "printf 'packages: hw-dsv-*/*.cabal\\n' > cabal.project"
   - cat cabal.project
   # this builds all libraries and executables (without tests/benchmarks)
   - cabal new-build -w ${HC} --disable-tests --disable-benchmarks all
@@ -97,7 +94,7 @@ script:
   - if [ "x$TEST" = "x--enable-tests" ]; then cabal new-test -w ${HC} ${TEST} ${BENCH} all; fi
 
   # cabal check
-  - (cd $PACKAGE_NAME-* && cabal check)
+  - (cd hw-dsv-* && cabal check)
 
   # haddock
   - rm -rf ./dist-newstyle
