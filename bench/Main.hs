@@ -7,82 +7,71 @@ import Control.Monad
 import Criterion.Main
 import Data.ByteString                            (ByteString)
 import Data.List
-import Data.Monoid
+import Data.Monoid                                ((<>))
 import Data.Vector                                (Vector)
 import Data.Word
-import Foreign
-import HaskellWorks.Data.Bits.BitShown
-import HaskellWorks.Data.Dsv.Internal.Char.Word64
-import HaskellWorks.Data.FromByteString
-import HaskellWorks.Data.FromForeignRegion
-import HaskellWorks.Data.Product
-import HaskellWorks.Data.RankSelect.Base.Rank1
-import HaskellWorks.Data.RankSelect.Base.Select1
-import HaskellWorks.Data.RankSelect.CsPoppy
 import System.Directory
-import Weigh
 
-import qualified Data.ByteString                                        as BS
-import qualified Data.ByteString.Internal                               as BSI
 import qualified Data.ByteString.Lazy                                   as LBS
 import qualified Data.Csv                                               as CSV
-import qualified Data.Vector                                            as DV
+import qualified Data.Csv.Streaming                                     as CSS
 import qualified Data.Vector.Storable                                   as DVS
-import qualified HaskellWorks.Data.Dsv.Internal.Char.Word64             as C
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor                      as SVL
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Type                 as SVL
+import qualified HaskellWorks.Data.RankSelect.CsPoppy                   as RS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor                    as SVS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal           as SVS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal.Reference as SVS
 import qualified HaskellWorks.Data.FromForeignRegion                    as IO
-import qualified System.IO                                              as IO
-import qualified System.IO.MMap                                         as IO
 
-loadCassava :: FilePath -> IO (Vector (Vector ByteString))
-loadCassava filePath = do
-  r <- fmap (CSV.decode CSV.HasHeader) (LBS.readFile filePath) :: IO (Either String (Vector (Vector ByteString)))
+loadCassavaStrict :: FilePath -> IO (Vector (Vector ByteString))
+loadCassavaStrict filePath = do
+  !bs <- LBS.readFile filePath
+  let r = CSV.decode CSS.HasHeader bs :: Either String (Vector (Vector ByteString))
   case r of
     Left _  -> error "Unexpected parse error"
     Right v -> pure v
 
-loadHwsvStrictIndex :: FilePath -> IO (Vector (Vector ByteString))
-loadHwsvStrictIndex filePath = do
-  !c <- SVS.mmapCursor ',' True filePath
+loadCassavaStreaming :: FilePath -> IO (CSS.Records (Vector ByteString))
+loadCassavaStreaming filePath = do
+  !bs <- LBS.readFile filePath
+  let r = CSS.decode CSV.HasHeader bs :: CSS.Records (Vector ByteString)
+  pure r
 
-  return DV.empty
+loadHwsvStrictIndex :: FilePath -> IO (SVS.DsvCursor ByteString RS.CsPoppy)
+loadHwsvStrictIndex filePath =
+  SVS.mmapCursor ',' True filePath
 
 loadHwsvStrict :: FilePath -> IO (Vector (Vector ByteString))
 loadHwsvStrict filePath = SVS.toVectorVector <$> SVS.mmapCursor ',' True filePath
 
-loadHwsvLazyIndex :: FilePath -> IO (Vector (Vector ByteString))
+loadHwsvLazyIndex :: FilePath -> IO [(DVS.Vector Word64, DVS.Vector Word64)]
 loadHwsvLazyIndex filePath = do
   !bs <- LBS.readFile filePath
 
   let c = SVL.makeCursor ',' bs
-  let zipIndexes = zip (SVL.dsvCursorMarkers c) (SVL.dsvCursorNewlines c)
-  let !n = length zipIndexes
+  pure (zip (SVL.dsvCursorMarkers c) (SVL.dsvCursorNewlines c))
 
-  return DV.empty
-
-loadHwsvLazy :: FilePath -> IO (Vector (Vector LBS.ByteString))
+loadHwsvLazy :: FilePath -> IO [Vector LBS.ByteString]
 loadHwsvLazy filePath = do
   !bs <- LBS.readFile filePath
 
   let c = SVL.makeCursor ',' bs
 
-  return (SVL.toVectorVector c)
+  pure (SVL.toListVector c)
 
 makeBenchCsv :: IO [Benchmark]
 makeBenchCsv = do
   entries <- listDirectory "data/bench"
   let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
   benchmarks <- forM files $ \file -> return $ mempty
-    <> [bench ("cassava/decode/"                  <> file) (nfIO (loadCassava         file))]
-    <> [bench ("hw-dsv/decode/via-strict/"        <> file) (nfIO (loadHwsvStrict      file))]
-    <> [bench ("hw-dsv/decode/via-lazy/"          <> file) (nfIO (loadHwsvLazy        file))]
+    <> [bench ("cassava/decode/via-strict/"       <> file) (nfIO (loadCassavaStrict    file))]
+    <> [bench ("cassava/decode/via-streaming/"    <> file) (nfIO (loadCassavaStreaming file))]
+    <> [bench ("hw-dsv/decode/via-strict/"        <> file) (nfIO (loadHwsvStrict       file))]
+    <> [bench ("hw-dsv/decode/via-lazy/"          <> file) (nfIO (loadHwsvLazy         file))]
 
-    <> [bench ("hw-dsv/decode/via-strict/index/"  <> file) (nfIO (loadHwsvStrictIndex file))]
-    <> [bench ("hw-dsv/decode/via-lazy/index/"    <> file) (nfIO (loadHwsvLazyIndex   file))]
+    <> [bench ("hw-dsv/decode/via-strict/index/"  <> file) (nfIO (loadHwsvStrictIndex  file))]
+    <> [bench ("hw-dsv/decode/via-lazy/index/"    <> file) (nfIO (loadHwsvLazyIndex    file))]
   return (join benchmarks)
 
 makeBenchW64s :: IO [Benchmark]
