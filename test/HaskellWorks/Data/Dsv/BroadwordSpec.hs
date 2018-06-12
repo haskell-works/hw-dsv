@@ -3,20 +3,14 @@
 
 module HaskellWorks.Data.Dsv.BroadwordSpec (spec) where
 
-import Control.Concurrent
-import Control.Monad.IO.Class
 import Data.Maybe                               (fromJust)
 import Data.Word
 import HaskellWorks.Data.Bits.BitRead
 import HaskellWorks.Data.Bits.BitShow
 import HaskellWorks.Data.Dsv.Internal.Broadword
-import HaskellWorks.Data.FromByteString
 import HaskellWorks.Hspec.Hedgehog
 import Hedgehog
 import Test.Hspec
-
-import qualified Data.Vector.Storable                                   as DVS
-import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal.Reference as SVS
 
 {-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}

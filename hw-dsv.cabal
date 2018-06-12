@@ -1,8 +1,8 @@
--- This file has been generated from package.yaml by hpack version 0.28.2.
+-- This file has been generated from package.yaml by hpack version 0.27.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: dfad7d5b5a92e9add31158a5fd8012acc84468f6f61f31a4ea5c20d03c68edbc
+-- hash: 15386ffa46e5f1abaf85856ee4ad2a89878fa97a81af71b49df22509985bb02f
 
 name:           hw-dsv
 version:        0.1.0.1
@@ -19,6 +19,7 @@ license-file:   LICENSE
 tested-with:    GHC == 8.4.3, GHC == 8.2.2, GHC == 8.0.2
 build-type:     Simple
 cabal-version:  >= 1.10
+
 extra-source-files:
     ChangeLog.md
     data/bench/data-0001000.csv
@@ -88,7 +89,7 @@ executable hw-dsv
       Paths_hw_dsv
   hs-source-dirs:
       app
-  ghc-options: -O2 -threaded -rtsopts -with-rtsopts=-N -Wall -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
+  ghc-options: -O2 -Wall -threaded -rtsopts -with-rtsopts=-N -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
     , bits-extra >=0.0.1.2 && <0.1
@@ -148,7 +149,7 @@ test-suite hw-dsv-test
       Paths_hw_dsv
   hs-source-dirs:
       test
-  ghc-options: -O2 -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -O2 -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
     , bits-extra >=0.0.1.2 && <0.1
@@ -178,7 +179,7 @@ benchmark bench
       Paths_hw_dsv
   hs-source-dirs:
       bench
-  ghc-options: -O2 -msse4.2
+  ghc-options: -O2 -Wall -msse4.2
   build-depends:
       base >=4.7 && <5
     , bits-extra >=0.0.1.2 && <0.1

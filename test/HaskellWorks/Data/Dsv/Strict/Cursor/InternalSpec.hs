@@ -4,20 +4,13 @@
 
 module HaskellWorks.Data.Dsv.Strict.Cursor.InternalSpec (spec) where
 
-import Control.Concurrent
 import Control.Monad
 import Control.Monad.IO.Class
 import Data.ByteString                           (ByteString)
 import Data.Char
 import Data.List                                 (isSuffixOf)
-import Data.Maybe                                (fromJust)
 import Data.Monoid                               ((<>))
-import Data.Text                                 (Text)
-import Data.Word
-import HaskellWorks.Data.Bits.BitRead
-import HaskellWorks.Data.Bits.BitShow
 import HaskellWorks.Data.Bits.PopCount.PopCount1
-import HaskellWorks.Data.Dsv.Internal.Broadword
 import HaskellWorks.Data.FromByteString
 import HaskellWorks.Hspec.Hedgehog
 import Hedgehog
@@ -27,9 +20,6 @@ import qualified Data.ByteString                                        as BS
 import qualified Data.Text                                              as T
 import qualified Data.Text.Encoding                                     as T
 import qualified Data.Vector.Storable                                   as DVS
-import qualified HaskellWorks.Data.Dsv.Gen                              as G
-import qualified HaskellWorks.Data.Dsv.Internal.Char.Word64             as C
-import qualified HaskellWorks.Data.Dsv.Strict.Cursor                    as SVS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal           as SVS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal.Reference as SVS
 import qualified HaskellWorks.Data.FromForeignRegion                    as IO
