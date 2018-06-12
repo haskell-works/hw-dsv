@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7276648526e55daabde71fd3211e6be029c6047c541f2aa805d7c7572347840c
+-- hash: 718a76bb385b6942e953349a06c1cb13527346796a1c9762afe111273493033b
 
 name:           hw-dsv
 version:        0.1.0.1
@@ -199,7 +199,6 @@ benchmark bench
     , hw-rankselect-base >=0.3.2.0 && <0.4
     , mmap >=0.5.9 && <0.6
     , vector >=0.12.0.1 && <0.13
-    , weigh >=0.0.11 && <0.1
   if flag(sse42)
     ghc-options: -msse4.2
   if (flag(bmi2)) && (impl(ghc >=8.4.1))
