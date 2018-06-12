@@ -48,11 +48,11 @@ loadCassavaStrict filePath = do
     Left _  -> error "Unexpected parse error"
     Right v -> pure v
 
-loadCassavaStreaming :: FilePath -> IO (Vector (Vector ByteString))
+loadCassavaStreaming :: FilePath -> IO (CSS.Records (Vector ByteString))
 loadCassavaStreaming filePath = do
   !bs <- LBS.readFile filePath
   let r = CSS.decode CSV.HasHeader bs :: CSS.Records (Vector ByteString)
-  pure (DV.fromList (F.toList r))
+  pure r
 
 loadHwsvStrictIndex :: FilePath -> IO (Vector (Vector ByteString))
 loadHwsvStrictIndex filePath = do
@@ -73,13 +73,13 @@ loadHwsvLazyIndex filePath = do
 
   return DV.empty
 
-loadHwsvLazy :: FilePath -> IO (Vector (Vector LBS.ByteString))
+loadHwsvLazy :: FilePath -> IO [Vector LBS.ByteString]
 loadHwsvLazy filePath = do
   !bs <- LBS.readFile filePath
 
   let c = SVL.makeCursor ',' bs
 
-  return (SVL.toVectorVector c)
+  return (SVL.toListVector c)
 
 makeBenchCsv :: IO [Benchmark]
 makeBenchCsv = do
