@@ -15,10 +15,10 @@ import System.Directory
 import qualified Data.ByteString.Lazy                                   as LBS
 import qualified Data.Csv                                               as CSV
 import qualified Data.Csv.Streaming                                     as CSS
-import qualified Data.Vector                                            as DV
 import qualified Data.Vector.Storable                                   as DVS
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor                      as SVL
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Type                 as SVL
+import qualified HaskellWorks.Data.RankSelect.CsPoppy                   as RS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor                    as SVS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal           as SVS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal.Reference as SVS
@@ -38,24 +38,19 @@ loadCassavaStreaming filePath = do
   let r = CSS.decode CSV.HasHeader bs :: CSS.Records (Vector ByteString)
   pure r
 
-loadHwsvStrictIndex :: FilePath -> IO (Vector (Vector ByteString))
-loadHwsvStrictIndex filePath = do
-  !c <- SVS.mmapCursor ',' True filePath
-
-  return DV.empty
+loadHwsvStrictIndex :: FilePath -> IO (SVS.DsvCursor ByteString RS.CsPoppy)
+loadHwsvStrictIndex filePath =
+  SVS.mmapCursor ',' True filePath
 
 loadHwsvStrict :: FilePath -> IO (Vector (Vector ByteString))
 loadHwsvStrict filePath = SVS.toVectorVector <$> SVS.mmapCursor ',' True filePath
 
-loadHwsvLazyIndex :: FilePath -> IO (Vector (Vector ByteString))
+loadHwsvLazyIndex :: FilePath -> IO [(DVS.Vector Word64, DVS.Vector Word64)]
 loadHwsvLazyIndex filePath = do
   !bs <- LBS.readFile filePath
 
   let c = SVL.makeCursor ',' bs
-  let zipIndexes = zip (SVL.dsvCursorMarkers c) (SVL.dsvCursorNewlines c)
-  let !n = length zipIndexes
-
-  return DV.empty
+  pure (zip (SVL.dsvCursorMarkers c) (SVL.dsvCursorNewlines c))
 
 loadHwsvLazy :: FilePath -> IO [Vector LBS.ByteString]
 loadHwsvLazy filePath = do
@@ -63,7 +58,7 @@ loadHwsvLazy filePath = do
 
   let c = SVL.makeCursor ',' bs
 
-  return (SVL.toListVector c)
+  pure (SVL.toListVector c)
 
 makeBenchCsv :: IO [Benchmark]
 makeBenchCsv = do
