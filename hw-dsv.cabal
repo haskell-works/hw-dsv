@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 718a76bb385b6942e953349a06c1cb13527346796a1c9762afe111273493033b
+-- hash: d036a71513c56f726d80141beadab0a6f3dc6023e780c11286de2282feaa071f
 
 name:           hw-dsv
 version:        0.1.0.1
@@ -90,7 +90,7 @@ executable hw-dsv
       Paths_hw_dsv
   hs-source-dirs:
       app
-  ghc-options: -O2 -threaded -rtsopts -with-rtsopts=-N -Wall -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
+  ghc-options: -O2 -Wall -threaded -rtsopts -with-rtsopts=-N -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
     , bits-extra >=0.0.1.2 && <0.1
@@ -152,7 +152,7 @@ test-suite hw-dsv-test
       Paths_hw_dsv
   hs-source-dirs:
       test
-  ghc-options: -O2 -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -O2 -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
     , bits-extra >=0.0.1.2 && <0.1
@@ -183,7 +183,7 @@ benchmark bench
       Paths_hw_dsv
   hs-source-dirs:
       bench
-  ghc-options: -O2 -msse4.2
+  ghc-options: -O2 -Wall -msse4.2
   build-depends:
       base >=4.7 && <5
     , bits-extra >=0.0.1.2 && <0.1

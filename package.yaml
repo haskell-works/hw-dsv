@@ -36,7 +36,6 @@ dependencies:
 library:
   source-dirs: src
   ghc-options:
-  - -Wall
   - -Wcompat
   - -Wincomplete-record-updates
   - -Wincomplete-uni-patterns
@@ -50,7 +49,6 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
-    - -Wall
     - -Wcompat
     - -Wincomplete-record-updates
     - -Wincomplete-uni-patterns
@@ -83,8 +81,6 @@ tests:
   hw-dsv-space:
     main:               Space.hs
     source-dirs:        weigh
-    ghc-options:
-      - -Wall
     dependencies:
       - cassava               >= 0.5.1.0    && < 0.6
       - hw-dsv
@@ -106,7 +102,7 @@ benchmarks:
     - mmap                  >= 0.5.9      && < 0.6
 
 ghc-options:
-- -O2
+- -O2 -Wall
 
 when:
 - condition: flag(sse42)
