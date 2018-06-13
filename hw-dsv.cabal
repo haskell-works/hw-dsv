@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 04b8ebd1cf59a1981aea14e37fb882007c0fedbc8eb5aec78057abe71483e27c
+-- hash: b211fde1aec200decb5b1d3910b3abb9373a88a10182236b5991381757272384
 
 name:           hw-dsv
 version:        0.1.0.1
@@ -56,7 +56,7 @@ library
       Paths_hw_dsv
   hs-source-dirs:
       src
-  ghc-options: -O2 -Wall -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
+  ghc-options: -O2 -Wall
   build-depends:
       base >=4.7 && <5
     , bits-extra >=0.0.1.2 && <0.1
@@ -71,6 +71,12 @@ library
     ghc-options: -msse4.2
   if (flag(bmi2)) && (impl(ghc >=8.4.1))
     ghc-options: -mbmi2 -msse4.2
+  if (impl(ghc >=8.0.1))
+    ghc-options: -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
+  if (!impl(ghc >=8.0.1))
+    build-depends:
+        semigroups >=0.8.4 && <0.19
+      , transformers >=0.4 && <0.6
   default-language: Haskell2010
 
 executable hw-dsv
@@ -90,7 +96,7 @@ executable hw-dsv
       Paths_hw_dsv
   hs-source-dirs:
       app
-  ghc-options: -O2 -Wall -threaded -rtsopts -with-rtsopts=-N -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
+  ghc-options: -O2 -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
     , bits-extra >=0.0.1.2 && <0.1
@@ -110,6 +116,12 @@ executable hw-dsv
     ghc-options: -msse4.2
   if (flag(bmi2)) && (impl(ghc >=8.4.1))
     ghc-options: -mbmi2 -msse4.2
+  if (impl(ghc >=8.0.1))
+    ghc-options: -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
+  if (!impl(ghc >=8.0.1))
+    build-depends:
+        semigroups >=0.8.4 && <0.19
+      , transformers >=0.4 && <0.6
   default-language: Haskell2010
 
 test-suite hw-dsv-space
@@ -137,6 +149,12 @@ test-suite hw-dsv-space
     ghc-options: -msse4.2
   if (flag(bmi2)) && (impl(ghc >=8.4.1))
     ghc-options: -mbmi2 -msse4.2
+  if (impl(ghc >=8.0.1))
+    ghc-options: -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
+  if (!impl(ghc >=8.0.1))
+    build-depends:
+        semigroups >=0.8.4 && <0.19
+      , transformers >=0.4 && <0.6
   default-language: Haskell2010
   build-tool-depends: hspec-discover:hspec-discover
 
@@ -173,6 +191,12 @@ test-suite hw-dsv-test
     ghc-options: -msse4.2
   if (flag(bmi2)) && (impl(ghc >=8.4.1))
     ghc-options: -mbmi2 -msse4.2
+  if (impl(ghc >=8.0.1))
+    ghc-options: -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
+  if (!impl(ghc >=8.0.1))
+    build-depends:
+        semigroups >=0.8.4 && <0.19
+      , transformers >=0.4 && <0.6
   default-language: Haskell2010
   build-tool-depends: hspec-discover:hspec-discover
 
@@ -203,4 +227,10 @@ benchmark bench
     ghc-options: -msse4.2
   if (flag(bmi2)) && (impl(ghc >=8.4.1))
     ghc-options: -mbmi2 -msse4.2
+  if (impl(ghc >=8.0.1))
+    ghc-options: -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
+  if (!impl(ghc >=8.0.1))
+    build-depends:
+        semigroups >=0.8.4 && <0.19
+      , transformers >=0.4 && <0.6
   default-language: Haskell2010
