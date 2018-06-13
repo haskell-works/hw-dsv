@@ -6,8 +6,11 @@ import Weigh
 
 import qualified Data.ByteString.Lazy                as LBS
 import qualified Data.Csv                            as CSV
+import qualified Data.Csv.Streaming                  as CSS
+import qualified Data.Foldable                       as F
 import qualified Data.Vector                         as DV
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor as SVS
+import qualified HaskellWorks.Data.Dsv.Lazy.Cursor   as SVL
 
 {-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
 
@@ -16,11 +19,18 @@ repeatedly f a = a:case f a of
   Just b  -> repeatedly f b
   Nothing -> []
 
-loadCsv :: FilePath -> IO (DV.Vector (DV.Vector ByteString))
-loadCsv filePath = do
+loadCsvStrict :: FilePath -> IO (DV.Vector (DV.Vector ByteString))
+loadCsvStrict filePath = do
   c <- SVS.mmapCursor ',' False filePath
 
   return $ SVS.toVectorVector c
+
+loadCsvLazy :: FilePath -> IO [DV.Vector LBS.ByteString]
+loadCsvLazy filePath = do
+  bs <- LBS.readFile filePath
+  let c = SVL.makeCursor ',' bs
+
+  return $ SVL.toListVector c
 
 main :: IO ()
 main = do
@@ -28,13 +38,18 @@ main = do
   mainWith $ do
     setColumns [Case, Allocated, Max, Live, GCs]
     sequence_
-      [ action "cassava/decode/Vector ByteString" $ do
+      [ action "cassava strict" $ do
           r <- fmap (CSV.decode CSV.HasHeader) (LBS.readFile infp) :: IO (Either String (Vector (Vector ByteString)))
           case r of
             Left _  -> error "Unexpected parse error"
             Right v -> pure v
-      , action "hw-dsv/decode/Vector ByteString" $ do
-          v <- loadCsv infp :: IO (Vector (Vector ByteString))
+      , action "cassava streaming" $ do
+          fmap (F.toList . CSS.decode CSS.HasHeader) (LBS.readFile infp) :: IO [Vector ByteString]
+      , action "hw-dsv strict" $ do
+          v <- loadCsvStrict infp :: IO (Vector (Vector ByteString))
+          pure v
+      , action "hw-dsv lazy" $ do
+          v <- loadCsvLazy infp :: IO [Vector LBS.ByteString]
           pure v
       ]
   return ()
