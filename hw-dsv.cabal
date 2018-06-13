@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: d036a71513c56f726d80141beadab0a6f3dc6023e780c11286de2282feaa071f
+-- hash: 04b8ebd1cf59a1981aea14e37fb882007c0fedbc8eb5aec78057abe71483e27c
 
 name:           hw-dsv
 version:        0.1.0.1
@@ -96,15 +96,15 @@ executable hw-dsv
     , bits-extra >=0.0.1.2 && <0.1
     , bytestring >=0.10 && <0.11
     , deepseq >=1.4 && <1.5
-    , hedgehog >=0.5.3 && <0.7
+    , hedgehog >=0.5 && <0.7
     , hw-bits >=0.7.0.2 && <0.8
     , hw-dsv
     , hw-prim >=0.6.2.0 && <0.7
     , hw-rankselect >=0.12.0.2 && <0.13
     , hw-rankselect-base >=0.3.2.0 && <0.4
-    , lens >=4.16.1 && <5
-    , optparse-applicative >=0.14.2.0 && <0.15
-    , resourcet >=1.2.1 && <1.3
+    , lens >=4.15 && <5
+    , optparse-applicative >=0.13 && <0.15
+    , resourcet >=1.1 && <1.3
     , vector >=0.12.0.1 && <0.13
   if flag(sse42)
     ghc-options: -msse4.2
@@ -132,7 +132,7 @@ test-suite hw-dsv-space
     , hw-rankselect >=0.12.0.2 && <0.13
     , hw-rankselect-base >=0.3.2.0 && <0.4
     , vector >=0.12.0.1 && <0.13
-    , weigh >=0.0.11 && <0.1
+    , weigh >=0.0.6 && <0.1
   if flag(sse42)
     ghc-options: -msse4.2
   if (flag(bmi2)) && (impl(ghc >=8.4.1))
@@ -158,16 +158,16 @@ test-suite hw-dsv-test
     , bits-extra >=0.0.1.2 && <0.1
     , bytestring >=0.10 && <0.11
     , deepseq >=1.4 && <1.5
-    , directory >=1.3.1.5 && <1.4
-    , hedgehog >=0.5.3 && <0.7
-    , hspec >=2.5.1 && <3
+    , directory >=1.2.2 && <1.4
+    , hedgehog >=0.5 && <0.7
+    , hspec >=2.4 && <3
     , hw-bits >=0.7.0.2 && <0.8
     , hw-dsv
     , hw-hspec-hedgehog >=0.1.0.4 && <0.2
     , hw-prim >=0.6.2.0 && <0.7
     , hw-rankselect >=0.12.0.2 && <0.13
     , hw-rankselect-base >=0.3.2.0 && <0.4
-    , text >=1.2.3.0 && <2.0
+    , text >=1.2.2 && <2.0
     , vector >=0.12.0.1 && <0.13
   if flag(sse42)
     ghc-options: -msse4.2
