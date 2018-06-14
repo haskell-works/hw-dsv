@@ -1,5 +1,6 @@
 module HaskellWorks.Data.Dsv.Lazy.Cursor
-  ( makeCursor
+  ( DsvCursor (..)
+  , makeCursor
   , snippet
   , trim
   , atEnd
