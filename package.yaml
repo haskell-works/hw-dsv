@@ -55,10 +55,10 @@ executables:
     - -Wredundant-constraints
     dependencies:
     - hw-dsv
-    - hedgehog                >= 0.5.3      && < 0.7
-    - lens                    >= 4.16.1     && < 5
-    - optparse-applicative    >= 0.14.2.0   && < 0.15
-    - resourcet               >= 1.2.1      && < 1.3
+    - hedgehog                >= 0.5        && < 0.7
+    - lens                    >= 4.15       && < 5
+    - optparse-applicative    >= 0.13       && < 0.15
+    - resourcet               >= 1.1        && < 1.3
 
 tests:
   hw-dsv-test:
@@ -69,12 +69,12 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - directory               >= 1.3.1.5    && < 1.4
+    - directory               >= 1.2.2      && < 1.4
     - hw-dsv
-    - hedgehog                >= 0.5.3      && < 0.7
-    - hspec                   >= 2.5.1      && < 3
+    - hedgehog                >= 0.5        && < 0.7
+    - hspec                   >= 2.4        && < 3
     - hw-hspec-hedgehog       >= 0.1.0.4    && < 0.2
-    - text                    >= 1.2.3.0    && < 2.0
+    - text                    >= 1.2.2      && < 2.0
     verbatim:
       build-tool-depends: hspec-discover:hspec-discover
 
@@ -84,7 +84,7 @@ tests:
     dependencies:
       - cassava               >= 0.5.1.0    && < 0.6
       - hw-dsv
-      - weigh                 >= 0.0.11     && < 0.1
+      - weigh                 >= 0.0.6      && < 0.1
     verbatim:
       build-tool-depends: hspec-discover:hspec-discover
 
