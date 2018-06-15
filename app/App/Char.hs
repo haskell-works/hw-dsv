@@ -21,3 +21,6 @@ readChar :: ReadM Char
 readChar = eitherReader $ \xs -> case xs of
   [a] -> return a
   _   -> Left $ "Invalid delimeter " <> show xs
+
+readWord8 :: ReadM Word8
+readWord8 = fromIntegral . ord <$> readChar

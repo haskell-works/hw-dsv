@@ -16,8 +16,8 @@ import qualified Data.ByteString.Lazy                                   as LBS
 import qualified Data.Csv                                               as CSV
 import qualified Data.Csv.Streaming                                     as CSS
 import qualified Data.Vector.Storable                                   as DVS
+import           HaskellWorks.Data.Dsv.Internal.Char (comma, pipe)
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor                      as SVL
-import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Type                 as SVL
 import qualified HaskellWorks.Data.RankSelect.CsPoppy                   as RS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor                    as SVS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal           as SVS
@@ -40,23 +40,23 @@ loadCassavaStreaming filePath = do
 
 loadHwsvStrictIndex :: FilePath -> IO (SVS.DsvCursor ByteString RS.CsPoppy)
 loadHwsvStrictIndex filePath =
-  SVS.mmapCursor ',' True filePath
+  SVS.mmapCursor comma True filePath
 
 loadHwsvStrict :: FilePath -> IO (Vector (Vector ByteString))
-loadHwsvStrict filePath = SVS.toVectorVector <$> SVS.mmapCursor ',' True filePath
+loadHwsvStrict filePath = SVS.toVectorVector <$> SVS.mmapCursor comma True filePath
 
 loadHwsvLazyIndex :: FilePath -> IO [(DVS.Vector Word64, DVS.Vector Word64)]
 loadHwsvLazyIndex filePath = do
   !bs <- LBS.readFile filePath
 
-  let c = SVL.makeCursor ',' bs
+  let c = SVL.makeCursor comma bs
   pure (zip (SVL.dsvCursorMarkers c) (SVL.dsvCursorNewlines c))
 
 loadHwsvLazy :: FilePath -> IO [Vector LBS.ByteString]
 loadHwsvLazy filePath = do
   !bs <- LBS.readFile filePath
 
-  let c = SVL.makeCursor ',' bs
+  let c = SVL.makeCursor comma bs
 
   pure (SVL.toListVector c)
 
@@ -80,7 +80,7 @@ makeBenchW64s = do
   let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
   benchmarks <- forM files $ \file -> return
     [ env (IO.mmapFromForeignRegion file) $ \v -> bgroup "Creating bit index from mmaped file" $ mempty
-      <> [bench ("mkIbVector                  with sum" <> file) (whnf (DVS.foldl (+) 0 . SVS.mkIbVector ',') v)]
+      <> [bench ("mkIbVector                  with sum" <> file) (whnf (DVS.foldl (+) 0 . SVS.mkIbVector comma) v)]
     ]
   return (join benchmarks)
 
@@ -90,8 +90,8 @@ makeBenchMkInterestBits = do
   let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
   benchmarks <- forM files $ \file -> return
     [ env (IO.mmapFromForeignRegion file) $ \(v :: DVS.Vector Word64) -> bgroup "Loading lazy byte string into Word64s" $ mempty
-      <> [bench ("mkIbVector                  with sum" <> file) (whnf (DVS.foldr (+) 0 . SVS.mkIbVector        '|') v)]
-      <> [bench ("makeIndexes                 with sum" <> file) (whnf (DVS.foldr (+) 0 . fst . SVS.makeIndexes '|') v)]
+      <> [bench ("mkIbVector                  with sum" <> file) (whnf (DVS.foldr (+) 0 . SVS.mkIbVector        pipe) v)]
+      <> [bench ("makeIndexes                 with sum" <> file) (whnf (DVS.foldr (+) 0 . fst . SVS.makeIndexes pipe) v)]
     ]
   return (join benchmarks)
 

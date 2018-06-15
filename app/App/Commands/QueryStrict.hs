@@ -13,7 +13,6 @@ import Control.Lens
 import Control.Monad
 import Control.Monad.IO.Class       (liftIO)
 import Control.Monad.Trans.Resource
-import Data.Char                    (ord)
 import Data.List
 import Data.Semigroup               ((<>))
 import Options.Applicative
@@ -33,7 +32,7 @@ runQueryStrict opts = do
   c <- SVS.mmapCursor delimiter useIndex inputFilePath
 
   let !rows = SVS.toListVector c
-  let !outDelimiterBuilder = B.word8 (fromIntegral (ord (opts ^. L.outDelimiter)))
+  let !outDelimiterBuilder = B.word8 (opts ^. L.outDelimiter)
 
   runResourceT $ do
     (_, hOut) <- IO.openOutputFile (opts ^. L.outputFilePath) Nothing
@@ -73,13 +72,13 @@ optsQueryStrict = QueryStrictOptions
           <>  help "Output DSV file"
           <>  metavar "FILE"
           )
-    <*> option readChar
+    <*> option readWord8
           (   long "input-delimiter"
           <>  short 'd'
           <>  help "DSV delimiter to read in the input"
           <>  metavar "CHAR"
           )
-    <*> option readChar
+    <*> option readWord8
           (   long "output-delimiter"
           <>  short 'e'
           <>  help "DSV delimiter to write in the output"

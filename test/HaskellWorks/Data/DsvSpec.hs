@@ -12,6 +12,7 @@ import HaskellWorks.Hspec.Hedgehog
 import Hedgehog
 import Test.Hspec
 
+import           HaskellWorks.Data.Dsv.Internal.Char (comma)
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal.Reference as SVS
 
 {-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
@@ -32,7 +33,7 @@ spec = describe "HaskellWorks.Data.DsvSpec" $ do
           \00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
 
     let v = fromByteString bs
-    let actual = SVS.mkIbVector ',' v
+    let actual = SVS.mkIbVector comma v
 
     bitShow actual ===  "00000000 10000000 01000000 10000000 00000000 00000000 00010000 00001000 \
                         \00000100 00001000 00000000 00000000 00000001 00000000 10000000 01000000 \
@@ -50,7 +51,7 @@ spec = describe "HaskellWorks.Data.DsvSpec" $ do
           \00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
 
     let v = fromByteString bs
-    let !actual = SVS.mkIbVector ',' v
+    let !actual = SVS.mkIbVector comma v
 
     bitShow actual ===  "00000000 10000000 01000000 10000000 00000000 00000000 00010000 00001000 \
                         \00000100 00001000 00000000 00000000 00000001 00000000 10000000 01000000 \
@@ -68,7 +69,7 @@ spec = describe "HaskellWorks.Data.DsvSpec" $ do
           \00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
 
     let v = fromByteString bs
-    let !actual = SVS.mkIbVector ',' v
+    let !actual = SVS.mkIbVector comma v
 
     bitShow actual ===  "00000000 10000000 01000000 10000000 00000000 00000000 00010000 00001000 \
                         \00000100 00001000 00000000 00000000 00000001 00000000 10000000 01000000 \

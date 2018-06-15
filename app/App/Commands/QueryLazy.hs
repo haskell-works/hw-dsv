@@ -13,7 +13,6 @@ import Control.Lens
 import Control.Monad
 import Control.Monad.IO.Class       (liftIO)
 import Control.Monad.Trans.Resource
-import Data.Char
 import Data.List
 import Data.Semigroup               ((<>))
 import Options.Applicative          hiding (columns)
@@ -31,7 +30,7 @@ runQueryLazy opts = do
 
   let !c = SVL.makeCursor (opts ^. L.delimiter) bs
   let !rows = SVL.toListVector c
-  let !outDelimiterBuilder = B.word8 (fromIntegral (ord (opts ^. L.outDelimiter)))
+  let !outDelimiterBuilder = B.word8 (opts ^. L.outDelimiter)
 
   runResourceT $ do
     (_, hOut) <- IO.openOutputFile (opts ^. L.outputFilePath) Nothing
@@ -75,13 +74,13 @@ optsQueryLazy = QueryLazyOptions
           <>  showDefault
           <>  value "-"
           )
-    <*> option readChar
+    <*> option readWord8
           (   long "input-delimiter"
           <>  short 'd'
           <>  help "Input DSV delimiter"
           <>  metavar "CHAR"
           )
-    <*> option readChar
+    <*> option readWord8
           (   long "output-delimiter"
           <>  short 'e'
           <>  help "Output DSV delimiter"

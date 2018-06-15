@@ -11,7 +11,6 @@ import HaskellWorks.Data.AtIndex
 import HaskellWorks.Data.Bits.BitWise
 import HaskellWorks.Data.Dsv.Internal.Bits
 import HaskellWorks.Data.Dsv.Internal.Broadword
-import HaskellWorks.Data.Dsv.Internal.Char.Word64
 import HaskellWorks.Data.Dsv.Strict.Cursor.Type
 import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
@@ -127,11 +126,11 @@ mkIbVector' rawBits cpcs v = DVS.constructN ((DVS.length v + 7) `div` 8) go
                     m   = toggle64 cpc d
                 in w .&. m
 
-mkIbVector :: Char -> DVS.Vector Word64 -> DVS.Vector Word64
+mkIbVector :: Word8 -> DVS.Vector Word64 -> DVS.Vector Word64
 mkIbVector delimiter v = mkIbVector' rawBits cpcs v
   where rdqs    = CW.doubleQuote
         rnls    = CW.newline
-        rdls    = fillWord64WithChar8 delimiter
+        rdls    = fillWord64 delimiter
         rawBits = mkDsvRawBitsByWord64s rdqs rnls rdls v
         cpcs    = mkCummulativeDqPopCount rawBits -- cummulative popcounts
 

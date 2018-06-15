@@ -1,16 +1,18 @@
 module App.Commands.Options.Type where
 
+import GHC.Word (Word8)
+
 data CreateIndexOptions = CreateIndexOptions
   { _createIndexOptionsFilePath  :: FilePath
-  , _createIndexOptionsDelimiter :: Char
+  , _createIndexOptionsDelimiter :: Word8
   } deriving (Eq, Show)
 
 data QueryStrictOptions = QueryStrictOptions
   { _queryStrictOptionsColumns        :: [Int]
   , _queryStrictOptionsFilePath       :: FilePath
   , _queryStrictOptionsOutputFilePath :: FilePath
-  , _queryStrictOptionsDelimiter      :: Char
-  , _queryStrictOptionsOutDelimiter   :: Char
+  , _queryStrictOptionsDelimiter      :: Word8
+  , _queryStrictOptionsOutDelimiter   :: Word8
   -- , _queryOptionsUseIndex       :: Bool
   } deriving (Eq, Show)
 
@@ -28,6 +30,6 @@ data QueryLazyOptions = QueryLazyOptions
   { _queryLazyOptionsColumns        :: [Int]
   , _queryLazyOptionsFilePath       :: FilePath
   , _queryLazyOptionsOutputFilePath :: FilePath
-  , _queryLazyOptionsDelimiter      :: Char
-  , _queryLazyOptionsOutDelimiter   :: Char
+  , _queryLazyOptionsDelimiter      :: Word8
+  , _queryLazyOptionsOutDelimiter   :: Word8
   } deriving (Eq, Show)

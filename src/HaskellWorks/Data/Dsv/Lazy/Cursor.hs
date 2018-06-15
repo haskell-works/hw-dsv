@@ -13,6 +13,8 @@ module HaskellWorks.Data.Dsv.Lazy.Cursor
   ) where
 
 import Data.Function
+import GHC.Word (Word8)
+import HaskellWorks.Data.Dsv.Internal.Broadword (fillWord64)
 import HaskellWorks.Data.Dsv.Internal.Bits
 import HaskellWorks.Data.Dsv.Lazy.Cursor.Internal
 import HaskellWorks.Data.Dsv.Lazy.Cursor.Type
@@ -25,7 +27,7 @@ import qualified Data.ByteString.Lazy                       as LBS
 import qualified Data.Vector                                as DV
 import qualified HaskellWorks.Data.Dsv.Internal.Char.Word64 as CW
 
-makeCursor :: Char -> LBS.ByteString -> DsvCursor
+makeCursor :: Word8 -> LBS.ByteString -> DsvCursor
 makeCursor delimiter lbs = DsvCursor
   { dsvCursorText      = lbs
   , dsvCursorMarkers   = ib
@@ -33,9 +35,9 @@ makeCursor delimiter lbs = DsvCursor
   , dsvCursorPosition  = 0
   }
   where ws  = asVector64s 64 lbs
-        ibq = makeIbs CW.doubleQuote                      <$> ws
-        ibn = makeIbs CW.newline                          <$> ws
-        ibd = makeIbs (CW.fillWord64WithChar8 delimiter)  <$> ws
+        ibq = makeIbs CW.doubleQuote         <$> ws
+        ibn = makeIbs CW.newline             <$> ws
+        ibd = makeIbs (fillWord64 delimiter) <$> ws
         pcq = makeCummulativePopCount ibq
         ibr = zip2Or ibn ibd
         qm  = makeQuoteMask ibq pcq

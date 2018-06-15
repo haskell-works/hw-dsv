@@ -16,7 +16,6 @@ import qualified App.Lens                               as L
 import qualified Data.ByteString.Builder                as B
 import qualified Data.Vector.Storable                   as DVS
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor      as SVL
-import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Type as SVL
 import qualified System.IO                              as IO
 
 runCreateIndex :: CreateIndexOptions -> IO ()
@@ -50,7 +49,7 @@ optsCreateIndex = CreateIndexOptions
         <>  help "Input DSV file"
         <>  metavar "STRING"
         )
-  <*> option readChar
+  <*> option readWord8
         (   long "input-delimiter"
         <>  short 'd'
         <>  help "DSV delimiter"
