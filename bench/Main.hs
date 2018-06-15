@@ -17,7 +17,6 @@ import qualified Data.Csv                                               as CSV
 import qualified Data.Csv.Streaming                                     as CSS
 import qualified Data.Vector.Storable                                   as DVS
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor                      as SVL
-import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Type                 as SVL
 import qualified HaskellWorks.Data.RankSelect.CsPoppy                   as RS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor                    as SVS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal           as SVS
@@ -49,14 +48,14 @@ loadHwsvLazyIndex :: FilePath -> IO [(DVS.Vector Word64, DVS.Vector Word64)]
 loadHwsvLazyIndex filePath = do
   !bs <- LBS.readFile filePath
 
-  let c = SVL.makeCursor ',' bs
+  let c = SVL.makeCursor 44 bs
   pure (zip (SVL.dsvCursorMarkers c) (SVL.dsvCursorNewlines c))
 
 loadHwsvLazy :: FilePath -> IO [Vector LBS.ByteString]
 loadHwsvLazy filePath = do
   !bs <- LBS.readFile filePath
 
-  let c = SVL.makeCursor ',' bs
+  let c = SVL.makeCursor 44 bs
 
   pure (SVL.toListVector c)
 

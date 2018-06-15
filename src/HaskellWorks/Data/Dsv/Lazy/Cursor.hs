@@ -1,7 +1,6 @@
 module HaskellWorks.Data.Dsv.Lazy.Cursor
   ( DsvCursor (..)
   , makeCursor
-  , makeCursorWord8
   , snippet
   , trim
   , atEnd
@@ -13,7 +12,6 @@ module HaskellWorks.Data.Dsv.Lazy.Cursor
   , toVectorVector
   ) where
 
-import Data.Char (ord)
 import Data.Function
 import GHC.Word (Word8)
 import HaskellWorks.Data.Dsv.Internal.Broadword (fillWord64)
@@ -29,12 +27,8 @@ import qualified Data.ByteString.Lazy                       as LBS
 import qualified Data.Vector                                as DV
 import qualified HaskellWorks.Data.Dsv.Internal.Char.Word64 as CW
 
-makeCursor :: Char -> LBS.ByteString -> DsvCursor
-makeCursor delimiter lbs = makeCursorWord8 (fromIntegral (ord delimiter) :: Word8) lbs
-{-# INLINE makeCursor #-}
-
-makeCursorWord8 :: Word8 -> LBS.ByteString -> DsvCursor
-makeCursorWord8 delimiter lbs = DsvCursor
+makeCursor :: Word8 -> LBS.ByteString -> DsvCursor
+makeCursor delimiter lbs = DsvCursor
   { dsvCursorText      = lbs
   , dsvCursorMarkers   = ib
   , dsvCursorNewlines  = nls
@@ -49,7 +43,7 @@ makeCursorWord8 delimiter lbs = DsvCursor
         qm  = makeQuoteMask ibq pcq
         ib  = zip2And ibr qm
         nls = zip2And ibn qm
-{-# INLINE makeCursorWord8 #-}
+{-# INLINE makeCursor #-}
 
 snippet :: DsvCursor -> LBS.ByteString
 snippet c = LBS.take (len `max` 0) $ LBS.drop posC $ dsvCursorText c

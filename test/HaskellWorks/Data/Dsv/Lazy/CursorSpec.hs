@@ -31,7 +31,7 @@ subjectMM = "hello,goodbye\nyes,no"
 expectedMM = mkExpected [["hello","goodbye"],["yes","no"]]
 
 testToListVector :: LBS.ByteString -> [V.Vector LBS.ByteString]
-testToListVector = SVL.toListVector . SVL.makeCursor ','
+testToListVector = SVL.toListVector . SVL.makeCursor 44
 
 -- Adds a terminal newline to the file
 testToListVector' :: LBS.ByteString -> [V.Vector LBS.ByteString]

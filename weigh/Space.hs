@@ -28,7 +28,7 @@ loadCsvStrict filePath = do
 loadCsvLazy :: FilePath -> IO [DV.Vector LBS.ByteString]
 loadCsvLazy filePath = do
   bs <- LBS.readFile filePath
-  let c = SVL.makeCursor ',' bs
+  let c = SVL.makeCursor 44 bs
 
   return $ SVL.toListVector c
 
