@@ -20,7 +20,7 @@ category:            Text, Web, CSV
 # common to point users to the README.md file.
 description:         Please see the README on Github at <https://github.com/haskell-works/hw-dsv#readme>
 
-tested-with:         GHC == 8.4.3, GHC == 8.2.2, GHC == 8.0.2
+tested-with:         GHC == 8.4.3, GHC == 8.2.2, GHC == 8.0.2, GHC == 7.10.3
 
 dependencies:
 - base                  >= 4.7      && < 5
@@ -35,11 +35,6 @@ dependencies:
 
 library:
   source-dirs: src
-  ghc-options:
-  - -Wcompat
-  - -Wincomplete-record-updates
-  - -Wincomplete-uni-patterns
-  - -Wredundant-constraints
 
 executables:
   hw-dsv:
@@ -49,10 +44,6 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
-    - -Wcompat
-    - -Wincomplete-record-updates
-    - -Wincomplete-uni-patterns
-    - -Wredundant-constraints
     dependencies:
     - hw-dsv
     - hedgehog                >= 0.5        && < 0.7
@@ -112,6 +103,16 @@ when:
   ghc-options:
   - -mbmi2
   - -msse4.2
+- condition: (impl(ghc >=8.0.1))
+  ghc-options:
+  - -Wcompat
+  - -Wincomplete-record-updates
+  - -Wincomplete-uni-patterns
+  - -Wredundant-constraints
+- condition: (!impl(ghc >=8.0.1))
+  dependencies:
+    - transformers          >= 0.4        && < 0.6
+    - semigroups            >= 0.8.4      && < 0.19
 
 flags:
   sse42:
