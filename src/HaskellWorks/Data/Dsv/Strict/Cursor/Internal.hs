@@ -11,7 +11,6 @@ import HaskellWorks.Data.AtIndex
 import HaskellWorks.Data.Bits.BitWise
 import HaskellWorks.Data.Dsv.Internal.Bits
 import HaskellWorks.Data.Dsv.Internal.Broadword
-import HaskellWorks.Data.Dsv.Internal.Char.Word64
 import HaskellWorks.Data.Dsv.Strict.Cursor.Type
 import HaskellWorks.Data.Positioning
 import HaskellWorks.Data.RankSelect.Base.Rank1
@@ -24,8 +23,8 @@ import qualified HaskellWorks.Data.Dsv.Internal.Char.Word64 as CW
 
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
 
-makeIndexes :: Char -> DVS.Vector Word64 -> (DVS.Vector Word64, DVS.Vector Word64)
-makeIndexes delimiter ws = case DVS.createT $ makeIndexes' CW.doubleQuote CW.newline (fillWord64WithChar8 delimiter) ws of
+makeIndexes :: Word8 -> DVS.Vector Word64 -> (DVS.Vector Word64, DVS.Vector Word64)
+makeIndexes delimiter ws = case DVS.createT $ makeIndexes' CW.doubleQuote CW.newline (fillWord64 delimiter) ws of
   [markers, newlines] -> (markers, newlines)
   _                   -> error "This should not happen"
 

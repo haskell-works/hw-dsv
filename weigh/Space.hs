@@ -9,6 +9,7 @@ import qualified Data.Csv                            as CSV
 import qualified Data.Csv.Streaming                  as CSS
 import qualified Data.Foldable                       as F
 import qualified Data.Vector                         as DV
+import           HaskellWorks.Data.Dsv.Internal.Char (comma)
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor as SVS
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor   as SVL
 
@@ -21,14 +22,14 @@ repeatedly f a = a:case f a of
 
 loadCsvStrict :: FilePath -> IO (DV.Vector (DV.Vector ByteString))
 loadCsvStrict filePath = do
-  c <- SVS.mmapCursor ',' False filePath
+  c <- SVS.mmapCursor comma False filePath
 
   return $ SVS.toVectorVector c
 
 loadCsvLazy :: FilePath -> IO [DV.Vector LBS.ByteString]
 loadCsvLazy filePath = do
   bs <- LBS.readFile filePath
-  let c = SVL.makeCursor 44 bs
+  let c = SVL.makeCursor comma bs
 
   return $ SVL.toListVector c
 

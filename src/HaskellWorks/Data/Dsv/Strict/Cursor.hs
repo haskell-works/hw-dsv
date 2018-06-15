@@ -13,7 +13,6 @@ module HaskellWorks.Data.Dsv.Strict.Cursor
   , toVectorVector
   ) where
 
-import Data.Char                                 (ord)
 import Data.Word
 import HaskellWorks.Data.Dsv.Strict.Cursor.Type
 import HaskellWorks.Data.Product
@@ -27,7 +26,7 @@ import qualified Data.Vector.Storable                         as DVS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal as SVS
 import qualified HaskellWorks.Data.FromForeignRegion          as IO
 
-mmapCursor :: Char -> Bool -> FilePath -> IO (DsvCursor BS.ByteString CsPoppy)
+mmapCursor :: Word8 -> Bool -> FilePath -> IO (DsvCursor BS.ByteString CsPoppy)
 mmapCursor delimiter useIndex filePath = do
   (!bs) :*: (!v) <- IO.mmapFromForeignRegion filePath
   let !_ = v :: DVS.Vector Word64
@@ -37,7 +36,7 @@ mmapCursor delimiter useIndex filePath = do
       <*> IO.mmapFromForeignRegion (filePath ++ ".newlines.idx")
     else return $ SVS.makeIndexes delimiter v
   return DsvCursor
-    { dsvCursorDelimiter = fromIntegral (ord delimiter)
+    { dsvCursorDelimiter = delimiter
     , dsvCursorText      = bs
     , dsvCursorMarkers   = makeCsPoppy markers
     , dsvCursorNewlines  = makeCsPoppy newlines

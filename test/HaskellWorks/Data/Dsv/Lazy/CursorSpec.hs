@@ -12,6 +12,7 @@ import Test.Hspec
 import qualified Data.ByteString.Lazy                                   as LBS
 import qualified Data.Vector                                            as V
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor                      as SVL
+import           HaskellWorks.Data.Dsv.Internal.Char (comma)
 
 {-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
@@ -31,7 +32,7 @@ subjectMM = "hello,goodbye\nyes,no"
 expectedMM = mkExpected [["hello","goodbye"],["yes","no"]]
 
 testToListVector :: LBS.ByteString -> [V.Vector LBS.ByteString]
-testToListVector = SVL.toListVector . SVL.makeCursor 44
+testToListVector = SVL.toListVector . SVL.makeCursor comma
 
 -- Adds a terminal newline to the file
 testToListVector' :: LBS.ByteString -> [V.Vector LBS.ByteString]

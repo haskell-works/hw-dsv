@@ -11,8 +11,8 @@ data QueryStrictOptions = QueryStrictOptions
   { _queryStrictOptionsColumns        :: [Int]
   , _queryStrictOptionsFilePath       :: FilePath
   , _queryStrictOptionsOutputFilePath :: FilePath
-  , _queryStrictOptionsDelimiter      :: Char
-  , _queryStrictOptionsOutDelimiter   :: Char
+  , _queryStrictOptionsDelimiter      :: Word8
+  , _queryStrictOptionsOutDelimiter   :: Word8
   -- , _queryOptionsUseIndex       :: Bool
   } deriving (Eq, Show)
 
