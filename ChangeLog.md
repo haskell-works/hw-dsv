@@ -1,5 +1,9 @@
 # Changelog for hw-dsv
 
+# 0.2.1
+
+* Add instance NFData Lazy.DsvCursor
+
 # 0.2
 
 * Change delimiter types from Char to Word8, since only 8-bit chars work.
