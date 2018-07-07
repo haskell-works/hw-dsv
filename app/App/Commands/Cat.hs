@@ -5,11 +5,10 @@ module App.Commands.Cat
 import App.Commands.Options.Type
 import Control.Lens
 import Data.Semigroup            ((<>))
-import Options.Applicative       hiding (columns)
+import Options.Applicative
 
-import qualified App.IO               as IO
-import qualified App.Lens             as L
-import qualified Data.ByteString.Lazy as LBS
+import qualified App.IO   as IO
+import qualified App.Lens as L
 
 runCat :: CatOptions -> IO ()
 runCat opts = do
@@ -18,7 +17,7 @@ runCat opts = do
 
   contents <- IO.readInputFile source
 
-  LBS.writeFile target contents
+  IO.writeOutputFile target contents
 
   return ()
 
@@ -28,11 +27,15 @@ optsCat = CatOptions
         (   long "input"
         <>  help "Input file"
         <>  metavar "FILE"
+        <>  showDefault
+        <>  value "-"
         )
   <*> strOption
         (   long "output"
         <>  help "Output file"
         <>  metavar "FILE"
+        <>  showDefault
+        <>  value "-"
         )
 
 cmdCat :: Mod CommandFields (IO ())
