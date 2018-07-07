@@ -21,3 +21,7 @@ openOutputFile filePath maybeBufferSize = allocate open close
 readInputFile :: FilePath -> IO LBS.ByteString
 readInputFile "-"      = LBS.hGetContents IO.stdin
 readInputFile filePath = LBS.readFile filePath
+
+writeOutputFile :: FilePath -> LBS.ByteString -> IO ()
+writeOutputFile "-"      bs = LBS.hPut IO.stdout bs
+writeOutputFile filePath bs = LBS.writeFile filePath bs
