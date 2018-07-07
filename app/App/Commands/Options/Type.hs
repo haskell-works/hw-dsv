@@ -24,6 +24,7 @@ data GenerateOptions = GenerateOptions
 data CatOptions = CatOptions
   { _catOptionsSource :: FilePath
   , _catOptionsTarget :: FilePath
+  , _catOptionsSimd   :: Bool
   } deriving (Eq, Show)
 
 data QueryLazyOptions = QueryLazyOptions

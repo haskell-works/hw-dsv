@@ -10,6 +10,7 @@ extra-source-files:
 - README.md
 - ChangeLog.md
 - data/bench/data-0001000.csv
+- cbits/simd.h
 
 # Metadata used when publishing your package
 synopsis:            Unbelievably fast streaming DSV file parser
@@ -35,6 +36,12 @@ dependencies:
 
 library:
   source-dirs: src
+  build-tools:
+  - c2hs
+  c-sources:
+  - cbits/simd.c
+  include-dirs:
+  - cbits
 
 executables:
   hw-dsv:
@@ -97,12 +104,30 @@ ghc-options:
 
 when:
 - condition: flag(sse42)
+  cc-options:
+  - -msse4.2
   ghc-options:
   - -msse4.2
+- condition: flag(bmi2)
+  cc-options:
+  - -mbmi2
+  - -DBMI2_ENABLED
 - condition: (flag(bmi2)) && (impl(ghc >=8.4.1))
   ghc-options:
   - -mbmi2
   - -msse4.2
+- condition:  flag(avx512)
+  cc-options:
+  - -mavx512bw
+  - -mavx512vl
+  - -DAVX512_ENABLED
+- condition: (flag(avx512)) && (impl(ghc >=8.4.1))
+  ghc-options:
+  - -mbmi2
+  - -msse4.2
+  cpp-options:
+  - -DBMI2_ENABLED
+  - -DAVX512_ENABLED
 - condition: (impl(ghc >=8.0.1))
   ghc-options:
   - -Wcompat
@@ -122,5 +147,10 @@ flags:
 
   bmi2:
     description: Enable bmi2 instruction set
+    manual: false
+    default: false
+
+  avx512:
+    description: Enable avx512 instruction set
     manual: false
     default: false
