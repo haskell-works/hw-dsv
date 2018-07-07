@@ -27,6 +27,12 @@ data CatOptions = CatOptions
   , _catOptionsSimd   :: Bool
   } deriving (Eq, Show)
 
+data CmpEq8Options = CmpEq8Options
+  { _cmpEq8OptionsSource :: FilePath
+  , _cmpEq8OptionsTarget :: FilePath
+  , _cmpEq8OptionsSimd   :: Bool
+  } deriving (Eq, Show)
+
 data QueryLazyOptions = QueryLazyOptions
   { _queryLazyOptionsColumns        :: [Int]
   , _queryLazyOptionsFilePath       :: FilePath

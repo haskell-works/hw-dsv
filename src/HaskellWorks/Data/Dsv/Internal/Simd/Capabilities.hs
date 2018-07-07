@@ -2,14 +2,14 @@
 
 module HaskellWorks.Data.Dsv.Internal.Simd.Capabilities where
 
-requireAvx512 :: a -> a
-requireAvx512 a = if avx512Enabled then a else error "AVX512 not enabled"
-{-# INLINE requireAvx512 #-}
+requireAvx2 :: a -> a
+requireAvx2 a = if avx2Enabled then a else error "AVX2 not enabled"
+{-# INLINE requireAvx2 #-}
 
-avx512Enabled :: Bool
-#if defined(AVX512_ENABLED)
-avx512Enabled = True
+avx2Enabled :: Bool
+#if defined(AVX2_ENABLED)
+avx2Enabled = True
 #else
-avx512Enabled = False
+avx2Enabled = False
 #endif
-{-# INLINE avx512Enabled #-}
+{-# INLINE avx2Enabled #-}
