@@ -1,8 +1,8 @@
--- This file has been generated from package.yaml by hpack version 0.27.0.
+-- This file has been generated from package.yaml by hpack version 0.28.2.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 14ef3831452c80f0f1a586d2faec53d18ae39348940e4b1a47bc7dcb4d302e23
+-- hash: 625c09afefb55020df478be91e227d2d299e99d7f734fce5e5be61c7b5a0b64c
 
 name:           hw-dsv
 version:        0.2.1
@@ -19,7 +19,6 @@ license-file:   LICENSE
 tested-with:    GHC == 8.4.3, GHC == 8.2.2, GHC == 8.0.2, GHC == 7.10.3
 build-type:     Simple
 cabal-version:  >= 1.10
-
 extra-source-files:
     ChangeLog.md
     data/bench/data-0001000.csv
