@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 625c09afefb55020df478be91e227d2d299e99d7f734fce5e5be61c7b5a0b64c
+-- hash: a569dda98e2ca42e3bb5d01433254f11aef9693abe16d67c1243146d1990d569
 
 name:           hw-dsv
 version:        0.2.1
@@ -20,6 +20,7 @@ tested-with:    GHC == 8.4.3, GHC == 8.2.2, GHC == 8.0.2, GHC == 7.10.3
 build-type:     Simple
 cabal-version:  >= 1.10
 extra-source-files:
+    cbits/simd.h
     ChangeLog.md
     data/bench/data-0001000.csv
     README.md
@@ -27,6 +28,11 @@ extra-source-files:
 source-repository head
   type: git
   location: https://github.com/haskell-works/hw-dsv
+
+flag avx512
+  description: Enable avx512 instruction set
+  manual: False
+  default: False
 
 flag bmi2
   description: Enable bmi2 instruction set
@@ -44,6 +50,9 @@ library
       HaskellWorks.Data.Dsv.Internal.Broadword
       HaskellWorks.Data.Dsv.Internal.Char
       HaskellWorks.Data.Dsv.Internal.Char.Word64
+      HaskellWorks.Data.Dsv.Internal.Simd.Avx512.ByteString
+      HaskellWorks.Data.Dsv.Internal.Simd.Capabilities
+      HaskellWorks.Data.Dsv.Internal.Simd.Foreign
       HaskellWorks.Data.Dsv.Lazy.Cursor
       HaskellWorks.Data.Dsv.Lazy.Cursor.Internal
       HaskellWorks.Data.Dsv.Lazy.Cursor.Type
@@ -56,6 +65,10 @@ library
   hs-source-dirs:
       src
   ghc-options: -O2 -Wall
+  include-dirs:
+      cbits
+  c-sources:
+      cbits/simd.c
   build-depends:
       base >=4.7 && <5
     , bits-extra >=0.0.1.2 && <0.1
@@ -66,10 +79,20 @@ library
     , hw-rankselect >=0.12.0.2 && <0.13
     , hw-rankselect-base >=0.3.2.0 && <0.4
     , vector >=0.12.0.1 && <0.13
+  build-tools:
+      c2hs
   if flag(sse42)
     ghc-options: -msse4.2
+    cc-options: -msse4.2
+  if flag(bmi2)
+    cc-options: -mbmi2 -DBMI2_ENABLED
   if (flag(bmi2)) && (impl(ghc >=8.4.1))
     ghc-options: -mbmi2 -msse4.2
+  if flag(avx512)
+    cc-options: -mavx512bw -mavx512vl -DAVX512_ENABLED
+  if (flag(avx512)) && (impl(ghc >=8.4.1))
+    ghc-options: -mbmi2 -msse4.2
+    cpp-options: -DBMI2_ENABLED -DAVX512_ENABLED
   if (impl(ghc >=8.0.1))
     ghc-options: -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
   if (!impl(ghc >=8.0.1))
@@ -113,8 +136,16 @@ executable hw-dsv
     , vector >=0.12.0.1 && <0.13
   if flag(sse42)
     ghc-options: -msse4.2
+    cc-options: -msse4.2
+  if flag(bmi2)
+    cc-options: -mbmi2 -DBMI2_ENABLED
   if (flag(bmi2)) && (impl(ghc >=8.4.1))
     ghc-options: -mbmi2 -msse4.2
+  if flag(avx512)
+    cc-options: -mavx512bw -mavx512vl -DAVX512_ENABLED
+  if (flag(avx512)) && (impl(ghc >=8.4.1))
+    ghc-options: -mbmi2 -msse4.2
+    cpp-options: -DBMI2_ENABLED -DAVX512_ENABLED
   if (impl(ghc >=8.0.1))
     ghc-options: -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
   if (!impl(ghc >=8.0.1))
@@ -146,8 +177,16 @@ test-suite hw-dsv-space
     , weigh >=0.0.6 && <0.1
   if flag(sse42)
     ghc-options: -msse4.2
+    cc-options: -msse4.2
+  if flag(bmi2)
+    cc-options: -mbmi2 -DBMI2_ENABLED
   if (flag(bmi2)) && (impl(ghc >=8.4.1))
     ghc-options: -mbmi2 -msse4.2
+  if flag(avx512)
+    cc-options: -mavx512bw -mavx512vl -DAVX512_ENABLED
+  if (flag(avx512)) && (impl(ghc >=8.4.1))
+    ghc-options: -mbmi2 -msse4.2
+    cpp-options: -DBMI2_ENABLED -DAVX512_ENABLED
   if (impl(ghc >=8.0.1))
     ghc-options: -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
   if (!impl(ghc >=8.0.1))
@@ -188,8 +227,16 @@ test-suite hw-dsv-test
     , vector >=0.12.0.1 && <0.13
   if flag(sse42)
     ghc-options: -msse4.2
+    cc-options: -msse4.2
+  if flag(bmi2)
+    cc-options: -mbmi2 -DBMI2_ENABLED
   if (flag(bmi2)) && (impl(ghc >=8.4.1))
     ghc-options: -mbmi2 -msse4.2
+  if flag(avx512)
+    cc-options: -mavx512bw -mavx512vl -DAVX512_ENABLED
+  if (flag(avx512)) && (impl(ghc >=8.4.1))
+    ghc-options: -mbmi2 -msse4.2
+    cpp-options: -DBMI2_ENABLED -DAVX512_ENABLED
   if (impl(ghc >=8.0.1))
     ghc-options: -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
   if (!impl(ghc >=8.0.1))
@@ -224,8 +271,16 @@ benchmark bench
     , vector >=0.12.0.1 && <0.13
   if flag(sse42)
     ghc-options: -msse4.2
+    cc-options: -msse4.2
+  if flag(bmi2)
+    cc-options: -mbmi2 -DBMI2_ENABLED
   if (flag(bmi2)) && (impl(ghc >=8.4.1))
     ghc-options: -mbmi2 -msse4.2
+  if flag(avx512)
+    cc-options: -mavx512bw -mavx512vl -DAVX512_ENABLED
+  if (flag(avx512)) && (impl(ghc >=8.4.1))
+    ghc-options: -mbmi2 -msse4.2
+    cpp-options: -DBMI2_ENABLED -DAVX512_ENABLED
   if (impl(ghc >=8.0.1))
     ghc-options: -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
   if (!impl(ghc >=8.0.1))

@@ -98,6 +98,10 @@ jobs:
           name: Running tests against latest on hackage
           command: stack --stack-yaml stack-ci.yaml test
 
+      - run:
+          name: Check package
+          command: stack exec cabal check
+
       - deploy:
           command: |
             if [ "$CIRCLE_PROJECT_USERNAME" == "haskell-works" ]; then
