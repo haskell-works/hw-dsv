@@ -12,6 +12,14 @@
 typedef uint8_t v32si __attribute__ ((vector_size (32)));
 typedef uint8_t v16si __attribute__ ((vector_size (16)));
 
+void print_bits_16(uint16_t word) {
+  putc('|', stdout);
+  for (size_t i = 0; i < 16; ++i) {
+    putc((word & (1L << i)) ? '1' : '0', stdout);
+  }
+  printf("|\n");
+}
+
 void system_memcpy(
     char *target,
     char *source,
@@ -19,11 +27,11 @@ void system_memcpy(
   memcpy(target, source, len);
 }
 
-#if defined(AVX2_ENABLED)
 void avx2_memcpy(
     uint8_t *target,
     uint8_t *source,
     size_t len) {
+#if defined(AVX2_ENABLED)
   size_t aligned_len    = (len / 32) * 32;
   size_t remaining_len  = len - aligned_len;
 
@@ -36,6 +44,7 @@ void avx2_memcpy(
   }
 
   memcpy(target + aligned_len, source + aligned_len, remaining_len);
+#endif
 }
 
 void avx2_cmpeq8(
@@ -43,21 +52,21 @@ void avx2_cmpeq8(
     uint64_t *target,
     size_t target_length,
     uint8_t *source) {
+#if defined(AVX2_ENABLED)
   uint16_t *target16 = (uint16_t *)target;
 
   __m128i v_comparand = _mm_set1_epi8(byte);
 
   uint16_t *out_mask = (uint16_t*)target;
 
-  for (size_t i = 0; i < target_length / 16; ++i) {
+  for (size_t i = 0; i < target_length * 4; ++i) {
     __m128i v_data_a = *(__m128i*)(source + (i * 16));
     __m128i v_results_a = _mm_cmpeq_epi8(v_data_a, v_comparand);
     uint16_t mask = (uint16_t)_mm_movemask_epi8(v_results_a);
     target16[i] = mask;
   }
-}
-
 #endif
+}
 
 int example_main() {
   uint8_t source[32] = "01234567890123456789012345678901";

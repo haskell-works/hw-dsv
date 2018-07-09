@@ -27,10 +27,10 @@ data CatOptions = CatOptions
   , _catOptionsSimd   :: Bool
   } deriving (Eq, Show)
 
-data CmpEq8Options = CmpEq8Options
-  { _cmpEq8OptionsSource :: FilePath
-  , _cmpEq8OptionsTarget :: FilePath
-  , _cmpEq8OptionsSimd   :: Bool
+data IndexWord8sOptions = IndexWord8sOptions
+  { _indexWord8sOptionsSource :: FilePath
+  , _indexWord8sOptionsTarget :: FilePath
+  , _indexWord8sOptionsSimd   :: Bool
   } deriving (Eq, Show)
 
 data QueryLazyOptions = QueryLazyOptions

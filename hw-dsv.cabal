@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7d42ec42228761698d1943c5374de4d5571dc69ac7b3ec744fa39a7643802ae7
+-- hash: cc18962fc1fdb53cd3e581690f233f59b30198758a43b328e574c4834e810a9d
 
 name:           hw-dsv
 version:        0.2.1
@@ -48,6 +48,8 @@ library
   exposed-modules:
       HaskellWorks.Data.Dsv.Internal.Bits
       HaskellWorks.Data.Dsv.Internal.Broadword
+      HaskellWorks.Data.Dsv.Internal.ByteString
+      HaskellWorks.Data.Dsv.Internal.ByteString.Lazy
       HaskellWorks.Data.Dsv.Internal.Char
       HaskellWorks.Data.Dsv.Internal.Char.Word64
       HaskellWorks.Data.Dsv.Internal.Simd.Avx2.ByteString
@@ -65,7 +67,6 @@ library
   hs-source-dirs:
       src
   ghc-options: -O2 -Wall
-  cc-options: -O3
   include-dirs:
       cbits
   c-sources:
@@ -108,9 +109,9 @@ executable hw-dsv
       App.Char
       App.Commands
       App.Commands.Cat
-      App.Commands.CmpEq8
       App.Commands.CreateIndex
       App.Commands.Generate
+      App.Commands.IndexWord8s
       App.Commands.Options.Type
       App.Commands.QueryLazy
       App.Commands.QueryStrict
@@ -121,7 +122,6 @@ executable hw-dsv
   hs-source-dirs:
       app
   ghc-options: -O2 -Wall -threaded -rtsopts -with-rtsopts=-N
-  cc-options: -O3
   build-depends:
       base >=4.7 && <5
     , bits-extra >=0.0.1.2 && <0.1
@@ -165,7 +165,6 @@ test-suite hw-dsv-space
   hs-source-dirs:
       weigh
   ghc-options: -O2 -Wall
-  cc-options: -O3
   build-depends:
       base >=4.7 && <5
     , bits-extra >=0.0.1.2 && <0.1
@@ -213,7 +212,6 @@ test-suite hw-dsv-test
   hs-source-dirs:
       test
   ghc-options: -O2 -Wall -threaded -rtsopts -with-rtsopts=-N
-  cc-options: -O3
   build-depends:
       base >=4.7 && <5
     , bits-extra >=0.0.1.2 && <0.1
@@ -259,7 +257,6 @@ benchmark bench
   hs-source-dirs:
       bench
   ghc-options: -O2 -Wall -msse4.2
-  cc-options: -O3
   build-depends:
       base >=4.7 && <5
     , bits-extra >=0.0.1.2 && <0.1
