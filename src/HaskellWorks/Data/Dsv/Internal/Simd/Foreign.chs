@@ -8,6 +8,6 @@ import HaskellWorks.Data.Dsv.Internal.Simd.Capabilities
 
 #include "../cbits/simd.h"
 
-avx512Memcpy :: Ptr CUChar -> Ptr CUChar -> CULong -> IO ()
-avx512Memcpy target source len = requireAvx512 $ {#call unsafe avx512_memcpy as c_build_ibs#} target source len
-{-# INLINE avx512Memcpy #-}
+avx2Memcpy :: Ptr CUChar -> Ptr CUChar -> CULong -> IO ()
+avx2Memcpy target source len = requireAvx2 $ {#call unsafe avx2_memcpy as c_build_ibs#} target source len
+{-# INLINE avx2Memcpy #-}

@@ -11,6 +11,7 @@ import App.Commands.Options.Type
 import Control.Lens
 
 makeFields ''CatOptions
+makeFields ''CmpEq8Options
 makeFields ''CreateIndexOptions
 makeFields ''GenerateOptions
 makeFields ''QueryLazyOptions

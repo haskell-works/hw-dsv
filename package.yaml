@@ -116,18 +116,17 @@ when:
   ghc-options:
   - -mbmi2
   - -msse4.2
-- condition:  flag(avx512)
+- condition:  flag(avx2)
   cc-options:
-  - -mavx512bw
-  - -mavx512vl
-  - -DAVX512_ENABLED
-- condition: (flag(avx512)) && (impl(ghc >=8.4.1))
+  - -mavx2
+  - -DAVX2_ENABLED
+- condition: (flag(avx2)) && (impl(ghc >=8.4.1))
   ghc-options:
   - -mbmi2
   - -msse4.2
   cpp-options:
   - -DBMI2_ENABLED
-  - -DAVX512_ENABLED
+  - -DAVX2_ENABLED
 - condition: (impl(ghc >=8.0.1))
   ghc-options:
   - -Wcompat
@@ -150,7 +149,7 @@ flags:
     manual: false
     default: false
 
-  avx512:
-    description: Enable avx512 instruction set
+  avx2:
+    description: Enable avx2 instruction set
     manual: false
     default: false
