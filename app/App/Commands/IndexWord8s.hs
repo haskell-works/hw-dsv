@@ -18,13 +18,13 @@ runIndexWord8sNormal :: IndexWord8sOptions -> IO ()
 runIndexWord8sNormal opts = do
   contents <- IO.readInputFile (opts ^. L.source)
 
-  IO.writeOutputFile (opts ^. L.target) ((LBS.fromChunks . BS.rechunkAlignedAt 64 . LBS.toChunks) contents)
+  IO.writeOutputFile (opts ^. L.target) ((LBS.toByteString . fmap (BS.cmpeq8s 44) . BS.rechunkPaddedAlignedAt 64 . LBS.toChunks) contents)
 
 runIndexWord8sSimd :: IndexWord8sOptions -> IO ()
 runIndexWord8sSimd opts = do
   contents <- IO.readInputFile (opts ^. L.source)
 
-  IO.writeOutputFile (opts ^. L.target) ((LBS.toByteString . fmap (AVX2BS.cmpeq 44) . BS.rechunkPaddedAlignedAt 64 . LBS.toChunks) contents)
+  IO.writeOutputFile (opts ^. L.target) ((LBS.toByteString . fmap (AVX2BS.cmpeq8s 44) . BS.rechunkPaddedAlignedAt 64 . LBS.toChunks) contents)
 
 runIndexWord8s :: IndexWord8sOptions -> IO ()
 runIndexWord8s opts
