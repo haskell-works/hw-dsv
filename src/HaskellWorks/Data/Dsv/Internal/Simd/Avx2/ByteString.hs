@@ -3,6 +3,7 @@
 module HaskellWorks.Data.Dsv.Internal.Simd.Avx2.ByteString where
 
 import Data.Word
+import Data.Semigroup (Semigroup ((<>)))
 import Foreign.Ptr (castPtr, plusPtr)
 
 import qualified Data.ByteString                             as BS
