@@ -13,15 +13,22 @@ import HaskellWorks.Data.Bits.BitWise
 import HaskellWorks.Data.Bits.PopCount.PopCount1
 import HaskellWorks.Data.Dsv.Internal.Bits
 import HaskellWorks.Data.Dsv.Internal.Broadword
+import HaskellWorks.Data.Dsv.Internal.Simd.Capabilities
 import Prelude
 
-import qualified Data.Vector.Storable as DVS
+import qualified Data.Vector.Storable                            as DVS
+import qualified HaskellWorks.Data.Dsv.Internal.Simd.Avx2.Vector as DVS
 
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
 
-makeIbs :: Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
-makeIbs iw v = DVS.constructN ((DVS.length v + 7) `div` 8) go
-  where go :: DVS.Vector Word64 -> Word64
+makeIbs :: Word8 -> DVS.Vector Word64 -> DVS.Vector Word64
+makeIbs = if avx2Enabled then DVS.cmpeq8s else makeIbsBasic
+{-# INLINE makeIbs #-}
+
+makeIbsBasic :: Word8 -> DVS.Vector Word64 -> DVS.Vector Word64
+makeIbsBasic w8 v = DVS.constructN ((DVS.length v + 7) `div` 8) go
+  where iw = fillWord64 w8
+        go :: DVS.Vector Word64 -> Word64
         go u = let ui = end u in
           if ui * 8 + 8 < end v
             then  let vi  = ui * 8
@@ -60,7 +67,7 @@ makeIbs iw v = DVS.constructN ((DVS.length v + 7) `div` 8) go
                             (w1 .<.  8) .|.
                             w0
                   in comp w
-{-# INLINE makeIbs #-}
+{-# INLINE makeIbsBasic #-}
 
 makeQuoteMask1 :: DVS.Vector Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
 makeQuoteMask1 ibv pcv = DVS.constructN (DVS.length ibv) go
