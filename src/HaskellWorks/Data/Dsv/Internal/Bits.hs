@@ -6,12 +6,11 @@ import HaskellWorks.Data.Bits.BitWise
 
 import qualified Data.Vector.Storable as DVS
 
-testWord8s :: Word64 -> Word64
-testWord8s w =  let w8s = w
-                    w4s = w8s .|. (w8s .>. 4)
-                    w2s = w4s .|. (w4s .>. 2)
-                    w1s = w2s .|. (w2s .>. 1)
-                in  pext w1s 0x0101010101010101
+_mm_cmpeq_pi8 :: Word64 -> Word64 -> Word64
+_mm_cmpeq_pi8 = error "Primop support for _mm_cmpeq_pi8 needed here"
+
+testWord8s :: Word64 -> Word64 -> Word64
+testWord8s actual expected = pext (_mm_cmpeq_pi8 actual expected) 0x0101010101010101
 {-# INLINE testWord8s #-}
 
 zipOr :: DVS.Vector Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
