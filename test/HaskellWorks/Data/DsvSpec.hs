@@ -2,17 +2,17 @@
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
+{-# OPTIONS_GHC -Wno-incomplete-uni-patterns #-}
+
 module HaskellWorks.Data.DsvSpec (spec) where
 
-import Data.Word
-import HaskellWorks.Data.Bits.BitRead
 import HaskellWorks.Data.Bits.BitShow
+import HaskellWorks.Data.Dsv.Internal.Char (comma)
 import HaskellWorks.Data.FromByteString
 import HaskellWorks.Hspec.Hedgehog
 import Hedgehog
 import Test.Hspec
 
-import           HaskellWorks.Data.Dsv.Internal.Char (comma)
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal.Reference as SVS
 
 {-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
@@ -26,11 +26,6 @@ spec = describe "HaskellWorks.Data.DsvSpec" $ do
               \12345678,12345678,123456,abcdefghijklmnopqrstuvwxyz\n\
               \12345678,12345678,123456,abcdefghijklmnopqrstuvwxyz\n\
               \12345678,12345678,123456,abcdefghijklmnopqrstuvwxyz"
-    let Just (expected :: [Word64]) = bitRead
-          "00000000 10000000 01000000 10000000 00000000 00000000 00010000 00001000 \
-          \00000100 00001000 00000000 00000000 00000001 00000000 10000000 01000000 \
-          \10000000 00000000 00000000 00010000 00001000 00000100 00001000 00000000 \
-          \00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
 
     let v = fromByteString bs
     let actual = SVS.mkIbVector comma v
@@ -44,11 +39,6 @@ spec = describe "HaskellWorks.Data.DsvSpec" $ do
               \12345678,12345678,123456,\"bcdefghijklmnopqrstuvwxy\"\n\
               \12345678,12345678,123456,\"bcdefghijklmnopqrstuvwxy\"\n\
               \12345678,12345678,123456,\"bcdefghijklmnopqrstuvwxy\""
-    let Just (expected :: [Word64]) = bitRead
-          "00000000 10000000 01000000 10000000 00000000 00000000 00010000 00001000 \
-          \00000100 00001000 00000000 00000000 00000001 00000000 10000000 01000000 \
-          \10000000 00000000 00000000 00010000 00001000 00000100 00001000 00000000 \
-          \00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
 
     let v = fromByteString bs
     let !actual = SVS.mkIbVector comma v
@@ -62,11 +52,6 @@ spec = describe "HaskellWorks.Data.DsvSpec" $ do
               \12345678,12345678,123456,\"bcdefghijklm,opqrstuvwxy\"\n\
               \12345678,12345678,123456,\"bcdefghijklm,opqrstuvwxy\"\n\
               \12345678,12345678,123456,\"bcdefghijklm,opqrstuvwxy\""
-    let Just (expected :: [Word64]) = bitRead
-          "00000000 10000000 01000000 10000000 00000000 00000000 00010000 00001000 \
-          \00000100 00001000 00000000 00000000 00000001 00000000 10000000 01000000 \
-          \10000000 00000000 00000000 00010000 00001000 00000100 00001000 00000000 \
-          \00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
 
     let v = fromByteString bs
     let !actual = SVS.mkIbVector comma v
