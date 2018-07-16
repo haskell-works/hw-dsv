@@ -1,5 +1,3 @@
-{-# LANGUAGE BangPatterns #-}
-
 module App.Commands.Generate
   ( cmdGenerate
   ) where
