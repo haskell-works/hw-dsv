@@ -11,12 +11,12 @@ import Control.Monad
 import Data.Semigroup            ((<>))
 import Options.Applicative       hiding (columns)
 
-import qualified App.IO                                 as IO
-import qualified App.Lens                               as L
-import qualified Data.ByteString.Builder                as B
-import qualified Data.Vector.Storable                   as DVS
-import qualified HaskellWorks.Data.Dsv.Lazy.Cursor      as SVL
-import qualified System.IO                              as IO
+import qualified App.IO                            as IO
+import qualified App.Lens                          as L
+import qualified Data.ByteString.Builder           as B
+import qualified Data.Vector.Storable              as DVS
+import qualified HaskellWorks.Data.Dsv.Lazy.Cursor as SVL
+import qualified System.IO                         as IO
 
 runCreateIndex :: CreateIndexOptions -> IO ()
 runCreateIndex opts = do
@@ -30,13 +30,15 @@ runCreateIndex opts = do
   let !newlines = cursor & SVL.dsvCursorNewlines
 
   hOutMarkers <- IO.openFile (filePath ++ ".markers.idx") IO.WriteMode
-  forM_ (markers >>= DVS.toList) $ \w -> do
+  forM_ (markers >>= DVS.toList) $ \w ->
     B.hPutBuilder hOutMarkers (B.word64LE w)
+  B.hPutBuilder hOutMarkers (B.word8 0xff) -- Telomere byte
   IO.hClose hOutMarkers
 
   hOutNewlines <- IO.openFile (filePath ++ ".newlines.idx") IO.WriteMode
-  forM_ (newlines >>= DVS.toList) $ \w -> do
+  forM_ (newlines >>= DVS.toList) $ \w ->
     B.hPutBuilder hOutNewlines (B.word64LE w)
+  B.hPutBuilder hOutNewlines (B.word8 0xff) -- Telomere byte
   IO.hClose hOutNewlines
 
   return ()

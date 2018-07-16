@@ -5,5 +5,6 @@ packages:
 
 extra-deps:
 - hw-rankselect-0.12.0.3
+- hw-simd-0.0.0.3
 - lazy-csv-0.5.1
 - sv-0.1

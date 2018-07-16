@@ -2,8 +2,6 @@
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-{-# OPTIONS_GHC -Wno-incomplete-uni-patterns #-}
-
 module HaskellWorks.Data.DsvSpec (spec) where
 
 import HaskellWorks.Data.Bits.BitShow

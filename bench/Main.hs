@@ -5,24 +5,24 @@ module Main where
 
 import Control.Monad
 import Criterion.Main
-import Data.ByteString                            (ByteString)
+import Data.ByteString                     (ByteString)
 import Data.List
-import Data.Monoid                                ((<>))
-import Data.Vector                                (Vector)
+import Data.Monoid                         ((<>))
+import Data.Vector                         (Vector)
 import Data.Word
+import HaskellWorks.Data.Dsv.Internal.Char (comma, pipe)
 import System.Directory
 
 import qualified Data.ByteString.Lazy                                   as LBS
 import qualified Data.Csv                                               as CSV
 import qualified Data.Csv.Streaming                                     as CSS
 import qualified Data.Vector.Storable                                   as DVS
-import           HaskellWorks.Data.Dsv.Internal.Char (comma, pipe)
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor                      as SVL
-import qualified HaskellWorks.Data.RankSelect.CsPoppy                   as RS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor                    as SVS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal           as SVS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal.Reference as SVS
 import qualified HaskellWorks.Data.FromForeignRegion                    as IO
+import qualified HaskellWorks.Data.RankSelect.CsPoppy                   as RS
 
 loadCassavaStrict :: FilePath -> IO (Vector (Vector ByteString))
 loadCassavaStrict filePath = do
@@ -99,6 +99,6 @@ main :: IO ()
 main = do
   benchmarks <- (mconcat <$>) $ sequence $ mempty
     <> [makeBenchCsv]
-    <> [makeBenchW64s]
-    <> [makeBenchMkInterestBits]
+    -- <> [makeBenchW64s]
+    -- <> [makeBenchMkInterestBits]
   defaultMain benchmarks

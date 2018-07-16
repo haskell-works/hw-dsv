@@ -25,6 +25,7 @@ import Prelude
 import qualified Data.ByteString.Lazy                as LBS
 import qualified Data.Vector                         as DV
 import qualified HaskellWorks.Data.Dsv.Internal.Char as C
+import qualified HaskellWorks.Data.Simd.Comparison   as DVS
 
 makeCursor :: Word8 -> LBS.ByteString -> DsvCursor
 makeCursor delimiter lbs = DsvCursor
@@ -34,9 +35,9 @@ makeCursor delimiter lbs = DsvCursor
   , dsvCursorPosition  = 0
   }
   where ws  = asVector64s 64 lbs
-        ibq = makeIbs C.doubleQuote <$> ws
-        ibn = makeIbs C.newline     <$> ws
-        ibd = makeIbs delimiter     <$> ws
+        ibq = DVS.cmpeq8s C.doubleQuote <$> ws
+        ibn = DVS.cmpeq8s C.newline     <$> ws
+        ibd = DVS.cmpeq8s delimiter     <$> ws
         pcq = makeCummulativePopCount ibq
         ibr = zip2Or ibn ibd
         qm  = makeQuoteMask ibq pcq
