@@ -14,7 +14,7 @@ extra-source-files:
 
 # Metadata used when publishing your package
 synopsis:            Unbelievably fast streaming DSV file parser
-category:            Text, Web, CSV, SIMD
+category:            Text, CSV, SIMD, Succinct Data Structures, Data Structures
 
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
