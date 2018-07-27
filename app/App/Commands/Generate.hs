@@ -1,9 +1,13 @@
+{-# LANGUAGE DataKinds        #-}
+{-# LANGUAGE TypeApplications #-}
+
 module App.Commands.Generate
   ( cmdGenerate
   ) where
 
 import App.Commands.Options.Type
 import Control.Lens
+import Data.Generics.Product.Any
 import Data.List
 import Data.Semigroup            ((<>))
 import Options.Applicative       hiding (columns)
@@ -22,8 +26,8 @@ printField cs = if any invalid cs
 
 runGenerate :: GenerateOptions -> IO ()
 runGenerate opts = do
-  let fields  = opts ^. L.fields
-  let rows    = opts ^. L.rows
+  let fields  = opts ^. the @"fields"
+  let rows    = opts ^. the @"rows"
 
   csv <- G.sample (G.list (R.singleton rows) (G.list (R.singleton fields) (G.field))) :: IO [[String]]
 
