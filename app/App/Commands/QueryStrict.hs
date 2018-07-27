@@ -1,24 +1,26 @@
 {-# LANGUAGE BangPatterns        #-}
+{-# LANGUAGE DataKinds           #-}
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications    #-}
 
 module App.Commands.QueryStrict
   ( cmdQueryStrict
   ) where
 
 import App.Char
-import App.Commands.Options.Type
+import App.Commands.Options.Type    (QueryStrictOptions (QueryStrictOptions))
 import Control.Applicative
 import Control.Lens
 import Control.Monad
 import Control.Monad.IO.Class       (liftIO)
 import Control.Monad.Trans.Resource
+import Data.Generics.Product.Any
 import Data.List
 import Data.Semigroup               ((<>))
 import Options.Applicative
 
 import qualified App.IO                              as IO
-import qualified App.Lens                            as L
 import qualified Data.ByteString                     as BS
 import qualified Data.ByteString.Builder             as B
 import qualified Data.Vector                         as DV
@@ -26,18 +28,18 @@ import qualified HaskellWorks.Data.Dsv.Strict.Cursor as SVS
 
 runQueryStrict :: QueryStrictOptions -> IO ()
 runQueryStrict opts = do
-  let delimiter     = opts ^. L.delimiter
-  let inputFilePath = opts ^. L.filePath
-  let useIndex      = False -- opts ^. L.useIndex
+  let delimiter     = opts ^. the @"delimiter"
+  let inputFilePath = opts ^. the @"filePath"
+  let useIndex      = False -- opts ^. the @"useIndex"
   c <- SVS.mmapCursor delimiter useIndex inputFilePath
 
   let !rows = SVS.toListVector c
-  let !outDelimiterBuilder = B.word8 (opts ^. L.outDelimiter)
+  let !outDelimiterBuilder = B.word8 (opts ^. the @"outDelimiter")
 
   runResourceT $ do
-    (_, hOut) <- IO.openOutputFile (opts ^. L.outputFilePath) Nothing
+    (_, hOut) <- IO.openOutputFile (opts ^. the @"outputFilePath") Nothing
     forM_ rows $ \row -> do
-      let fieldStrings = columnToFieldString row <$> (opts ^. L.columns)
+      let fieldStrings = columnToFieldString row <$> (opts ^. the @"columns")
 
       liftIO $ B.hPutBuilder hOut $ mconcat (intersperse outDelimiterBuilder fieldStrings) <> B.word8 10
 

@@ -1,24 +1,26 @@
 {-# LANGUAGE BangPatterns        #-}
+{-# LANGUAGE DataKinds           #-}
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications    #-}
 
 module App.Commands.QueryLazy
   ( cmdQueryLazy
   ) where
 
 import App.Char
-import App.Commands.Options.Type
+import App.Commands.Options.Type    (QueryLazyOptions (QueryLazyOptions))
 import Control.Applicative
 import Control.Lens
 import Control.Monad
 import Control.Monad.IO.Class       (liftIO)
 import Control.Monad.Trans.Resource
+import Data.Generics.Product.Any
 import Data.List
 import Data.Semigroup               ((<>))
 import Options.Applicative          hiding (columns)
 
 import qualified App.IO                            as IO
-import qualified App.Lens                          as L
 import qualified Data.ByteString.Builder           as B
 import qualified Data.ByteString.Lazy              as LBS
 import qualified Data.Vector                       as DV
@@ -26,16 +28,16 @@ import qualified HaskellWorks.Data.Dsv.Lazy.Cursor as SVL
 
 runQueryLazy :: QueryLazyOptions -> IO ()
 runQueryLazy opts = do
-  !bs <- IO.readInputFile (opts ^. L.filePath)
+  !bs <- IO.readInputFile (opts ^. the @"filePath")
 
-  let !c = SVL.makeCursor (opts ^. L.delimiter) bs
+  let !c = SVL.makeCursor (opts ^. the @"delimiter") bs
   let !rows = SVL.toListVector c
-  let !outDelimiterBuilder = B.word8 (opts ^. L.outDelimiter)
+  let !outDelimiterBuilder = B.word8 (opts ^. the @"outDelimiter")
 
   runResourceT $ do
-    (_, hOut) <- IO.openOutputFile (opts ^. L.outputFilePath) Nothing
+    (_, hOut) <- IO.openOutputFile (opts ^. the @"outputFilePath") Nothing
     forM_ rows $ \row -> do
-      let fieldStrings = columnToFieldString row <$> (opts ^. L.columns)
+      let fieldStrings = columnToFieldString row <$> (opts ^. the @"columns")
 
       liftIO $ B.hPutBuilder hOut $ mconcat (intersperse outDelimiterBuilder fieldStrings) <> B.word8 10
 

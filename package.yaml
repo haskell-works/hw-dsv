@@ -53,6 +53,7 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
+    - generic-lens            >= 0.5        && < 1.0
     - hw-dsv
     - hedgehog                >= 0.5        && < 0.7
     - lens                    >= 4.15       && < 5
