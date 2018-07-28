@@ -13,7 +13,7 @@ data QueryStrictOptions = QueryStrictOptions
   , _queryStrictOptionsOutputFilePath :: FilePath
   , _queryStrictOptionsDelimiter      :: Word8
   , _queryStrictOptionsOutDelimiter   :: Word8
-  -- , _queryOptionsUseIndex       :: Bool
+  , _queryStrictOptionsUseIndex       :: Bool
   } deriving (Eq, Show)
 
 data GenerateOptions = GenerateOptions
