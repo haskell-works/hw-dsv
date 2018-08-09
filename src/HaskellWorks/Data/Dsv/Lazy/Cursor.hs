@@ -35,9 +35,9 @@ makeCursor delimiter lbs = DsvCursor
   , dsvCursorPosition  = 0
   }
   where ws  = asVector64s 64 lbs
-        ibq = DVS.cmpeq8s C.doubleQuote <$> ws
-        ibn = DVS.cmpeq8s C.newline     <$> ws
-        ibd = DVS.cmpeq8s delimiter     <$> ws
+        ibq = DVS.cmpEqWord8s C.doubleQuote <$> ws
+        ibn = DVS.cmpEqWord8s C.newline     <$> ws
+        ibd = DVS.cmpEqWord8s delimiter     <$> ws
         pcq = makeCummulativePopCount ibq
         ibr = zip2Or ibn ibd
         qm  = makeQuoteMask ibq pcq

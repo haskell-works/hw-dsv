@@ -32,7 +32,7 @@ dependencies:
 - hw-rankselect         >= 0.12.0.2 && < 0.13
 - hw-rankselect-base    >= 0.3.2.0  && < 0.4
 - hw-prim               >= 0.6.2.0  && < 0.7
-- hw-simd               >= 0.0.0.3  && < 0.1
+- hw-simd               >= 0.1      && < 0.2
 - vector                >= 0.12.0.1 && < 0.13
 
 library:

@@ -22,7 +22,7 @@ runIndexWord8sNormal opts = do
 
   IO.writeOutputFile (opts ^. L.target) $ contents
     & LBS.toByteString
-    . fmap (STOCK.cmpeq8s 44 . asVector64)
+    . fmap (STOCK.cmpEqWord8s 44 . asVector64)
     . BS.rechunkPaddedAlignedAt 64
     . LBS.toChunks
 
@@ -32,7 +32,7 @@ runIndexWord8sSimd opts = do
 
   IO.writeOutputFile (opts ^. L.target) $ contents
     & LBS.toByteString
-    . fmap (AVX2.cmpeq8s 44 . asVector64)
+    . fmap (AVX2.cmpEqWord8s 44 . asVector64)
     . BS.rechunkPaddedAlignedAt 64
     . LBS.toChunks
 
