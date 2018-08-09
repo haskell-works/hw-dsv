@@ -26,19 +26,19 @@ stack bench
 For best performance, add the `bmi2` and `avx2` flag to target the BMI2 and AVS2 instruction sets:
 
 ```text
-stack build   --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2 --flag hw-dsv:avx2
-stack test    --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2 --flag hw-dsv:avx2
-stack bench   --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2 --flag hw-dsv:avx2
-stack install --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2 --flag hw-dsv:avx2
+stack build   --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-simd:bmi2 --flag hw-simd:avx2 --flag hw-dsv:bmi2 --flag hw-dsv:avx2
+stack test    --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-simd:bmi2 --flag hw-simd:avx2 --flag hw-dsv:bmi2 --flag hw-dsv:avx2
+stack bench   --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-simd:bmi2 --flag hw-simd:avx2 --flag hw-dsv:bmi2 --flag hw-dsv:avx2
+stack install --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-simd:bmi2 --flag hw-simd:avx2 --flag hw-dsv:bmi2 --flag hw-dsv:avx2
 ```
 
 For slightly older CPUs, add only the `bmi2` flag to target the BMI2 instruction set: 
 
 ```text
-stack build   --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2
-stack test    --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2
-stack bench   --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2
-stack install --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2
+stack build   --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-simd:bmi2 --flag hw-dsv:bmi2
+stack test    --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-simd:bmi2 --flag hw-dsv:bmi2
+stack bench   --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-simd:bmi2 --flag hw-dsv:bmi2
+stack install --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-simd:bmi2 --flag hw-dsv:bmi2
 ```
 
 ## Benchmark results
