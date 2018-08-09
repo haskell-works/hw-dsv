@@ -31,4 +31,14 @@ case $1 in
     stack repl \
       $STACK_FLAGS
     ;;
+
+  install)
+    stack install \
+      $STACK_FLAGS
+    ;;
+
+  flags)
+    echo "Flags: " \
+      $STACK_FLAGS
+    ;;
 esac
