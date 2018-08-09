@@ -28,7 +28,7 @@ runQueryStrict :: QueryStrictOptions -> IO ()
 runQueryStrict opts = do
   let delimiter     = opts ^. L.delimiter
   let inputFilePath = opts ^. L.filePath
-  let useIndex      = False -- opts ^. L.useIndex
+  let useIndex      = opts ^. L.useIndex
   c <- SVS.mmapCursor delimiter useIndex inputFilePath
 
   let !rows = SVS.toListVector c
@@ -84,4 +84,4 @@ optsQueryStrict = QueryStrictOptions
           <>  help "DSV delimiter to write in the output"
           <>  metavar "CHAR"
           )
-    -- <*> switch (long "use-index")
+    <*> switch (long "use-index")
