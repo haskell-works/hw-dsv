@@ -8,13 +8,14 @@ import App.Char
 import App.Commands.Options.Type
 import Control.Lens
 import Control.Monad
-import Data.Semigroup            ((<>))
-import Options.Applicative       hiding (columns)
+import Data.Semigroup                    ((<>))
+import HaskellWorks.Data.ByteString.Lazy
+import Options.Applicative               hiding (columns)
 
 import qualified App.IO                            as IO
 import qualified App.Lens                          as L
 import qualified Data.ByteString.Builder           as B
-import qualified Data.Vector.Storable              as DVS
+import qualified Data.ByteString.Lazy              as LBS
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor as SVL
 import qualified System.IO                         as IO
 
@@ -28,16 +29,18 @@ runCreateIndex opts = do
   let !cursor   = SVL.makeCursor delimiter bs
   let !markers  = cursor & SVL.dsvCursorMarkers
   let !newlines = cursor & SVL.dsvCursorNewlines
+  let !filePathNoDash = if filePath == "-" then "stdin" else filePath
 
-  hOutMarkers <- IO.openFile (filePath ++ ".markers.idx") IO.WriteMode
-  forM_ (markers >>= DVS.toList) $ \w ->
-    B.hPutBuilder hOutMarkers (B.word64LE w)
+  hOutMarkers <- IO.openFile (filePathNoDash ++ ".markers.idx") IO.WriteMode
+  hOutNewlines <- IO.openFile (filePathNoDash ++ ".newlines.idx") IO.WriteMode
+
+  forM_ (zip markers newlines) $ \(markerV, newlineV) -> do
+    LBS.hPut hOutMarkers (toLazyByteString markerV)
+    LBS.hPut hOutMarkers (toLazyByteString newlineV)
+
   B.hPutBuilder hOutMarkers (B.word8 0xff) -- Telomere byte
   IO.hClose hOutMarkers
 
-  hOutNewlines <- IO.openFile (filePath ++ ".newlines.idx") IO.WriteMode
-  forM_ (newlines >>= DVS.toList) $ \w ->
-    B.hPutBuilder hOutNewlines (B.word64LE w)
   B.hPutBuilder hOutNewlines (B.word8 0xff) -- Telomere byte
   IO.hClose hOutNewlines
 
