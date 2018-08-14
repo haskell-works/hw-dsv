@@ -28,3 +28,4 @@ cabal.sandbox.config
 /*.json.bp
 /snapshot.yaml
 /stack-ci.yaml
+/tmp
