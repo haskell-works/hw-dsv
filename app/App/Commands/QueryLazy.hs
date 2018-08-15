@@ -45,7 +45,7 @@ runQueryLazy opts = do
   where columnToFieldString :: DV.Vector LBS.ByteString -> Int -> B.Builder
         columnToFieldString fields i = if i >= 0 && i < DV.length fields
           then B.lazyByteString (DV.unsafeIndex fields i)
-          else B.lazyByteString (LBS.empty)
+          else B.lazyByteString LBS.empty
 
 cmdQueryLazy :: Mod CommandFields (IO ())
 cmdQueryLazy = command "query-lazy" $ flip info idm $ runQueryLazy <$> optsQueryLazy
