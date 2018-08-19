@@ -31,12 +31,12 @@ runCreateIndex opts = do
   let !newlines = cursor & SVL.dsvCursorNewlines
   let !filePathNoDash = if filePath == "-" then "stdin" else filePath
 
-  hOutMarkers <- IO.openFile (filePathNoDash ++ ".markers.idx") IO.WriteMode
+  hOutMarkers  <- IO.openFile (filePathNoDash ++ ".markers.idx") IO.WriteMode
   hOutNewlines <- IO.openFile (filePathNoDash ++ ".newlines.idx") IO.WriteMode
 
   forM_ (zip markers newlines) $ \(markerV, newlineV) -> do
-    LBS.hPut hOutMarkers (toLazyByteString markerV)
-    LBS.hPut hOutMarkers (toLazyByteString newlineV)
+    LBS.hPut hOutMarkers  (toLazyByteString markerV)
+    LBS.hPut hOutNewlines (toLazyByteString newlineV)
 
   B.hPutBuilder hOutMarkers (B.word8 0xff) -- Telomere byte
   IO.hClose hOutMarkers
