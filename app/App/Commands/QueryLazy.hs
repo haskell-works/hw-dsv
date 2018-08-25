@@ -23,9 +23,19 @@ import qualified Data.ByteString.Builder           as B
 import qualified Data.ByteString.Lazy              as LBS
 import qualified Data.Vector                       as DV
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor as SVL
+import qualified System.Exit                       as IO
+import qualified System.IO                         as IO
 
 runQueryLazy :: QueryLazyOptions -> IO ()
-runQueryLazy opts = do
+runQueryLazy opts = case opts ^. L.method of
+  "fast" -> runQueryLazyFast opts
+  "slow" -> runQueryLazySlow opts
+  method -> do
+    IO.hPutStrLn IO.stderr $ "Unknown method: " <> method
+    IO.exitFailure
+
+runQueryLazySlow :: QueryLazyOptions -> IO ()
+runQueryLazySlow opts = do
   !bs <- IO.readInputFile (opts ^. L.filePath)
 
   let !c = SVL.makeCursor (opts ^. L.delimiter) bs
@@ -41,11 +51,29 @@ runQueryLazy opts = do
 
       return ()
   return ()
-
   where columnToFieldString :: DV.Vector LBS.ByteString -> Int -> B.Builder
         columnToFieldString fields i = if i >= 0 && i < DV.length fields
           then B.lazyByteString (DV.unsafeIndex fields i)
           else B.lazyByteString LBS.empty
+
+runQueryLazyFast :: QueryLazyOptions -> IO ()
+runQueryLazyFast opts = do
+  !bs <- IO.readInputFile (opts ^. L.filePath)
+
+  let !c = SVL.makeCursor (opts ^. L.delimiter) bs
+  let !sel = opts ^. L.columns
+  let !rows = SVL.selectListVector sel c
+  let !outDelimiterBuilder = B.word8 (opts ^. L.outDelimiter)
+
+  runResourceT $ do
+    (_, hOut) <- IO.openOutputFile (opts ^. L.outputFilePath) Nothing
+    forM_ rows $ \row -> do
+      let fieldStrings = fmap B.lazyByteString row
+
+      liftIO $ B.hPutBuilder hOut $ mconcat (intersperse outDelimiterBuilder fieldStrings) <> B.word8 10
+
+      return ()
+  return ()
 
 cmdQueryLazy :: Mod CommandFields (IO ())
 cmdQueryLazy = command "query-lazy" $ flip info idm $ runQueryLazy <$> optsQueryLazy
@@ -85,4 +113,12 @@ optsQueryLazy = QueryLazyOptions
           <>  short 'e'
           <>  help "Output DSV delimiter"
           <>  metavar "CHAR"
+          )
+    <*> strOption
+          (   long "method"
+          <>  short 'm'
+          <>  help "Method"
+          <>  metavar "METHOD"
+          <>  showDefault
+          <>  value "fast"
           )

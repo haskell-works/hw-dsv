@@ -39,4 +39,5 @@ data QueryLazyOptions = QueryLazyOptions
   , _queryLazyOptionsOutputFilePath :: FilePath
   , _queryLazyOptionsDelimiter      :: Word8
   , _queryLazyOptionsOutDelimiter   :: Word8
+  , _queryLazyOptionsMethod         :: String
   } deriving (Eq, Show)
