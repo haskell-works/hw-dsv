@@ -5,17 +5,20 @@ module HaskellWorks.Data.Dsv.Lazy.Cursor
   , trim
   , atEnd
   , nextField
+  , advanceField
   , nextRow
   , nextPosition
   , getRowBetween
   , toListVector
   , toVectorVector
+  , selectListVector
   ) where
 
 import Data.Function
 import Data.Word
 import GHC.Word                                  (Word8)
 import HaskellWorks.Data.Dsv.Lazy.Cursor.Type
+import HaskellWorks.Data.Positioning
 import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.Vector.AsVector64s
@@ -81,6 +84,14 @@ nextField cursor = cursor
         newPos      = select1 (dsvCursorMarkers cursor) (currentRank + 1) - 1
 {-# INLINE nextField #-}
 
+advanceField :: Count -> DsvCursor -> DsvCursor
+advanceField n cursor = cursor
+  { dsvCursorPosition = newPos
+  }
+  where currentRank = rank1   (dsvCursorMarkers cursor) (dsvCursorPosition cursor)
+        newPos      = select1 (dsvCursorMarkers cursor) (currentRank + n) - 1
+{-# INLINE advanceField #-}
+
 nextRow :: DsvCursor -> DsvCursor
 nextRow cursor = cursor
   { dsvCursorPosition = if newPos > dsvCursorPosition cursor
@@ -127,3 +138,19 @@ toListVector c = if dsvCursorPosition d > dsvCursorPosition c && not (atEnd c)
 toVectorVector :: DsvCursor -> DV.Vector (DV.Vector LBS.ByteString)
 toVectorVector = DV.fromList . toListVector
 {-# INLINE toVectorVector #-}
+
+selectRowBetween :: [Int] -> DsvCursor -> DsvCursor -> [LBS.ByteString]
+selectRowBetween sel c d = go <$> sel
+  where go :: Int -> LBS.ByteString
+        go n = snippet nc
+          where nc = nextPosition (advanceField (fromIntegral n) c)
+        {-# INLINE go #-}
+{-# INLINE selectRowBetween #-}
+
+selectListVector :: [Int] -> DsvCursor -> [[LBS.ByteString]]
+selectListVector sel c = if dsvCursorPosition d > dsvCursorPosition c && not (atEnd c)
+  then selectRowBetween sel c nr:selectListVector sel (trim d)
+  else []
+  where nr = nextRow c
+        d = nextPosition nr
+{-# INLINE selectListVector #-}
