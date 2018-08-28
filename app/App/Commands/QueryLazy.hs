@@ -19,6 +19,7 @@ import Options.Applicative          hiding (columns)
 
 import qualified App.IO                            as IO
 import qualified App.Lens                          as L
+import qualified Data.ByteString                   as BS
 import qualified Data.ByteString.Builder           as B
 import qualified Data.ByteString.Lazy              as LBS
 import qualified Data.Vector                       as DV
@@ -26,10 +27,14 @@ import qualified HaskellWorks.Data.Dsv.Lazy.Cursor as SVL
 import qualified System.Exit                       as IO
 import qualified System.IO                         as IO
 
+defaultMethod :: String
+defaultMethod = "lazy-traverse"
+
 runQueryLazy :: QueryLazyOptions -> IO ()
 runQueryLazy opts = case opts ^. L.method of
-  "fast" -> runQueryLazyFast opts
-  "slow" -> runQueryLazySlow opts
+  "lazy-traverse"     -> runQueryLazyFast opts
+  "strict-traverse"   -> runQueryLazySlow opts
+  "strict-bytestring" -> runQueryLazyStrict opts
   method -> do
     IO.hPutStrLn IO.stderr $ "Unknown method: " <> method
     IO.exitFailure
@@ -55,6 +60,28 @@ runQueryLazySlow opts = do
         columnToFieldString fields i = if i >= 0 && i < DV.length fields
           then B.lazyByteString (DV.unsafeIndex fields i)
           else B.lazyByteString LBS.empty
+
+runQueryLazyStrict :: QueryLazyOptions -> IO ()
+runQueryLazyStrict opts = do
+  !bs <- IO.readInputFile (opts ^. L.filePath)
+
+  let !c = SVL.makeCursor (opts ^. L.delimiter) bs
+  let !rows = SVL.toListVectorStrict c
+  let !outDelimiterBuilder = B.word8 (opts ^. L.outDelimiter)
+
+  runResourceT $ do
+    (_, hOut) <- IO.openOutputFile (opts ^. L.outputFilePath) Nothing
+    forM_ rows $ \row -> do
+      let fieldStrings = columnToFieldString row <$> (opts ^. L.columns)
+
+      liftIO $ B.hPutBuilder hOut $ mconcat (intersperse outDelimiterBuilder fieldStrings) <> B.word8 10
+
+      return ()
+  return ()
+  where columnToFieldString :: DV.Vector BS.ByteString -> Int -> B.Builder
+        columnToFieldString fields i = if i >= 0 && i < DV.length fields
+          then B.byteString (DV.unsafeIndex fields i)
+          else B.byteString BS.empty
 
 runQueryLazyFast :: QueryLazyOptions -> IO ()
 runQueryLazyFast opts = do
@@ -120,5 +147,5 @@ optsQueryLazy = QueryLazyOptions
           <>  help "Method"
           <>  metavar "METHOD"
           <>  showDefault
-          <>  value "fast"
+          <>  value defaultMethod
           )

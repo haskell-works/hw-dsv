@@ -8,10 +8,11 @@ module HaskellWorks.Data.Dsv.Lazy.Cursor
   , advanceField
   , nextRow
   , nextPosition
-  , getRowBetween
   , toListVector
   , toVectorVector
   , selectListVector
+  , getRowBetweenStrict
+  , toListVectorStrict
   ) where
 
 import Data.Function
@@ -24,6 +25,7 @@ import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.Vector.AsVector64s
 import Prelude
 
+import qualified Data.ByteString                       as BS
 import qualified Data.ByteString.Lazy                  as LBS
 import qualified Data.Vector                           as DV
 import qualified Data.Vector.Storable                  as DVS
@@ -139,18 +141,54 @@ toVectorVector :: DsvCursor -> DV.Vector (DV.Vector LBS.ByteString)
 toVectorVector = DV.fromList . toListVector
 {-# INLINE toVectorVector #-}
 
-selectRowBetween :: [Int] -> DsvCursor -> DsvCursor -> [LBS.ByteString]
-selectRowBetween sel c d = go <$> sel
+selectRowFrom :: [Int] -> DsvCursor -> [LBS.ByteString]
+selectRowFrom sel c = go <$> sel
   where go :: Int -> LBS.ByteString
         go n = snippet nc
           where nc = nextPosition (advanceField (fromIntegral n) c)
         {-# INLINE go #-}
-{-# INLINE selectRowBetween #-}
+{-# INLINE selectRowFrom #-}
 
 selectListVector :: [Int] -> DsvCursor -> [[LBS.ByteString]]
 selectListVector sel c = if dsvCursorPosition d > dsvCursorPosition c && not (atEnd c)
-  then selectRowBetween sel c nr:selectListVector sel (trim d)
+  then selectRowFrom sel c:selectListVector sel (trim d)
   else []
   where nr = nextRow c
         d = nextPosition nr
 {-# INLINE selectListVector #-}
+
+getRowBetweenStrict :: DsvCursor -> DsvCursor -> Bool -> DV.Vector BS.ByteString
+getRowBetweenStrict c d dEnd = DV.unfoldrN fields go c
+  where bsA = fromIntegral $ dsvCursorPosition c
+        bsZ = fromIntegral $ dsvCursorPosition d
+        bsT = dsvCursorText c
+        bs  = LBS.toStrict $ LBS.take (bsZ - bsA) (LBS.drop bsA bsT)
+
+        cr  = rank1 (dsvCursorMarkers c) (dsvCursorPosition c)
+        dr  = rank1 (dsvCursorMarkers d) (dsvCursorPosition d)
+        c2d = fromIntegral (dr - cr)
+        fields = if dEnd then c2d +1 else c2d
+        go :: DsvCursor -> Maybe (BS.ByteString, DsvCursor)
+        go e = case nextField e of
+          f -> case nextPosition f of
+            g -> case snippetStrict e (fromIntegral bsA) bs of
+              s -> Just (s, g)
+        {-# INLINE go #-}
+{-# INLINE getRowBetweenStrict #-}
+
+snippetStrict :: DsvCursor -> Int -> BS.ByteString -> BS.ByteString
+snippetStrict c offset bs = BS.take (len `max` 0) $ BS.drop posC $ bs
+  where d = nextField c
+        posC = fromIntegral (dsvCursorPosition c) - offset
+        posD = fromIntegral (dsvCursorPosition d) - offset
+        len  = posD - posC
+{-# INLINE snippetStrict #-}
+
+toListVectorStrict :: DsvCursor -> [DV.Vector BS.ByteString]
+toListVectorStrict c = if dsvCursorPosition d > dsvCursorPosition c && not (atEnd c)
+  then getRowBetweenStrict c d dEnd:toListVectorStrict (trim d)
+  else []
+  where nr = nextRow c
+        d = nextPosition nr
+        dEnd = atEnd nr
+{-# INLINE toListVectorStrict #-}
