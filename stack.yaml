@@ -5,9 +5,9 @@ packages:
 
 extra-deps:
 - criterion-1.5.0.0
-- hw-prim-0.6.2.13
+- hw-prim-0.6.2.14
 - hw-bits-0.7.0.3
 - hw-rankselect-0.12.0.3
-- hw-simd-0.1.1.1
+- hw-simd-0.1.1.2
 - lazy-csv-0.5.1
 - sv-0.1
