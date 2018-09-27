@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveGeneric      #-}
 {-# LANGUAGE FlexibleContexts   #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module HaskellWorks.Data.Dsv.Strict.Cursor.Type
   ( DsvCursor(..)
