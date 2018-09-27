@@ -21,7 +21,7 @@ category:            Text, CSV, SIMD, Succinct Data Structures, Data Structures
 # common to point users to the README.md file.
 description:         Please see the README on Github at <https://github.com/haskell-works/hw-dsv#readme>
 
-tested-with:         GHC == 8.4.3, GHC == 8.2.2, GHC == 8.0.2, GHC == 7.10.3
+tested-with:         GHC == 8.6.1, GHC == 8.4.3, GHC == 8.2.2, GHC == 8.0.2, GHC == 7.10.3
 
 dependencies:
 - base                  >= 4.7      && < 5
