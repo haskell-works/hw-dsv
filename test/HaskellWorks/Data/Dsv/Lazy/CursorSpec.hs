@@ -114,7 +114,7 @@ spec = describe "HaskellWorks.Data.Dsv.Lazy.CursorSpec" $ do
           , "1.0e-2"
           ]
         ]
-    xit "512 bytes" $ requireTest $ do
+    it "512 bytes" $ requireTest $ do
       let actual = testToListList $ LBS.intercalate "\n"
             [ "id,group_id,arm,first_name,last_name,email,contact_number,start_date,status,dose_smart_id,fitbit_id,glyco_id,sms_reminder,email_reminder,inactive_reminder,starting_weight,starting_bmi,starting_hba1c"
             , "10,aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,1,aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,aaaaaaa,aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,2018-01-01 00:00:00 UTC,Active,,,,Never,Weekly,Never,100.01,10.01,1.0e-2"
