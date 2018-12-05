@@ -16,6 +16,7 @@ import Control.Monad.Trans.Resource
 import Data.List
 import Data.Semigroup               ((<>))
 import Options.Applicative
+import Text.Read                    (readEither)
 
 import qualified App.IO                              as IO
 import qualified App.Lens                            as L
@@ -52,10 +53,17 @@ runQueryStrict opts = do
 cmdQueryStrict :: Mod CommandFields (IO ())
 cmdQueryStrict = command "query-strict" $ flip info idm $ runQueryStrict <$> optsQueryStrict
 
+nonZeroOneBased :: Mod OptionFields Int -> Parser Int
+nonZeroOneBased = option $ eitherReader $ \s -> do
+  a <- readEither s
+  if a == 0
+    then Left "cannot index column 0"
+    else Right (a - 1)
+
 optsQueryStrict :: Parser QueryStrictOptions
 optsQueryStrict = QueryStrictOptions
     <$> many
-        ( option auto
+        ( nonZeroOneBased
           (   long "column"
           <>  short 'k'
           <>  help "Column to select"
