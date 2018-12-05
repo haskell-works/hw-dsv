@@ -16,6 +16,7 @@ import Control.Monad.Trans.Resource
 import Data.List
 import Data.Semigroup               ((<>))
 import Options.Applicative          hiding (columns)
+import Text.Read                    (readEither)
 
 import qualified App.IO                            as IO
 import qualified App.Lens                          as L
@@ -105,10 +106,17 @@ runQueryLazyFast opts = do
 cmdQueryLazy :: Mod CommandFields (IO ())
 cmdQueryLazy = command "query-lazy" $ flip info idm $ runQueryLazy <$> optsQueryLazy
 
+nonZeroOneBased :: Mod OptionFields Int -> Parser Int
+nonZeroOneBased = option $ eitherReader $ \s -> do
+  a <- readEither s
+  if a == 0
+    then Left "cannot index column 0"
+    else Right (a - 1)
+
 optsQueryLazy :: Parser QueryLazyOptions
 optsQueryLazy = QueryLazyOptions
     <$> many
-        ( option auto
+        ( nonZeroOneBased
           (   long "column"
           <>  short 'k'
           <>  help "Column to select"
