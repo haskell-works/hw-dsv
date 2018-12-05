@@ -10,7 +10,6 @@ extra-source-files:
 - README.md
 - ChangeLog.md
 - data/bench/data-0001000.csv
-- cbits/simd.h
 
 # Metadata used when publishing your package
 synopsis:            Unbelievably fast streaming DSV file parser
@@ -38,12 +37,6 @@ dependencies:
 
 library:
   source-dirs: src
-  build-tools:
-  - c2hs
-  c-sources:
-  - cbits/simd.c
-  include-dirs:
-  - cbits
 
 executables:
   hw-dsv:
