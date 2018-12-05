@@ -52,7 +52,7 @@ With BMI2 disabled:
 
 ```text
 $ stack install
-$ cat 7g.csv | pv -t -e -b -a | hw-dsv query-lazy -k 0 -k 1 -d , -e '|' > /dev/null
+$ cat 7g.csv | pv -t -e -b -a | hw-dsv query-lazy -k 1 -k 2 -d , -e '|' > /dev/null
 7.08GiB 0:07:25 [16.3MiB/s]
 ```
 
@@ -60,7 +60,7 @@ With BMI2 and AVX2 enabled:
 
 ```text
 $ stack install --flag bits-extra:bmi2 --flag hw-bits:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2 --flag hw-dsv:avx2
-$ cat 7gb.csv | pv -t -e -b -a | hw-dsv query-lazy -k 0 -k 1 -d , -e '|' > /dev/null
+$ cat 7gb.csv | pv -t -e -b -a | hw-dsv query-lazy -k 1 -k 2 -d , -e '|' > /dev/null
 7.08GiB 0:00:39 [ 181MiB/s]
 ```
 
@@ -68,9 +68,13 @@ With only BMI2 enabled:
 
 ```text
 $ stack install --flag bits-extra:bmi2 --flag hw-bits:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2
-$ cat 7gb.csv | pv -t -e -b -a | hw-dsv query-lazy -k 0 -k 1 -d , -e '|' > /dev/null
+$ cat 7gb.csv | pv -t -e -b -a | hw-dsv query-lazy -k 1 -k 2 -d , -e '|' > /dev/null
 7.08GiB 0:00:43 [ 165MiB/s]
 ```
+
+## `hw-dsv` command line options
+
+The `hw-dsv` application accepts 1-based column indexes rather than 0-based. The library is 0-based.
 
 ## Using `hw-dsv` as a library
 
