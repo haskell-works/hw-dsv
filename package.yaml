@@ -1,5 +1,5 @@
 name:                hw-dsv
-version:             0.3.2
+version:             0.3.3
 github:              "haskell-works/hw-dsv"
 license:             BSD3
 author:              "John Ky"
