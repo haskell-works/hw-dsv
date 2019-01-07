@@ -29,3 +29,5 @@ cabal.sandbox.config
 /snapshot.yaml
 /stack-ci.yaml
 /tmp
+/*.csv
+/*.dsv
