@@ -4,13 +4,14 @@
 module HaskellWorks.Data.Dsv.Lazy.CursorSpec (spec) where
 
 import Data.Semigroup                      ((<>))
+import HaskellWorks.Data.Bits.BitShown
 import HaskellWorks.Data.Dsv.Internal.Char (comma)
 import HaskellWorks.Hspec.Hedgehog
 import Hedgehog
 import Test.Hspec
 
 import qualified Data.ByteString.Lazy              as LBS
-import qualified Data.Vector                       as V
+import qualified Data.Vector                       as DV
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor as SVL
 
 {-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
@@ -18,7 +19,7 @@ import qualified HaskellWorks.Data.Dsv.Lazy.Cursor as SVL
 {-# ANN module ("HLint: ignore Redundant bracket"   :: String) #-}
 
 subjectEmpty, subjectSS, subjectSM, subjectMS, subjectMM :: LBS.ByteString
-expectedEmpty, expectedSS, expectedSM, expectedMS, expectedMM :: [V.Vector LBS.ByteString]
+expectedEmpty, expectedSS, expectedSM, expectedMS, expectedMM :: [DV.Vector LBS.ByteString]
 subjectEmpty = ""
 expectedEmpty = mkExpected []
 subjectSS = "hello"
@@ -30,18 +31,18 @@ expectedMS = mkExpected [["hello","goodbye"]]
 subjectMM = "hello,goodbye\nyes,no"
 expectedMM = mkExpected [["hello","goodbye"],["yes","no"]]
 
-testToListVector :: LBS.ByteString -> [V.Vector LBS.ByteString]
+testToListVector :: LBS.ByteString -> [DV.Vector LBS.ByteString]
 testToListVector = SVL.toListVector . SVL.makeCursor comma
 
 testToListList :: LBS.ByteString -> [[LBS.ByteString]]
-testToListList = fmap V.toList . testToListVector
+testToListList = fmap DV.toList . testToListVector
 
 -- Adds a terminal newline to the file
-testToListVector' :: LBS.ByteString -> [V.Vector LBS.ByteString]
+testToListVector' :: LBS.ByteString -> [DV.Vector LBS.ByteString]
 testToListVector' = testToListVector . (<> "\n")
 
-mkExpected :: [[LBS.ByteString]] -> [V.Vector LBS.ByteString]
-mkExpected = fmap V.fromList
+mkExpected :: [[LBS.ByteString]] -> [DV.Vector LBS.ByteString]
+mkExpected = fmap DV.fromList
 
 spec :: Spec
 spec = describe "HaskellWorks.Data.Dsv.Lazy.CursorSpec" $ do
@@ -205,3 +206,37 @@ spec = describe "HaskellWorks.Data.Dsv.Lazy.CursorSpec" $ do
           , "1.0e-2"
           ]
         ]
+  describe "single quoted field with newline at 127-129" $ do
+    it "newline at 127 bytes" $ requireTest $ do
+      let newlinePos = 127
+      let text = "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\""
+      let expected = [["\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\""]]
+      let cursor = SVL.makeCursor 44 text
+      _ <- forAll $ pure $ BitShown (head (SVL.dsvCursorMarkers  cursor))
+      _ <- forAll $ pure $ BitShown (head (SVL.dsvCursorNewlines cursor))
+      let actual = fmap DV.toList (DV.toList (SVL.toVectorVector cursor))
+      LBS.length text === newlinePos + 2
+      LBS.index text newlinePos === 10
+      actual === expected
+    xit "newline at 128 bytes" $ requireTest $ do
+      let newlinePos = 128
+      let text = "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\""
+      let expected = [["\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\""]]
+      let cursor = SVL.makeCursor 44 text
+      _ <- forAll $ pure $ BitShown (head (SVL.dsvCursorMarkers  cursor))
+      _ <- forAll $ pure $ BitShown (head (SVL.dsvCursorNewlines cursor))
+      let actual = fmap DV.toList (DV.toList (SVL.toVectorVector cursor))
+      LBS.length text === newlinePos + 2
+      LBS.index text newlinePos === 10
+      actual === expected
+    xit "newline at 129 bytes" $ requireTest $ do
+      let newlinePos = 129
+      let text = "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\""
+      let expected = [["\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\""]]
+      let cursor = SVL.makeCursor 44 text
+      _ <- forAll $ pure $ BitShown (head (SVL.dsvCursorMarkers  cursor))
+      _ <- forAll $ pure $ BitShown (head (SVL.dsvCursorNewlines cursor))
+      let actual = fmap DV.toList (DV.toList (SVL.toVectorVector cursor))
+      LBS.length text === newlinePos + 2
+      LBS.index text newlinePos === 10
+      actual === expected
