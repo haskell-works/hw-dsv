@@ -31,3 +31,4 @@ cabal.sandbox.config
 /tmp
 /*.csv
 /*.dsv
+/*.idx
