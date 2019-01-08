@@ -57,10 +57,10 @@ indexCsvChunk qqCount qqCarry mks nls qqs = runST $ do
           let enters = pdep (oddsMask .<. (0x1 .&.      pc)) qq
           let leaves = pdep (oddsMask .<. (0x1 .&. comp pc)) qq
 
-          let compLeaves = comp leaves
-          let preQuoteMask = enters + compLeaves
-          let quoteMask = preQuoteMask + carry
-          let newCarry = preQuoteMask `ltWord` enters
+          let compLeaves    = comp leaves
+          let preQuoteMask  = enters + compLeaves
+          let quoteMask     = preQuoteMask + carry
+          let newCarry      = quoteMask `ltWord` (enters .|. compLeaves .|. carry)
 
           DVSM.unsafeWrite tmks i ((nl .|. mk) .&. quoteMask)
           DVSM.unsafeWrite tnls i ( nl         .&. quoteMask)

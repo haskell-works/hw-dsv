@@ -218,7 +218,7 @@ spec = describe "HaskellWorks.Data.Dsv.Lazy.CursorSpec" $ do
       LBS.length text === newlinePos + 2
       LBS.index text newlinePos === 10
       actual === expected
-    xit "newline at 128 bytes" $ requireTest $ do
+    it "newline at 128 bytes" $ requireTest $ do
       let newlinePos = 128
       let text = "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\""
       let expected = [["\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\""]]
@@ -229,7 +229,7 @@ spec = describe "HaskellWorks.Data.Dsv.Lazy.CursorSpec" $ do
       LBS.length text === newlinePos + 2
       LBS.index text newlinePos === 10
       actual === expected
-    xit "newline at 129 bytes" $ requireTest $ do
+    it "newline at 129 bytes" $ requireTest $ do
       let newlinePos = 129
       let text = "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\""
       let expected = [["\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\""]]
