@@ -142,18 +142,18 @@ cabalbuild: &cabalbuild
 
 version: 2.0
 jobs:
-  ghc-8.6.1:
+  ghc-8.6.3:
     environment:
-      - GHC: "ghc8.6.1"
+      - GHC: "ghc8.6.3"
     docker:
-      - image: quay.io/haskell_works/ghc-8.6.1
+      - image: quay.io/haskell_works/ghc-8.6.3
     <<: *cabalbuild
 
-  ghc-8.4.3:
+  ghc-8.4.4:
     environment:
-      - GHC: "ghc8.4.3"
+      - GHC: "ghc8.4.4"
     docker:
-      - image: quay.io/haskell_works/ghc-8.4.3
+      - image: quay.io/haskell_works/ghc-8.4.4
     <<: *cabalbuild
 
   ghc-8.2.2:
@@ -170,7 +170,7 @@ jobs:
 
   checked-builds:
     docker:
-      - image: quay.io/haskell_works/ghc-8.4.3
+      - image: quay.io/haskell_works/ghc-8.4.4
 
     steps:
       - checkout
@@ -202,7 +202,7 @@ jobs:
 
   release:
     docker:
-      - image: quay.io/haskell_works/ghc-8.4.3
+      - image: quay.io/haskell_works/ghc-8.4.4
 
     steps:
       - checkout
@@ -236,8 +236,8 @@ workflows:
   version: 2
   multiple-ghcs:
     jobs:
-      - ghc-8.6.1
-      - ghc-8.4.3
+      - ghc-8.6.3
+      - ghc-8.4.4
       - ghc-8.2.2
       - lts-12
       - checked-builds:
