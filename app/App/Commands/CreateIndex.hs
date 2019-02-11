@@ -1,28 +1,30 @@
-{-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE BangPatterns     #-}
+{-# LANGUAGE DataKinds        #-}
+{-# LANGUAGE TypeApplications #-}
 
 module App.Commands.CreateIndex
   ( cmdCreateIndex
   ) where
 
 import App.Char
-import App.Commands.Options.Type
 import Control.Lens
 import Control.Monad
+import Data.Generics.Product.Any
 import Data.Semigroup                    ((<>))
 import HaskellWorks.Data.ByteString.Lazy
 import Options.Applicative               hiding (columns)
 
+import qualified App.Commands.Options.Type         as Z
 import qualified App.IO                            as IO
-import qualified App.Lens                          as L
 import qualified Data.ByteString.Builder           as B
 import qualified Data.ByteString.Lazy              as LBS
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor as SVL
 import qualified System.IO                         as IO
 
-runCreateIndex :: CreateIndexOptions -> IO ()
+runCreateIndex :: Z.CreateIndexOptions -> IO ()
 runCreateIndex opts = do
-  let !filePath   = opts ^. L.filePath
-  let !delimiter  = opts ^. L.delimiter
+  let !filePath   = opts ^. the @"filePath"
+  let !delimiter  = opts ^. the @"delimiter"
 
   !bs <- IO.readInputFile filePath
 
@@ -46,8 +48,8 @@ runCreateIndex opts = do
 
   return ()
 
-optsCreateIndex :: Parser CreateIndexOptions
-optsCreateIndex = CreateIndexOptions
+optsCreateIndex :: Parser Z.CreateIndexOptions
+optsCreateIndex = Z.CreateIndexOptions
   <$> strOption
         (   long "input"
         <>  short 'i'

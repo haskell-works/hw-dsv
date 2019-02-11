@@ -1,43 +1,47 @@
+{-# LANGUAGE DeriveGeneric         #-}
+{-# LANGUAGE DuplicateRecordFields #-}
+
 module App.Commands.Options.Type where
 
-import GHC.Word (Word8)
+import GHC.Generics
+import GHC.Word     (Word8)
 
 data CreateIndexOptions = CreateIndexOptions
-  { _createIndexOptionsFilePath  :: FilePath
-  , _createIndexOptionsDelimiter :: Word8
-  } deriving (Eq, Show)
+  { filePath  :: FilePath
+  , delimiter :: Word8
+  } deriving (Eq, Show, Generic)
 
 data QueryStrictOptions = QueryStrictOptions
-  { _queryStrictOptionsColumns        :: [Int]
-  , _queryStrictOptionsFilePath       :: FilePath
-  , _queryStrictOptionsOutputFilePath :: FilePath
-  , _queryStrictOptionsDelimiter      :: Word8
-  , _queryStrictOptionsOutDelimiter   :: Word8
-  , _queryStrictOptionsUseIndex       :: Bool
-  } deriving (Eq, Show)
+  { columns        :: [Int]
+  , filePath       :: FilePath
+  , outputFilePath :: FilePath
+  , delimiter      :: Word8
+  , outDelimiter   :: Word8
+  , useIndex       :: Bool
+  } deriving (Eq, Show, Generic)
 
 data GenerateOptions = GenerateOptions
-  { _generateOptionsFields :: Int
-  , _generateOptionsRows   :: Int
-  } deriving (Eq, Show)
+  { fields :: Int
+  , rows   :: Int
+  } deriving (Eq, Show, Generic)
 
 data CatOptions = CatOptions
-  { _catOptionsSource :: FilePath
-  , _catOptionsTarget :: FilePath
-  , _catOptionsSimd   :: Bool
-  } deriving (Eq, Show)
+  { source :: FilePath
+  , target :: FilePath
+  , simd   :: Bool
+  } deriving (Eq, Show, Generic)
 
 data IndexWord8sOptions = IndexWord8sOptions
-  { _indexWord8sOptionsSource :: FilePath
-  , _indexWord8sOptionsTarget :: FilePath
-  , _indexWord8sOptionsSimd   :: Bool
-  } deriving (Eq, Show)
+  { source :: FilePath
+  , target :: FilePath
+  , simd   :: Bool
+  } deriving (Eq, Show, Generic)
 
 data QueryLazyOptions = QueryLazyOptions
-  { _queryLazyOptionsColumns        :: [Int]
-  , _queryLazyOptionsFilePath       :: FilePath
-  , _queryLazyOptionsOutputFilePath :: FilePath
-  , _queryLazyOptionsDelimiter      :: Word8
-  , _queryLazyOptionsOutDelimiter   :: Word8
-  , _queryLazyOptionsMethod         :: String
-  } deriving (Eq, Show)
+  { columns        :: [Int]
+  , filePath       :: FilePath
+  , outputFilePath :: FilePath
+  , delimiter      :: Word8
+  , outDelimiter   :: Word8
+  , method         :: String
+  } deriving (Eq, Show, Generic)
