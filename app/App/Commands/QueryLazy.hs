@@ -1,25 +1,27 @@
 {-# LANGUAGE BangPatterns        #-}
+{-# LANGUAGE DataKinds           #-}
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications    #-}
 
 module App.Commands.QueryLazy
   ( cmdQueryLazy
   ) where
 
 import App.Char
-import App.Commands.Options.Type
 import Control.Applicative
 import Control.Lens
 import Control.Monad
 import Control.Monad.IO.Class       (liftIO)
 import Control.Monad.Trans.Resource
+import Data.Generics.Product.Any
 import Data.List
 import Data.Semigroup               ((<>))
 import Options.Applicative          hiding (columns)
 import Text.Read                    (readEither)
 
+import qualified App.Commands.Options.Type         as Z
 import qualified App.IO                            as IO
-import qualified App.Lens                          as L
 import qualified Data.ByteString                   as BS
 import qualified Data.ByteString.Builder           as B
 import qualified Data.ByteString.Lazy              as LBS
@@ -31,8 +33,8 @@ import qualified System.IO                         as IO
 defaultMethod :: String
 defaultMethod = "lazy-traverse"
 
-runQueryLazy :: QueryLazyOptions -> IO ()
-runQueryLazy opts = case opts ^. L.method of
+runQueryLazy :: Z.QueryLazyOptions -> IO ()
+runQueryLazy opts = case opts ^. the @"method" of
   "lazy-traverse"     -> runQueryLazyFast opts
   "strict-traverse"   -> runQueryLazySlow opts
   "strict-bytestring" -> runQueryLazyStrict opts
@@ -40,18 +42,18 @@ runQueryLazy opts = case opts ^. L.method of
     IO.hPutStrLn IO.stderr $ "Unknown method: " <> method
     IO.exitFailure
 
-runQueryLazySlow :: QueryLazyOptions -> IO ()
+runQueryLazySlow :: Z.QueryLazyOptions -> IO ()
 runQueryLazySlow opts = do
-  !bs <- IO.readInputFile (opts ^. L.filePath)
+  !bs <- IO.readInputFile (opts ^. the @"filePath")
 
-  let !c = SVL.makeCursor (opts ^. L.delimiter) bs
+  let !c = SVL.makeCursor (opts ^. the @"delimiter") bs
   let !rows = SVL.toListVector c
-  let !outDelimiterBuilder = B.word8 (opts ^. L.outDelimiter)
+  let !outDelimiterBuilder = B.word8 (opts ^. the @"outDelimiter")
 
   runResourceT $ do
-    (_, hOut) <- IO.openOutputFile (opts ^. L.outputFilePath) Nothing
+    (_, hOut) <- IO.openOutputFile (opts ^. the @"outputFilePath") Nothing
     forM_ rows $ \row -> do
-      let fieldStrings = columnToFieldString row <$> (opts ^. L.columns)
+      let fieldStrings = columnToFieldString row <$> (opts ^. the @"columns")
 
       liftIO $ B.hPutBuilder hOut $ mconcat (intersperse outDelimiterBuilder fieldStrings) <> B.word8 10
 
@@ -62,18 +64,18 @@ runQueryLazySlow opts = do
           then B.lazyByteString (DV.unsafeIndex fields i)
           else B.lazyByteString LBS.empty
 
-runQueryLazyStrict :: QueryLazyOptions -> IO ()
+runQueryLazyStrict :: Z.QueryLazyOptions -> IO ()
 runQueryLazyStrict opts = do
-  !bs <- IO.readInputFile (opts ^. L.filePath)
+  !bs <- IO.readInputFile (opts ^. the @"filePath")
 
-  let !c = SVL.makeCursor (opts ^. L.delimiter) bs
+  let !c = SVL.makeCursor (opts ^. the @"delimiter") bs
   let !rows = SVL.toListVectorStrict c
-  let !outDelimiterBuilder = B.word8 (opts ^. L.outDelimiter)
+  let !outDelimiterBuilder = B.word8 (opts ^. the @"outDelimiter")
 
   runResourceT $ do
-    (_, hOut) <- IO.openOutputFile (opts ^. L.outputFilePath) Nothing
+    (_, hOut) <- IO.openOutputFile (opts ^. the @"outputFilePath") Nothing
     forM_ rows $ \row -> do
-      let fieldStrings = columnToFieldString row <$> (opts ^. L.columns)
+      let fieldStrings = columnToFieldString row <$> (opts ^. the @"columns")
 
       liftIO $ B.hPutBuilder hOut $ mconcat (intersperse outDelimiterBuilder fieldStrings) <> B.word8 10
 
@@ -84,17 +86,17 @@ runQueryLazyStrict opts = do
           then B.byteString (DV.unsafeIndex fields i)
           else B.byteString BS.empty
 
-runQueryLazyFast :: QueryLazyOptions -> IO ()
+runQueryLazyFast :: Z.QueryLazyOptions -> IO ()
 runQueryLazyFast opts = do
-  !bs <- IO.readInputFile (opts ^. L.filePath)
+  !bs <- IO.readInputFile (opts ^. the @"filePath")
 
-  let !c = SVL.makeCursor (opts ^. L.delimiter) bs
-  let !sel = opts ^. L.columns
+  let !c = SVL.makeCursor (opts ^. the @"delimiter") bs
+  let !sel = opts ^. the @"columns"
   let !rows = SVL.selectListVector sel c
-  let !outDelimiterBuilder = B.word8 (opts ^. L.outDelimiter)
+  let !outDelimiterBuilder = B.word8 (opts ^. the @"outDelimiter")
 
   runResourceT $ do
-    (_, hOut) <- IO.openOutputFile (opts ^. L.outputFilePath) Nothing
+    (_, hOut) <- IO.openOutputFile (opts ^. the @"outputFilePath") Nothing
     forM_ rows $ \row -> do
       let fieldStrings = fmap B.lazyByteString row
 
@@ -113,8 +115,8 @@ nonZeroOneBased = option $ eitherReader $ \s -> do
     then Left "cannot index column 0"
     else Right (a - 1)
 
-optsQueryLazy :: Parser QueryLazyOptions
-optsQueryLazy = QueryLazyOptions
+optsQueryLazy :: Parser Z.QueryLazyOptions
+optsQueryLazy = Z.QueryLazyOptions
     <$> many
         ( nonZeroOneBased
           (   long "column"
