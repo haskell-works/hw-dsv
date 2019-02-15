@@ -15,7 +15,6 @@ cabal.sandbox.config
 *.aux
 *.hp
 
-/*.cabal
 /*.submodules
 /.stack-work/
 /.stack-work-*/
