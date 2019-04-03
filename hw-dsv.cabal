@@ -64,7 +64,7 @@ library
     , ghc-prim
     , hw-bits >=0.7.0.2 && <0.8
     , hw-prim >=0.6.2.14 && <0.7
-    , hw-rankselect >=0.12.0.2 && <0.13
+    , hw-rankselect >=0.12.0.2 && <0.14
     , hw-rankselect-base >=0.3.2.0 && <0.4
     , hw-simd >=0.1.1.3 && <0.2
     , vector >=0.12.0.1 && <0.13
@@ -116,7 +116,7 @@ executable hw-dsv
     , hw-bits >=0.7.0.2 && <0.8
     , hw-dsv
     , hw-prim >=0.6.2.14 && <0.7
-    , hw-rankselect >=0.12.0.2 && <0.13
+    , hw-rankselect >=0.12.0.2 && <0.14
     , hw-rankselect-base >=0.3.2.0 && <0.4
     , hw-simd >=0.1.1.3 && <0.2
     , lens >=4.15 && <5
@@ -161,7 +161,7 @@ test-suite hw-dsv-space
     , hw-bits >=0.7.0.2 && <0.8
     , hw-dsv
     , hw-prim >=0.6.2.14 && <0.7
-    , hw-rankselect >=0.12.0.2 && <0.13
+    , hw-rankselect >=0.12.0.2 && <0.14
     , hw-rankselect-base >=0.3.2.0 && <0.4
     , hw-simd >=0.1.1.3 && <0.2
     , vector >=0.12.0.1 && <0.13
@@ -213,7 +213,7 @@ test-suite hw-dsv-test
     , hw-dsv
     , hw-hspec-hedgehog >=0.1.0.4 && <0.2
     , hw-prim >=0.6.2.14 && <0.7
-    , hw-rankselect >=0.12.0.2 && <0.13
+    , hw-rankselect >=0.12.0.2 && <0.14
     , hw-rankselect-base >=0.3.2.0 && <0.4
     , hw-simd >=0.1.1.3 && <0.2
     , text >=1.2.2 && <2.0
@@ -259,7 +259,7 @@ benchmark bench
     , hw-bits >=0.7.0.2 && <0.8
     , hw-dsv
     , hw-prim >=0.6.2.14 && <0.7
-    , hw-rankselect >=0.12.0.2 && <0.13
+    , hw-rankselect >=0.12.0.2 && <0.14
     , hw-rankselect-base >=0.3.2.0 && <0.4
     , hw-simd >=0.1.1.3 && <0.2
     , mmap >=0.5.9 && <0.6
