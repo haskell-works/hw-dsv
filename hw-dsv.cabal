@@ -67,7 +67,22 @@ common semigroups           {  if (!impl(ghc >= 8.0.1)) { build-depends: semigro
 common transformers         {  if (!impl(ghc >= 8.0.1)) { build-depends: transformers >= 0.4    && <  0.6   } }
 
 common common
-  default-language: Haskell2010
+  default-language:   Haskell2010
+  ghc-options:        -O2 -Wall
+  if flag(sse42)
+    ghc-options: -msse4.2
+    cc-options: -msse4.2
+  if flag(bmi2)
+    cc-options: -mbmi2 -DBMI2_ENABLED
+  if flag(avx2)
+    cc-options: -mavx2 -DAVX2_ENABLED
+  if (impl(ghc >=8.0.1))
+    ghc-options: -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
+  if (flag(avx2)) && (impl(ghc >=8.4.1))
+    ghc-options: -mbmi2 -msse4.2
+    cpp-options: -DBMI2_ENABLED -DAVX2_ENABLED
+  if (flag(bmi2)) && (impl(ghc >=8.4.1))
+    ghc-options: -mbmi2 -msse4.2
 
 library
   import:   base, common
@@ -99,21 +114,6 @@ library
   other-modules:    Paths_hw_dsv
   autogen-modules:  Paths_hw_dsv
   hs-source-dirs:   src
-  ghc-options:      -O2 -Wall
-  if flag(sse42)
-    ghc-options: -msse4.2
-    cc-options: -msse4.2
-  if flag(bmi2)
-    cc-options: -mbmi2 -DBMI2_ENABLED
-  if (flag(bmi2)) && (impl(ghc >=8.4.1))
-    ghc-options: -mbmi2 -msse4.2
-  if flag(avx2)
-    cc-options: -mavx2 -DAVX2_ENABLED
-  if (flag(avx2)) && (impl(ghc >=8.4.1))
-    ghc-options: -mbmi2 -msse4.2
-    cpp-options: -DBMI2_ENABLED -DAVX2_ENABLED
-  if (impl(ghc >=8.0.1))
-    ghc-options: -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
 
 executable hw-dsv
   import:   base, common
@@ -149,22 +149,8 @@ executable hw-dsv
       Paths_hw_dsv
   autogen-modules:  Paths_hw_dsv
   hs-source-dirs:   app
-  ghc-options:      -O2 -Wall -threaded -rtsopts -with-rtsopts=-N
+  ghc-options:      -threaded -rtsopts -with-rtsopts=-N
   build-depends:    hw-dsv
-  if flag(sse42)
-    ghc-options: -msse4.2
-    cc-options: -msse4.2
-  if flag(bmi2)
-    cc-options: -mbmi2 -DBMI2_ENABLED
-  if (flag(bmi2)) && (impl(ghc >=8.4.1))
-    ghc-options: -mbmi2 -msse4.2
-  if flag(avx2)
-    cc-options: -mavx2 -DAVX2_ENABLED
-  if (flag(avx2)) && (impl(ghc >=8.4.1))
-    ghc-options: -mbmi2 -msse4.2
-    cpp-options: -DBMI2_ENABLED -DAVX2_ENABLED
-  if (impl(ghc >=8.0.1))
-    ghc-options: -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
 
 test-suite hw-dsv-space
   import:   base, common
@@ -186,21 +172,6 @@ test-suite hw-dsv-space
   other-modules:    Paths_hw_dsv
   autogen-modules:  Paths_hw_dsv
   hs-source-dirs:   weigh
-  ghc-options:      -O2 -Wall
-  if flag(sse42)
-    ghc-options: -msse4.2
-    cc-options: -msse4.2
-  if flag(bmi2)
-    cc-options: -mbmi2 -DBMI2_ENABLED
-  if (flag(bmi2)) && (impl(ghc >=8.4.1))
-    ghc-options: -mbmi2 -msse4.2
-  if flag(avx2)
-    cc-options: -mavx2 -DAVX2_ENABLED
-  if (flag(avx2)) && (impl(ghc >=8.4.1))
-    ghc-options: -mbmi2 -msse4.2
-    cpp-options: -DBMI2_ENABLED -DAVX2_ENABLED
-  if (impl(ghc >=8.0.1))
-    ghc-options: -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
   build-tool-depends: hspec-discover:hspec-discover
 
 test-suite hw-dsv-test
@@ -220,7 +191,7 @@ test-suite hw-dsv-test
           , hw-simd
           , text
           , vector
-  ghc-options:      -O2 -Wall -threaded -rtsopts -with-rtsopts=-N
+  ghc-options:      -threaded -rtsopts -with-rtsopts=-N
   build-depends:    hw-dsv
   type:             exitcode-stdio-1.0
   main-is:          Spec.hs
@@ -233,56 +204,28 @@ test-suite hw-dsv-test
       Paths_hw_dsv
   autogen-modules:  Paths_hw_dsv
   hs-source-dirs:   test
-  if flag(sse42)
-    ghc-options: -msse4.2
-    cc-options: -msse4.2
-  if flag(bmi2)
-    cc-options: -mbmi2 -DBMI2_ENABLED
-  if (flag(bmi2)) && (impl(ghc >=8.4.1))
-    ghc-options: -mbmi2 -msse4.2
-  if flag(avx2)
-    cc-options: -mavx2 -DAVX2_ENABLED
-  if (flag(avx2)) && (impl(ghc >=8.4.1))
-    ghc-options: -mbmi2 -msse4.2
-    cpp-options: -DBMI2_ENABLED -DAVX2_ENABLED
-  if (impl(ghc >=8.0.1))
-    ghc-options: -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
   build-tool-depends: hspec-discover:hspec-discover
 
 benchmark bench
   import:   base, common
-    , bits-extra
-    , bytestring
-    , cassava
-    , criterion
-    , deepseq
-    , directory
-    , ghc-prim
-    , hw-bits
-    , hw-prim
-    , hw-rankselect
-    , hw-rankselect-base
-    , hw-simd
-    , mmap
-    , vector
+          , bits-extra
+          , bytestring
+          , cassava
+          , criterion
+          , deepseq
+          , directory
+          , ghc-prim
+          , hw-bits
+          , hw-prim
+          , hw-rankselect
+          , hw-rankselect-base
+          , hw-simd
+          , mmap
+          , vector
   type:             exitcode-stdio-1.0
   main-is:          Main.hs
   other-modules:    Paths_hw_dsv
   autogen-modules:  Paths_hw_dsv
   hs-source-dirs:   bench
-  ghc-options:      -O2 -Wall -msse4.2
+  ghc-options:      -msse4.2
   build-depends:    hw-dsv
-  if flag(sse42)
-    ghc-options: -msse4.2
-    cc-options: -msse4.2
-  if flag(bmi2)
-    cc-options: -mbmi2 -DBMI2_ENABLED
-  if (flag(bmi2)) && (impl(ghc >=8.4.1))
-    ghc-options: -mbmi2 -msse4.2
-  if flag(avx2)
-    cc-options: -mavx2 -DAVX2_ENABLED
-  if (flag(avx2)) && (impl(ghc >=8.4.1))
-    ghc-options: -mbmi2 -msse4.2
-    cpp-options: -DBMI2_ENABLED -DAVX2_ENABLED
-  if (impl(ghc >=8.0.1))
-    ghc-options: -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
