@@ -15,7 +15,7 @@ import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal.Reference as SVS
 
 {-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
-{-# ANN module ("HLint: redundant bracket"          :: String) #-}
+{-# ANN module ("HLint: ignore Redundant bracket"   :: String) #-}
 
 spec :: Spec
 spec = describe "HaskellWorks.Data.DsvSpec" $ do
