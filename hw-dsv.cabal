@@ -11,7 +11,7 @@ maintainer:     newhoggy@gmail.com
 copyright:      2018 John Ky
 license:        BSD-3-Clause
 license-file:   LICENSE
-tested-with:    GHC == 8.6.4, GHC == 8.4.4, GHC == 8.2.2, GHC == 8.0.2
+tested-with:    GHC == 8.6.5, GHC == 8.4.4, GHC == 8.2.2
 build-type:     Simple
 extra-source-files:
     README.md
