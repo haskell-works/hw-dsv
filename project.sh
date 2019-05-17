@@ -1,48 +1,59 @@
 #!/usr/bin/env bash
 
-STACK_FLAGS="
-  --flag bits-extra:bmi2
-  --flag hw-rankselect-base:bmi2
-  --flag hw-rankselect:bmi2
-  --flag hw-simd:bmi2
-  --flag hw-simd:avx2
-  --flag hw-dsv:bmi2
-  --flag hw-dsv:avx2
-"
+CABAL_FLAGS=""
 
 cmd="$1"
 
 shift
 
 case "$cmd" in
+  install)
+    cabal new-install \
+      --symlink-bindir=$HOME/.local/bin \
+      -j8 --overwrite-policy=always --disable-documentation \
+      exe:hw-dsv
+      $CABAL_FLAGS "$@"
+    ;;
+
   build)
-    stack build \
-      --test --no-run-tests --bench --no-run-benchmarks \
-      $STACK_FLAGS "$@"
+    cabal new-build all -j8 \
+      --disable-tests --disable-benchmarks \
+      $CABAL_FLAGS "$@"
+    ;;
+  
+  exec)
+    cabal new-exec "$(echo *.cabal | cut -d . -f 1)" "$@"
     ;;
 
   test)
-    stack test \
-      $STACK_FLAGS "$@"
+    cabal new-test -j8 --enable-tests --disable-documentation \
+      $CABAL_FLAGS "$@"
     ;;
 
   bench)
-    stack bench \
-      $STACK_FLAGS "$@"
+    cabal new-bench -j8 \
+      $CABAL_FLAGS "$@"
     ;;
 
   repl)
-    stack repl \
-      $STACK_FLAGS "$@"
+    cabal new-repl \
+      $CABAL_FLAGS "$@"
     ;;
 
-  install)
-    stack install \
-      $STACK_FLAGS "$@"
+  clean)
+    cabal new-clean
     ;;
-
-  flags)
-    echo "Flags: " \
-      $STACK_FLAGS "$@"
+  
+  *)
+    echo "Unrecognised command: $cmd"
+    exit 1
     ;;
 esac
+
+# haskell-ide-engine work-around
+for x in $(find dist-newstyle -name setup-config | grep '/opt/setup-config$' | sed 's|/opt/setup-config$||g'); do
+  ( cd $x
+    ln -fs opt/setup-config setup-config
+  )
+done
+
