@@ -46,7 +46,7 @@ common criterion            { build-depends: criterion            >= 1.4.1.0    
 common deepseq              { build-depends: deepseq              >= 1.4        && < 1.5    }
 common directory            { build-depends: directory            >= 1.2.2      && < 1.4    }
 common generic-lens         { build-depends: generic-lens         >= 1.0.0.0    && < 1.3    }
-common ghc-prim             { build-depends: ghc-prim                                       }
+common ghc-prim             { build-depends: ghc-prim             >= 0.4        && < 0.6    }
 common hedgehog             { build-depends: hedgehog             >= 0.5        && < 1.1    }
 common hspec                { build-depends: hspec                >= 2.4        && < 3      }
 common hw-bits              { build-depends: hw-bits              >= 0.7.0.2    && < 0.8    }
