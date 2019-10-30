@@ -9,6 +9,7 @@ module App.Commands.QueryStrict
   ) where
 
 import App.Char
+import App.Commands.Options.Parse
 import Control.Applicative
 import Control.Lens
 import Control.Monad
@@ -18,7 +19,6 @@ import Data.Generics.Product.Any
 import Data.List
 import Data.Semigroup               ((<>))
 import Options.Applicative
-import Text.Read                    (readEither)
 
 import qualified App.Commands.Options.Type           as Z
 import qualified App.IO                              as IO
@@ -54,13 +54,6 @@ runQueryStrict opts = do
 
 cmdQueryStrict :: Mod CommandFields (IO ())
 cmdQueryStrict = command "query-strict" $ flip info idm $ runQueryStrict <$> optsQueryStrict
-
-nonZeroOneBased :: Mod OptionFields Int -> Parser Int
-nonZeroOneBased = option $ eitherReader $ \s -> do
-  a <- readEither s
-  if a == 0
-    then Left "cannot index column 0"
-    else Right (a - 1)
 
 optsQueryStrict :: Parser Z.QueryStrictOptions
 optsQueryStrict = Z.QueryStrictOptions

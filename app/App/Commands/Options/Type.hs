@@ -3,8 +3,10 @@
 
 module App.Commands.Options.Type where
 
+import App.Data.ColumnDesc
+import Data.Text           (Text)
 import GHC.Generics
-import GHC.Word     (Word8)
+import GHC.Word            (Word8)
 
 data CreateIndexOptions = CreateIndexOptions
   { filePath  :: FilePath
@@ -38,7 +40,7 @@ data IndexWord8sOptions = IndexWord8sOptions
   } deriving (Eq, Show, Generic)
 
 data QueryLazyOptions = QueryLazyOptions
-  { columns        :: [Int]
+  { columns        :: [ColumnDesc Text]
   , filePath       :: FilePath
   , outputFilePath :: FilePath
   , delimiter      :: Word8

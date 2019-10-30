@@ -9,6 +9,7 @@ module App.Commands.QueryLazy
   ) where
 
 import App.Char
+import App.Commands.Options.Parse
 import Control.Applicative
 import Control.Lens
 import Control.Monad
@@ -18,9 +19,9 @@ import Data.Generics.Product.Any
 import Data.List
 import Data.Semigroup               ((<>))
 import Options.Applicative          hiding (columns)
-import Text.Read                    (readEither)
 
 import qualified App.Commands.Options.Type                as Z
+import qualified App.Data.ColumnDesc                      as Z
 import qualified App.IO                                   as IO
 import qualified Data.ByteString                          as BS
 import qualified Data.ByteString.Builder                  as B
@@ -55,7 +56,7 @@ runQueryLazySlow opts = do
   runResourceT $ do
     (_, hOut) <- IO.openOutputFile (opts ^. the @"outputFilePath") Nothing
     forM_ rows $ \row -> do
-      let fieldStrings = columnToFieldString row <$> (opts ^. the @"columns")
+      let fieldStrings = columnToFieldString row <$> (opts ^.. the @"columns" . each . the @"number")
 
       liftIO $ B.hPutBuilder hOut $ mconcat (intersperse outDelimiterBuilder fieldStrings) <> B.word8 10
 
@@ -77,7 +78,7 @@ runQueryLazyStrict opts = do
   runResourceT $ do
     (_, hOut) <- IO.openOutputFile (opts ^. the @"outputFilePath") Nothing
     forM_ rows $ \row -> do
-      let fieldStrings = columnToFieldString row <$> (opts ^. the @"columns")
+      let fieldStrings = columnToFieldString row <$> (opts ^.. the @"columns" . each . the @"number")
 
       liftIO $ B.hPutBuilder hOut $ mconcat (intersperse outDelimiterBuilder fieldStrings) <> B.word8 10
 
@@ -93,8 +94,8 @@ runQueryLazyFast opts = do
   !bs <- IO.readInputFile (opts ^. the @"filePath")
 
   let !c = SVL.makeCursor (opts ^. the @"delimiter") bs
-  let !sel = opts ^. the @"columns"
-  let !rows = SVLL.selectListVector sel c
+  let !sel = opts ^. the @"columns" <&> Z.realiseColumnDescLazy <&> Z.columnDescToTuple
+  let !rows = SVLL.mapSelectListVector sel c
   let !outDelimiterBuilder = B.word8 (opts ^. the @"outDelimiter")
 
   runResourceT $ do
@@ -110,17 +111,10 @@ runQueryLazyFast opts = do
 cmdQueryLazy :: Mod CommandFields (IO ())
 cmdQueryLazy = command "query-lazy" $ flip info idm $ runQueryLazy <$> optsQueryLazy
 
-nonZeroOneBased :: Mod OptionFields Int -> Parser Int
-nonZeroOneBased = option $ eitherReader $ \s -> do
-  a <- readEither s
-  if a == 0
-    then Left "cannot index column 0"
-    else Right (a - 1)
-
 optsQueryLazy :: Parser Z.QueryLazyOptions
 optsQueryLazy = Z.QueryLazyOptions
     <$> many
-        ( nonZeroOneBased
+        ( columnDesc
           (   long "column"
           <>  short 'k'
           <>  help "Column to select"
