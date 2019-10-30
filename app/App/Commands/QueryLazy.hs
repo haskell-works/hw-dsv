@@ -20,15 +20,16 @@ import Data.Semigroup               ((<>))
 import Options.Applicative          hiding (columns)
 import Text.Read                    (readEither)
 
-import qualified App.Commands.Options.Type         as Z
-import qualified App.IO                            as IO
-import qualified Data.ByteString                   as BS
-import qualified Data.ByteString.Builder           as B
-import qualified Data.ByteString.Lazy              as LBS
-import qualified Data.Vector                       as DV
-import qualified HaskellWorks.Data.Dsv.Lazy.Cursor as SVL
-import qualified System.Exit                       as IO
-import qualified System.IO                         as IO
+import qualified App.Commands.Options.Type                as Z
+import qualified App.IO                                   as IO
+import qualified Data.ByteString                          as BS
+import qualified Data.ByteString.Builder                  as B
+import qualified Data.ByteString.Lazy                     as LBS
+import qualified Data.Vector                              as DV
+import qualified HaskellWorks.Data.Dsv.Lazy.Cursor        as SVL
+import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Strict as SVLS
+import qualified System.Exit                              as IO
+import qualified System.IO                                as IO
 
 defaultMethod :: String
 defaultMethod = "lazy-traverse"
@@ -69,7 +70,7 @@ runQueryLazyStrict opts = do
   !bs <- IO.readInputFile (opts ^. the @"filePath")
 
   let !c = SVL.makeCursor (opts ^. the @"delimiter") bs
-  let !rows = SVL.toListVectorStrict c
+  let !rows = SVLS.toListVector c
   let !outDelimiterBuilder = B.word8 (opts ^. the @"outDelimiter")
 
   runResourceT $ do
