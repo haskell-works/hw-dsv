@@ -33,15 +33,12 @@ import qualified HaskellWorks.Data.Dsv.Internal.Char   as C
 import qualified HaskellWorks.Data.Dsv.Internal.Vector as DVS
 import qualified HaskellWorks.Data.Simd.Comparison     as DVS
 
-empty64 :: DVS.Vector Word64
-empty64 = DVS.replicate 64 0
-
 makeIndexes :: [DVS.Vector Word64] -> [DVS.Vector Word64] -> [DVS.Vector Word64] -> ([DVS.Vector Word64], [DVS.Vector Word64])
 makeIndexes ds ns qs = unzip $ go 0 0 ds ns qs
   where go pc carry (dv:dvs) (nv:nvs) (qv:qvs) =
           let (dv', nv', pc', carry') = DVS.indexCsvChunk pc carry dv nv qv in
           (dv', nv'):go pc' carry' dvs nvs qvs
-        go _ _ [] [] [] = [(empty64, empty64)]
+        go _ _ [] [] [] = [(DVS.empty64, DVS.empty64)]
         go _ _ _ _ _ = error "Unbalanced inputs"
 
 makeCursor :: Word8 -> LBS.ByteString -> DsvCursor
