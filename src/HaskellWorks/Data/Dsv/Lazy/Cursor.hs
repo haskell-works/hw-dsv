@@ -1,16 +1,18 @@
 module HaskellWorks.Data.Dsv.Lazy.Cursor
   ( DsvCursor (..)
   , makeCursor
-  , snippet
   , trim
   , atEnd
   , nextField
   , advanceField
   , nextRow
   , nextPosition
+  -- Functions returning lazy bytestrings
+  , snippet
   , toListVector
   , toVectorVector
   , selectListVector
+  -- Functions returning strict bytestrings
   , getRowBetweenStrict
   , toListVectorStrict
   ) where
@@ -20,9 +22,6 @@ import Data.Word
 import GHC.Word                                   (Word8)
 import HaskellWorks.Data.Dsv.Lazy.Cursor.Internal
 import HaskellWorks.Data.Dsv.Lazy.Cursor.Type
-import HaskellWorks.Data.Positioning
-import HaskellWorks.Data.RankSelect.Base.Rank1
-import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.Vector.AsVector64s
 import Prelude
 
@@ -32,7 +31,8 @@ import qualified Data.Vector                              as DV
 import qualified Data.Vector.Storable                     as DVS
 import qualified HaskellWorks.Data.Dsv.Internal.Char      as C
 import qualified HaskellWorks.Data.Dsv.Internal.Vector    as DVS
-import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Strict as STRICT
+import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Lazy   as LCL
+import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Strict as LCS
 import qualified HaskellWorks.Data.Simd.Comparison        as DVS
 
 makeIndexes :: [DVS.Vector Word64] -> [DVS.Vector Word64] -> [DVS.Vector Word64] -> ([DVS.Vector Word64], [DVS.Vector Word64])
@@ -58,70 +58,31 @@ makeCursor delimiter lbs = DsvCursor
 {-# INLINE makeCursor #-}
 
 snippet :: DsvCursor -> LBS.ByteString
-snippet c = LBS.take (len `max` 0) $ LBS.drop posC $ dsvCursorText c
-  where d = nextField c
-        posC = fromIntegral $ dsvCursorPosition c
-        posD = fromIntegral $ dsvCursorPosition d
-        len  = posD - posC
+snippet = LCL.snippet
+{-# DEPRECATED snippet "Use HaskellWorks.Data.Dsv.Lazy.Cursor.Strict.snippet instead" #-}
 {-# INLINE snippet #-}
 
-advanceField :: Count -> DsvCursor -> DsvCursor
-advanceField n cursor = cursor
-  { dsvCursorPosition = newPos
-  }
-  where currentRank = rank1   (dsvCursorMarkers cursor) (dsvCursorPosition cursor)
-        newPos      = select1 (dsvCursorMarkers cursor) (currentRank + n) - 1
-{-# INLINE advanceField #-}
-
-getRowBetween :: DsvCursor -> DsvCursor -> Bool -> DV.Vector LBS.ByteString
-getRowBetween c d dEnd = DV.unfoldrN fields go c
-  where cr  = rank1 (dsvCursorMarkers c) (dsvCursorPosition c)
-        dr  = rank1 (dsvCursorMarkers d) (dsvCursorPosition d)
-        c2d = fromIntegral (dr - cr)
-        fields = if dEnd then c2d +1 else c2d
-        go :: DsvCursor -> Maybe (LBS.ByteString, DsvCursor)
-        go e = case nextField e of
-          f -> case nextPosition f of
-            g -> case snippet e of
-              s -> Just (s, g)
-        {-# INLINE go #-}
-{-# INLINE getRowBetween #-}
-
 toListVector :: DsvCursor -> [DV.Vector LBS.ByteString]
-toListVector c = if dsvCursorPosition d > dsvCursorPosition c && not (atEnd c)
-  then getRowBetween c d dEnd:toListVector (trim d)
-  else []
-  where nr = nextRow c
-        d = nextPosition nr
-        dEnd = atEnd nr
+toListVector = LCL.toListVector
+{-# DEPRECATED toListVector "Use HaskellWorks.Data.Dsv.Lazy.Cursor.toListVector instead" #-}
 {-# INLINE toListVector #-}
 
 toVectorVector :: DsvCursor -> DV.Vector (DV.Vector LBS.ByteString)
-toVectorVector = DV.fromList . toListVector
+toVectorVector = LCL.toVectorVector
+{-# DEPRECATED toVectorVector "Use HaskellWorks.Data.Dsv.Lazy.Cursor.toVectorVector instead" #-}
 {-# INLINE toVectorVector #-}
 
-selectRowFrom :: [Int] -> DsvCursor -> [LBS.ByteString]
-selectRowFrom sel c = go <$> sel
-  where go :: Int -> LBS.ByteString
-        go n = snippet nc
-          where nc = nextPosition (advanceField (fromIntegral n) c)
-        {-# INLINE go #-}
-{-# INLINE selectRowFrom #-}
-
 selectListVector :: [Int] -> DsvCursor -> [[LBS.ByteString]]
-selectListVector sel c = if dsvCursorPosition d > dsvCursorPosition c && not (atEnd c)
-  then selectRowFrom sel c:selectListVector sel (trim d)
-  else []
-  where nr = nextRow c
-        d = nextPosition nr
+selectListVector = LCL.selectListVector
+{-# DEPRECATED selectListVector "Use HaskellWorks.Data.Dsv.Lazy.Cursor.selectListVector instead" #-}
 {-# INLINE selectListVector #-}
 
 toListVectorStrict :: DsvCursor -> [DV.Vector BS.ByteString]
-toListVectorStrict = STRICT.toListVector
+toListVectorStrict = LCS.toListVector
 {-# DEPRECATED toListVectorStrict "Use HaskellWorks.Data.Dsv.Lazy.Cursor.Strict.toListVector instead" #-}
 {-# INLINE toListVectorStrict #-}
 
 getRowBetweenStrict :: DsvCursor -> DsvCursor -> Bool -> DV.Vector BS.ByteString
-getRowBetweenStrict = STRICT.getRowBetween
+getRowBetweenStrict = LCS.getRowBetween
 {-# INLINE getRowBetweenStrict #-}
 {-# DEPRECATED getRowBetweenStrict "Use HaskellWorks.Data.Dsv.Lazy.Cursor.Strict.getRowBetween instead" #-}

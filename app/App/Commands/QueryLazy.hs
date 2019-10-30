@@ -27,6 +27,7 @@ import qualified Data.ByteString.Builder                  as B
 import qualified Data.ByteString.Lazy                     as LBS
 import qualified Data.Vector                              as DV
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor        as SVL
+import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Lazy   as SVLL
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Strict as SVLS
 import qualified System.Exit                              as IO
 import qualified System.IO                                as IO
@@ -48,7 +49,7 @@ runQueryLazySlow opts = do
   !bs <- IO.readInputFile (opts ^. the @"filePath")
 
   let !c = SVL.makeCursor (opts ^. the @"delimiter") bs
-  let !rows = SVL.toListVector c
+  let !rows = SVLL.toListVector c
   let !outDelimiterBuilder = B.word8 (opts ^. the @"outDelimiter")
 
   runResourceT $ do
@@ -93,7 +94,7 @@ runQueryLazyFast opts = do
 
   let !c = SVL.makeCursor (opts ^. the @"delimiter") bs
   let !sel = opts ^. the @"columns"
-  let !rows = SVL.selectListVector sel c
+  let !rows = SVLL.selectListVector sel c
   let !outDelimiterBuilder = B.word8 (opts ^. the @"outDelimiter")
 
   runResourceT $ do
