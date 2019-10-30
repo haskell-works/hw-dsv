@@ -39,6 +39,7 @@ flag sse42
 
 common base                 { build-depends: base                 >= 4.7        && < 5      }
 
+common appar                { build-depends: appar                >= 0.1.8      && < 0.2    }
 common bits-extra           { build-depends: bits-extra           >= 0.0.1.2    && < 0.1    }
 common bytestring           { build-depends: bytestring           >= 0.10       && < 0.11   }
 common cassava              { build-depends: cassava              >= 0.5.1.0    && < 0.6    }
@@ -120,6 +121,7 @@ library
 
 executable hw-dsv
   import:               base, config
+                      , appar
                       , bits-extra
                       , bytestring
                       , deepseq

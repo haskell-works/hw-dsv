@@ -1,17 +1,18 @@
 module Main where
 
-import Data.ByteString (ByteString)
-import Data.Vector     (Vector)
+import Data.ByteString                     (ByteString)
+import Data.Vector                         (Vector)
+import HaskellWorks.Data.Dsv.Internal.Char (comma)
 import Weigh
 
-import qualified Data.ByteString.Lazy                as LBS
-import qualified Data.Csv                            as CSV
-import qualified Data.Csv.Streaming                  as CSS
-import qualified Data.Foldable                       as F
-import qualified Data.Vector                         as DV
-import           HaskellWorks.Data.Dsv.Internal.Char (comma)
-import qualified HaskellWorks.Data.Dsv.Strict.Cursor as SVS
-import qualified HaskellWorks.Data.Dsv.Lazy.Cursor   as SVL
+import qualified Data.ByteString.Lazy                   as LBS
+import qualified Data.Csv                               as CSV
+import qualified Data.Csv.Streaming                     as CSS
+import qualified Data.Foldable                          as F
+import qualified Data.Vector                            as DV
+import qualified HaskellWorks.Data.Dsv.Lazy.Cursor      as SVL
+import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Lazy as SVLL
+import qualified HaskellWorks.Data.Dsv.Strict.Cursor    as SVS
 
 {-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
 
@@ -31,7 +32,7 @@ loadCsvLazy filePath = do
   bs <- LBS.readFile filePath
   let c = SVL.makeCursor comma bs
 
-  return $ SVL.toListVector c
+  return $ SVLL.toListVector c
 
 main :: IO ()
 main = do

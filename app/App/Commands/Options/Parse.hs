@@ -5,6 +5,7 @@ module App.Commands.Options.Parse
   , columnDesc
   ) where
 
+import Data.Semigroup      ((<>))
 import Data.Text
 import Options.Applicative
 import Text.Read           (readEither)
