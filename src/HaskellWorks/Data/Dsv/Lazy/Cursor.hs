@@ -83,6 +83,6 @@ toListVectorStrict = LCS.toListVector
 {-# INLINE toListVectorStrict #-}
 
 getRowBetweenStrict :: DsvCursor -> DsvCursor -> Bool -> DV.Vector BS.ByteString
-getRowBetweenStrict = LCS.getRowBetween
+getRowBetweenStrict = LCS.getRowVectorBetween
 {-# INLINE getRowBetweenStrict #-}
-{-# DEPRECATED getRowBetweenStrict "Use HaskellWorks.Data.Dsv.Lazy.Cursor.Strict.getRowBetween instead" #-}
+{-# DEPRECATED getRowBetweenStrict "Use HaskellWorks.Data.Dsv.Lazy.Cursor.Strict.getRowVectorBetween instead" #-}
