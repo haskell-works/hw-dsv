@@ -4,6 +4,7 @@ Description : Extraction functions that yields lazy bytestrings
 -}
 module HaskellWorks.Data.Dsv.Lazy.Cursor.Lazy
   ( snippet
+  , toListList
   , toListVector
   , toVectorVector
   , selectListVector
@@ -16,6 +17,7 @@ import HaskellWorks.Data.RankSelect.Base.Rank1
 import Prelude
 
 import qualified Data.ByteString.Lazy as LBS
+import qualified Data.List            as L
 import qualified Data.Vector          as DV
 
 snippet :: DsvCursor -> LBS.ByteString
@@ -26,8 +28,8 @@ snippet c = LBS.take (len `max` 0) $ LBS.drop posC $ dsvCursorText c
         len  = posD - posC
 {-# INLINE snippet #-}
 
-getRowBetween :: DsvCursor -> DsvCursor -> Bool -> DV.Vector LBS.ByteString
-getRowBetween c d dEnd = DV.unfoldrN fields go c
+getRowVectorBetween :: DsvCursor -> DsvCursor -> Bool -> DV.Vector LBS.ByteString
+getRowVectorBetween c d dEnd = DV.unfoldrN fields go c
   where cr  = rank1 (dsvCursorMarkers c) (dsvCursorPosition c)
         dr  = rank1 (dsvCursorMarkers d) (dsvCursorPosition d)
         c2d = fromIntegral (dr - cr)
@@ -38,11 +40,34 @@ getRowBetween c d dEnd = DV.unfoldrN fields go c
             g -> case snippet e of
               s -> Just (s, g)
         {-# INLINE go #-}
-{-# INLINE getRowBetween #-}
+{-# INLINE getRowVectorBetween #-}
+
+getRowListBetween :: DsvCursor -> DsvCursor -> Bool -> [LBS.ByteString]
+getRowListBetween c d dEnd = take fields (L.unfoldr go c)
+  where cr  = rank1 (dsvCursorMarkers c) (dsvCursorPosition c)
+        dr  = rank1 (dsvCursorMarkers d) (dsvCursorPosition d)
+        c2d = fromIntegral (dr - cr)
+        fields = if dEnd then c2d +1 else c2d
+        go :: DsvCursor -> Maybe (LBS.ByteString, DsvCursor)
+        go e = case nextField e of
+          f -> case nextPosition f of
+            g -> case snippet e of
+              s -> Just (s, g)
+        {-# INLINE go #-}
+{-# INLINE getRowListBetween #-}
+
+toListList :: DsvCursor -> [[LBS.ByteString]]
+toListList c = if dsvCursorPosition d > dsvCursorPosition c && not (atEnd c)
+  then getRowListBetween c d dEnd:toListList (trim d)
+  else []
+  where nr = nextRow c
+        d = nextPosition nr
+        dEnd = atEnd nr
+{-# INLINE toListList #-}
 
 toListVector :: DsvCursor -> [DV.Vector LBS.ByteString]
 toListVector c = if dsvCursorPosition d > dsvCursorPosition c && not (atEnd c)
-  then getRowBetween c d dEnd:toListVector (trim d)
+  then getRowVectorBetween c d dEnd:toListVector (trim d)
   else []
   where nr = nextRow c
         d = nextPosition nr
