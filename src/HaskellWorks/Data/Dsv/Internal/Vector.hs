@@ -2,7 +2,13 @@
 {-# LANGUAGE RankNTypes          #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module HaskellWorks.Data.Dsv.Internal.Vector where
+module HaskellWorks.Data.Dsv.Internal.Vector
+  ( empty64
+  , constructNS
+  , ltWord
+  , indexCsvChunk
+  , oddsMask
+  ) where
 
 import Control.Monad.ST
 import Data.Bits.Pdep
@@ -17,6 +23,10 @@ import HaskellWorks.Data.Positioning
 
 import qualified Data.Vector.Storable         as DVS
 import qualified Data.Vector.Storable.Mutable as DVSM
+
+empty64 :: DVS.Vector Word64
+empty64 = DVS.replicate 64 0
+{-# NOINLINE empty64 #-}
 
 constructNS :: forall a s. Storable a => Int -> s -> (s -> DVS.Vector a -> (s, a)) -> (s, DVS.Vector a)
 constructNS n s f = DVS.createT (go 0 s)
