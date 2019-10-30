@@ -4,6 +4,8 @@ Description : Extraction functions that yields lazy bytestrings
 -}
 module HaskellWorks.Data.Dsv.Lazy.Cursor.Lazy
   ( snippet
+  , getRowListBetween
+  , getRowVectorBetween
   , toListList
   , toListVector
   , toVectorVector
