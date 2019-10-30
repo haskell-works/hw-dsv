@@ -10,9 +10,10 @@ import HaskellWorks.Hspec.Hedgehog
 import Hedgehog
 import Test.Hspec
 
-import qualified Data.ByteString.Lazy              as LBS
-import qualified Data.Vector                       as DV
-import qualified HaskellWorks.Data.Dsv.Lazy.Cursor as SVL
+import qualified Data.ByteString.Lazy                   as LBS
+import qualified Data.Vector                            as DV
+import qualified HaskellWorks.Data.Dsv.Lazy.Cursor      as SVL
+import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Lazy as SVLL
 
 {-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
@@ -32,7 +33,7 @@ subjectMM = "hello,goodbye\nyes,no"
 expectedMM = mkExpected [["hello","goodbye"],["yes","no"]]
 
 testToListVector :: LBS.ByteString -> [DV.Vector LBS.ByteString]
-testToListVector = SVL.toListVector . SVL.makeCursor comma
+testToListVector = SVLL.toListVector . SVL.makeCursor comma
 
 testToListList :: LBS.ByteString -> [[LBS.ByteString]]
 testToListList = fmap DV.toList . testToListVector
@@ -214,7 +215,7 @@ spec = describe "HaskellWorks.Data.Dsv.Lazy.CursorSpec" $ do
       let cursor = SVL.makeCursor 44 text
       _ <- forAll $ pure $ BitShown (head (SVL.dsvCursorMarkers  cursor))
       _ <- forAll $ pure $ BitShown (head (SVL.dsvCursorNewlines cursor))
-      let actual = fmap DV.toList (DV.toList (SVL.toVectorVector cursor))
+      let actual = fmap DV.toList (DV.toList (SVLL.toVectorVector cursor))
       LBS.length text === newlinePos + 2
       LBS.index text newlinePos === 10
       actual === expected
@@ -225,7 +226,7 @@ spec = describe "HaskellWorks.Data.Dsv.Lazy.CursorSpec" $ do
       let cursor = SVL.makeCursor 44 text
       _ <- forAll $ pure $ BitShown (head (SVL.dsvCursorMarkers  cursor))
       _ <- forAll $ pure $ BitShown (head (SVL.dsvCursorNewlines cursor))
-      let actual = fmap DV.toList (DV.toList (SVL.toVectorVector cursor))
+      let actual = fmap DV.toList (DV.toList (SVLL.toVectorVector cursor))
       LBS.length text === newlinePos + 2
       LBS.index text newlinePos === 10
       actual === expected
@@ -236,7 +237,7 @@ spec = describe "HaskellWorks.Data.Dsv.Lazy.CursorSpec" $ do
       let cursor = SVL.makeCursor 44 text
       _ <- forAll $ pure $ BitShown (head (SVL.dsvCursorMarkers  cursor))
       _ <- forAll $ pure $ BitShown (head (SVL.dsvCursorNewlines cursor))
-      let actual = fmap DV.toList (DV.toList (SVL.toVectorVector cursor))
+      let actual = fmap DV.toList (DV.toList (SVLL.toVectorVector cursor))
       LBS.length text === newlinePos + 2
       LBS.index text newlinePos === 10
       actual === expected

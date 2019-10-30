@@ -39,6 +39,7 @@ flag sse42
 
 common base                 { build-depends: base                 >= 4.7        && < 5      }
 
+common appar                { build-depends: appar                >= 0.1.8      && < 0.2    }
 common bits-extra           { build-depends: bits-extra           >= 0.0.1.2    && < 0.1    }
 common bytestring           { build-depends: bytestring           >= 0.10       && < 0.11   }
 common cassava              { build-depends: cassava              >= 0.5.1.0    && < 0.6    }
@@ -50,6 +51,7 @@ common ghc-prim             { build-depends: ghc-prim             >= 0.4        
 common hedgehog             { build-depends: hedgehog             >= 0.5        && < 1.1    }
 common hspec                { build-depends: hspec                >= 2.4        && < 3      }
 common hw-bits              { build-depends: hw-bits              >= 0.7.0.2    && < 0.8    }
+common hw-ip                { build-depends: hw-ip                >= 2.3.4.2    && < 2.4    }
 common hw-hspec-hedgehog    { build-depends: hw-hspec-hedgehog    >= 0.1.0.4    && < 0.2    }
 common hw-prim              { build-depends: hw-prim              >= 0.6.2.14   && < 0.7    }
 common hw-rankselect        { build-depends: hw-rankselect        >= 0.12.0.2   && < 0.14   }
@@ -119,6 +121,7 @@ library
 
 executable hw-dsv
   import:               base, config
+                      , appar
                       , bits-extra
                       , bytestring
                       , deepseq
@@ -126,6 +129,7 @@ executable hw-dsv
                       , ghc-prim
                       , hedgehog
                       , hw-bits
+                      , hw-ip
                       , hw-prim
                       , hw-rankselect
                       , hw-rankselect-base
@@ -134,6 +138,7 @@ executable hw-dsv
                       , optparse-applicative
                       , resourcet
                       , semigroups
+                      , text
                       , transformers
                       , vector
   main-is:              Main.hs
@@ -142,9 +147,12 @@ executable hw-dsv
                         App.Commands.CreateIndex
                         App.Commands.Generate
                         App.Commands.IndexWord8s
+                        App.Commands.Options.Parse
                         App.Commands.Options.Type
                         App.Commands.QueryLazy
                         App.Commands.QueryStrict
+                        App.Data.ColumnDesc
+                        App.Data.List
                         App.Gen
                         App.IO
                         Paths_hw_dsv
