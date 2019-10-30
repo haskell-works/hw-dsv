@@ -106,6 +106,7 @@ library
                         HaskellWorks.Data.Dsv.Internal.Vector
                         HaskellWorks.Data.Dsv.Lazy.Cursor
                         HaskellWorks.Data.Dsv.Lazy.Cursor.Internal
+                        HaskellWorks.Data.Dsv.Lazy.Cursor.Lazy
                         HaskellWorks.Data.Dsv.Lazy.Cursor.Strict
                         HaskellWorks.Data.Dsv.Lazy.Cursor.Type
                         HaskellWorks.Data.Dsv.Strict.Cursor

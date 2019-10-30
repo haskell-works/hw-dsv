@@ -7,14 +7,24 @@ module HaskellWorks.Data.Dsv.Lazy.Cursor.Internal
   , atEnd
   , nextRow
   , trim
+  , advanceField
   ) where
 
 import HaskellWorks.Data.Dsv.Lazy.Cursor.Type
+import HaskellWorks.Data.Positioning
 import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
 import Prelude
 
 import qualified Data.ByteString.Lazy as LBS
+
+advanceField :: Count -> DsvCursor -> DsvCursor
+advanceField n cursor = cursor
+  { dsvCursorPosition = newPos
+  }
+  where currentRank = rank1   (dsvCursorMarkers cursor) (dsvCursorPosition cursor)
+        newPos      = select1 (dsvCursorMarkers cursor) (currentRank + n) - 1
+{-# INLINE advanceField #-}
 
 nextField :: DsvCursor -> DsvCursor
 nextField cursor = cursor
