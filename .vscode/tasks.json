@@ -1,27 +1,18 @@
 {
-  "version": "0.1.0",
-  "isShellCommand": true,
-  "showOutput": "always",
-  "suppressTaskName": true,
-  "windows": {
-    "command": "cmd", "args": ["/c"]
-  },
-  "linux": {
-    "command": "sh", "args": ["-c"]
-  },
-  "osx": {
-    "command": "sh", "args": ["-c"]
-  },
+  "version": "2.0.0",
   "tasks": [
     {
-      "taskName": "stack build",
-      "isBuildCommand": true,
-      "args": [
-        "echo START_STACK_BUILD && cd ${workspaceRoot} && ./project.sh build && echo END_STACK_BUILD "
-      ],
+      "label": "Build",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-lc", "cabal new-build && echo 'Done'"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
       "problemMatcher": {
         "owner": "haskell",
-        "fileLocation": "absolute",
+        "fileLocation": "relative",
         "pattern": [
           {
             "regexp": "^(.+?):(\\d+):(\\d+):\\s+(error|warning|info):.*$",
@@ -32,27 +23,46 @@
             "message": 1
           }
         ]
+      },
+      "presentation": {
+        "echo": false,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
       }
     },
     {
-      "isTestCommand": true,
-      "taskName": "stack test",
-      "args": [
-        "echo START_STACK_TEST && cd ${workspaceRoot} && ./project.sh test && echo END_STACK_TEST "
-      ],
+      "label": "Test",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-lc", "cabal new-test --enable-tests && echo 'Done'"],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
       "problemMatcher": {
         "owner": "haskell",
-        "fileLocation": [ "relative", "${workspaceRoot}" ],
+        "fileLocation": "relative",
         "pattern": [
           {
-            "regexp": "^\\s+(.+):(\\d+):.*$",
-            "file": 1, "line": 2
+            "regexp": "^(.+?):(\\d+):(\\d+):.*$",
+            "file": 1, "line": 2, "column": 3, "severity": 4
           },
           {
-            "regexp": "^.*\\.(.+)\\s*$",
-            "message": 1
+            "regexp": "\\s*(\\d\\)\\s)?(.*)$",
+            "message": 2
           }
         ]
+      },
+      "presentation": {
+        "echo": false,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
       }
     }
   ]
