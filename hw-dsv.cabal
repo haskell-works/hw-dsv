@@ -153,6 +153,7 @@ executable hw-dsv
                         App.Commands.QueryStrict
                         App.Commands.RangeJoin
                         App.Data.ColumnDesc
+                        App.Data.RangeJoinColumn
                         App.Data.List
                         App.Gen
                         App.IO
