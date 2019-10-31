@@ -47,3 +47,17 @@ data QueryLazyOptions = QueryLazyOptions
   , outDelimiter   :: Word8
   , method         :: String
   } deriving (Eq, Show, Generic)
+
+data RangeJoinOptions = RangeJoinOptions
+  { input1FilePath    :: FilePath
+  , input1Delimiter   :: Word8
+  , input1StartColumn :: Int
+  , input1StopColumn  :: Int
+  , input2FilePath    :: FilePath
+  , input2Delimiter   :: Word8
+  , input2StartColumn :: Int
+  , input2StopColumn  :: Int
+  , rangeType         :: Text
+  , outputFilePath    :: FilePath
+  , outputDelimiter   :: Word8
+  } deriving (Eq, Show, Generic)
