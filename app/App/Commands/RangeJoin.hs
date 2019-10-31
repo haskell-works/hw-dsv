@@ -24,6 +24,7 @@ import Options.Applicative          hiding (columns)
 import Text.Read                    (readMaybe)
 
 import qualified App.Commands.Options.Type              as Z
+import qualified App.Data.RangeJoinColumn               as Z
 import qualified App.IO                                 as IO
 import qualified Data.ByteString.Builder                as B
 import qualified Data.ByteString.Lazy                   as LBS
@@ -33,8 +34,9 @@ import qualified Data.Vector                            as DV
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor      as SVL
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Lazy as SVLL
 
-rangeJoin :: Int -> Int -> [DV.Vector LBS.ByteString] -> Int -> Int -> [DV.Vector LBS.ByteString] -> [[LBS.ByteString]]
-rangeJoin aa az as ba bz bs = rangeJoin' (catMaybes (fmap (mkEntry aa az) as)) (catMaybes (fmap (mkEntry ba bz) bs))
+rangeJoin :: (DV.Vector LBS.ByteString -> DV.Vector LBS.ByteString -> [LBS.ByteString])
+  -> Int -> Int -> [DV.Vector LBS.ByteString] -> Int -> Int -> [DV.Vector LBS.ByteString] -> [[LBS.ByteString]]
+rangeJoin f aa az as ba bz bs = rangeJoin' f (catMaybes (fmap (mkEntry aa az) as)) (catMaybes (fmap (mkEntry ba bz) bs))
 
 mkEntry :: Int -> Int -> DV.Vector LBS.ByteString -> Maybe (Word32, Word32, DV.Vector LBS.ByteString)
 mkEntry a z v = (,, v) <$> lookupWord32 a v <*> lookupWord32 z v
@@ -45,21 +47,29 @@ lookupWord32 i v = do
   let s = T.unpack (T.decodeUtf8 (LBS.toStrict lbs))
   readMaybe s
 
-rangeJoin' :: [(Word32, Word32, DV.Vector LBS.ByteString)] -> [(Word32, Word32, DV.Vector LBS.ByteString)] -> [[LBS.ByteString]]
-rangeJoin' ((ua, uz, u):us) ((va, vz, v):vs) = if
-  | uz < va   -> ["L", encodeWord32 ua, encodeWord32  uz      ]:rangeJoin'                  us  ((va    , vz, v):vs)
-  | vz < ua   -> ["R", encodeWord32 va, encodeWord32  vz      ]:rangeJoin' ((ua    , uz, u):us) (                vs)
-  | ua < va   -> ["L", encodeWord32 ua, encodeWord32 (va - 1) ]:rangeJoin' ((va    , uz, u):us) ((va    , vz, v):vs)
-  | va < ua   -> ["R", encodeWord32 va, encodeWord32 (ua - 1) ]:rangeJoin' ((ua    , uz, u):us) ((ua    , vz, v):vs)
-  | uz < vz   -> ["B", encodeWord32 ua, encodeWord32  uz      ]:rangeJoin'                  us  ((uz + 1, vz, v):vs)
-  | vz < uz   -> ["B", encodeWord32 va, encodeWord32  vz      ]:rangeJoin' ((vz + 1, uz, u):us)                  vs
-  | otherwise -> ["B", encodeWord32 va, encodeWord32  vz      ]:rangeJoin'                  us                   vs
-rangeJoin' ((ua, uz, _):us) []                = ["L", encodeWord32 ua, encodeWord32 uz]:rangeJoin' us []
-rangeJoin' []               ((va, vz, _):vs)  = ["R", encodeWord32 va, encodeWord32 vz]:rangeJoin' [] vs
-rangeJoin' []               []                = []
+rangeJoin' :: (DV.Vector LBS.ByteString -> DV.Vector LBS.ByteString -> [LBS.ByteString])
+  -> [(Word32, Word32, DV.Vector LBS.ByteString)] -> [(Word32, Word32, DV.Vector LBS.ByteString)] -> [[LBS.ByteString]]
+rangeJoin' f ((ua, uz, u):us) ((va, vz, v):vs) = if
+  | uz < va   -> ("L":encodeWord32 ua:encodeWord32  uz     :f u e):rangeJoin' f                  us  ((va    , vz, v):vs)
+  | vz < ua   -> ("R":encodeWord32 va:encodeWord32  vz     :f e v):rangeJoin' f ((ua    , uz, u):us) (                vs)
+  | ua < va   -> ("L":encodeWord32 ua:encodeWord32 (va - 1):f u e):rangeJoin' f ((va    , uz, u):us) ((va    , vz, v):vs)
+  | va < ua   -> ("R":encodeWord32 va:encodeWord32 (ua - 1):f e v):rangeJoin' f ((ua    , uz, u):us) ((ua    , vz, v):vs)
+  | uz < vz   -> ("B":encodeWord32 ua:encodeWord32  uz     :f u v):rangeJoin' f                  us  ((uz + 1, vz, v):vs)
+  | vz < uz   -> ("B":encodeWord32 va:encodeWord32  vz     :f u v):rangeJoin' f ((vz + 1, uz, u):us)                  vs
+  | otherwise -> ("B":encodeWord32 va:encodeWord32  vz     :f u v):rangeJoin' f                  us                   vs
+  where e = DV.empty
+rangeJoin' f ((ua, uz, _):us) []                = ("L":encodeWord32 ua:encodeWord32 uz:[]):rangeJoin' f us []
+rangeJoin' f []               ((va, vz, _):vs)  = ("R":encodeWord32 va:encodeWord32 vz:[]):rangeJoin' f [] vs
+rangeJoin' _ []               []                = []
 
 encodeWord32 :: Word32 -> LBS.ByteString
 encodeWord32 = LBS.fromStrict . T.encodeUtf8 . T.pack . show
+
+mkColumnSelector :: [Z.RangeJoinColumn] -> DV.Vector LBS.ByteString -> DV.Vector LBS.ByteString -> [LBS.ByteString]
+mkColumnSelector []     _ _ = []
+mkColumnSelector (c:cs) u v = case c of
+  Z.LtColumn n -> (maybe "" id (u DV.!? n)):mkColumnSelector cs u v
+  Z.RtColumn n -> (maybe "" id (v DV.!? n)):mkColumnSelector cs u v
 
 runRangeJoin :: Z.RangeJoinOptions -> IO ()
 runRangeJoin opts = do
@@ -71,6 +81,7 @@ runRangeJoin opts = do
   let input2FilePath    = opts ^. the @"input2FilePath"
   let input2StartColumn = opts ^. the @"input2StartColumn"
   let input2StopColumn  = opts ^. the @"input2StopColumn"
+  let columns           = opts ^. the @"columns"
   let rangeType         = opts ^. the @"rangeType"
   let outputFilePath    = opts ^. the @"outputFilePath"
   let outputDelimiter   = opts ^. the @"outputDelimiter"
@@ -80,10 +91,11 @@ runRangeJoin opts = do
 
   let !outDelimiterBuilder  = B.word8 outputDelimiter
   let !outNewlineBuilder    = B.word8 10
+  let !columnSelector       = mkColumnSelector columns
 
   runResourceT $ do
     (_, hOut) <- IO.openOutputFile outputFilePath Nothing
-    let outLbsss  = rangeJoin input1StartColumn input1StopColumn rows1 input2StartColumn input2StopColumn rows2
+    let outLbsss  = rangeJoin columnSelector input1StartColumn input1StopColumn rows1 input2StartColumn input2StopColumn rows2
     let outBss    = fmap (fmap B.lazyByteString) outLbsss
     let outB      = mconcat (intersperse outNewlineBuilder (fmap (mconcat . intersperse outDelimiterBuilder) outBss))
     liftIO $ B.hPutBuilder hOut outB
@@ -137,6 +149,14 @@ optsRangeJoin = Z.RangeJoinOptions
         <>  short 'k'
         <>  help "Column to use as stop column from 2"
         <>  metavar "COLUMN INDEX"
+        )
+    <*> many
+        ( rangeJoinColumn
+          (   long "column"
+          <>  short 'k'
+          <>  help "Range join colum"
+          <>  metavar "RANGE_JOIN_COLUMN"
+          )
         )
     <*> strOption
         (   long "range-type"

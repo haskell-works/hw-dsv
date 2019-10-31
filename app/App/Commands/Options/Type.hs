@@ -4,9 +4,10 @@
 module App.Commands.Options.Type where
 
 import App.Data.ColumnDesc
-import Data.Text           (Text)
+import App.Data.RangeJoinColumn
+import Data.Text                (Text)
 import GHC.Generics
-import GHC.Word            (Word8)
+import GHC.Word                 (Word8)
 
 data CreateIndexOptions = CreateIndexOptions
   { filePath  :: FilePath
@@ -57,6 +58,7 @@ data RangeJoinOptions = RangeJoinOptions
   , input2Delimiter   :: Word8
   , input2StartColumn :: Int
   , input2StopColumn  :: Int
+  , columns           :: [RangeJoinColumn]
   , rangeType         :: Text
   , outputFilePath    :: FilePath
   , outputDelimiter   :: Word8
