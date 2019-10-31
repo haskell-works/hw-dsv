@@ -47,15 +47,15 @@ lookupWord32 i v = do
 
 rangeJoin' :: [(Word32, Word32, DV.Vector LBS.ByteString)] -> [(Word32, Word32, DV.Vector LBS.ByteString)] -> [[LBS.ByteString]]
 rangeJoin' ((ua, uz, u):us) ((va, vz, v):vs) = if
-  | uz < va   -> ["L", encodeWord32 ua, encodeWord32  uz      ]:rangeJoin'                  us  ((va    , vz, v):vs)
-  | vz < ua   -> ["R", encodeWord32 va, encodeWord32  vz      ]:rangeJoin' ((ua    , uz, u):us) (                vs)
-  | ua < va   -> ["L", encodeWord32 ua, encodeWord32 (va - 1) ]:rangeJoin' ((va    , uz, u):us) ((va    , vz, v):vs)
-  | va < ua   -> ["R", encodeWord32 va, encodeWord32 (ua - 1) ]:rangeJoin' ((ua    , uz, u):us) ((ua    , vz, v):vs)
-  | uz < vz   -> ["B", encodeWord32 ua, encodeWord32  uz      ]:rangeJoin'                  us  ((uz + 1, vz, v):vs)
-  | vz < uz   -> ["B", encodeWord32 va, encodeWord32  vz      ]:rangeJoin' ((vz + 1, uz, u):us)                  vs
-  | otherwise -> ["B", encodeWord32 va, encodeWord32  vz      ]:rangeJoin'                  us                   vs
-rangeJoin' ((ua, uz, _):us) []                = ["L", encodeWord32 ua, encodeWord32 uz]:rangeJoin' us []
-rangeJoin' []               ((va, vz, _):vs)  = ["R", encodeWord32 va, encodeWord32 vz]:rangeJoin' [] vs
+  | uz < va   -> ("L":encodeWord32 ua:encodeWord32  uz     :[]):rangeJoin'                  us  ((va    , vz, v):vs)
+  | vz < ua   -> ("R":encodeWord32 va:encodeWord32  vz     :[]):rangeJoin' ((ua    , uz, u):us) (                vs)
+  | ua < va   -> ("L":encodeWord32 ua:encodeWord32 (va - 1):[]):rangeJoin' ((va    , uz, u):us) ((va    , vz, v):vs)
+  | va < ua   -> ("R":encodeWord32 va:encodeWord32 (ua - 1):[]):rangeJoin' ((ua    , uz, u):us) ((ua    , vz, v):vs)
+  | uz < vz   -> ("B":encodeWord32 ua:encodeWord32  uz     :[]):rangeJoin'                  us  ((uz + 1, vz, v):vs)
+  | vz < uz   -> ("B":encodeWord32 va:encodeWord32  vz     :[]):rangeJoin' ((vz + 1, uz, u):us)                  vs
+  | otherwise -> ("B":encodeWord32 va:encodeWord32  vz     :[]):rangeJoin'                  us                   vs
+rangeJoin' ((ua, uz, _):us) []                = ("L":encodeWord32 ua:encodeWord32 uz:[]):rangeJoin' us []
+rangeJoin' []               ((va, vz, _):vs)  = ("R":encodeWord32 va:encodeWord32 vz:[]):rangeJoin' [] vs
 rangeJoin' []               []                = []
 
 encodeWord32 :: Word32 -> LBS.ByteString
