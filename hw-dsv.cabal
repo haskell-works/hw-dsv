@@ -151,6 +151,7 @@ executable hw-dsv
                         App.Commands.Options.Type
                         App.Commands.QueryLazy
                         App.Commands.QueryStrict
+                        App.Commands.RangeJoin
                         App.Data.ColumnDesc
                         App.Data.List
                         App.Gen

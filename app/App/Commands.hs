@@ -5,6 +5,7 @@ import App.Commands.Generate
 import App.Commands.IndexWord8s
 import App.Commands.QueryLazy
 import App.Commands.QueryStrict
+import App.Commands.RangeJoin
 import Data.Semigroup           ((<>))
 import Options.Applicative
 
@@ -17,6 +18,7 @@ commandsGeneral = subparser $ mempty
   <>  cmdCreateIndex
   <>  cmdQueryLazy
   <>  cmdQueryStrict
+  <>  cmdRangeJoin
 
 commandsDebugging :: Parser (IO ())
 commandsDebugging = subparser $ mempty
