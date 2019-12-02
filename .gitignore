@@ -33,3 +33,4 @@ cabal.sandbox.config
 /*.idx
 /.ghc.environment.*
 /*.dsv.gz
+/*.txt
