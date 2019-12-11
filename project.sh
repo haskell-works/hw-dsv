@@ -8,21 +8,21 @@ shift
 
 case "$cmd" in
   install)
-    cabal new-install \
-      --symlink-bindir=$HOME/.local/bin \
+    cabal v2-install \
+      --installdir=$HOME/.local/bin \
       -j8 --overwrite-policy=always --disable-documentation \
-      exe:hw-dsv
+      exe:hw-dsv \
       $CABAL_FLAGS "$@"
     ;;
 
   build)
-    cabal new-build all -j8 \
+    cabal v2-build all -j8 \
       --disable-tests --disable-benchmarks \
       $CABAL_FLAGS "$@"
     ;;
   
   exec)
-    cabal new-exec "$(echo *.cabal | cut -d . -f 1)" "$@"
+    cabal v2-exec "$(echo *.cabal | cut -d . -f 1)" "$@"
     ;;
 
   test)
@@ -31,17 +31,17 @@ case "$cmd" in
     ;;
 
   bench)
-    cabal new-bench -j8 \
+    cabal v2-bench -j8 \
       $CABAL_FLAGS "$@"
     ;;
 
   repl)
-    cabal new-repl \
+    cabal v2-repl \
       $CABAL_FLAGS "$@"
     ;;
 
   clean)
-    cabal new-clean
+    cabal v2-clean
     ;;
   
   *)
@@ -49,11 +49,3 @@ case "$cmd" in
     exit 1
     ;;
 esac
-
-# haskell-ide-engine work-around
-for x in $(find dist-newstyle -name setup-config | grep '/opt/setup-config$' | sed 's|/opt/setup-config$||g'); do
-  ( cd $x
-    ln -fs opt/setup-config setup-config
-  )
-done
-
