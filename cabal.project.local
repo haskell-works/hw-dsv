@@ -1,0 +1,6 @@
+tests: True
+benchmarks: True
+documentation: False
+
+package *
+  documentation: False
