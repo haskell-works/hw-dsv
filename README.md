@@ -7,39 +7,45 @@ Unbelievably fast streaming DSV file parser that reads based on succinct data st
 This library will use support for some BMI2 or AVX2 CPU instructions on some x86 based
 CPUs if compiled with the appropriate flags on `ghc-8.4.1` or later.
 
-## Compilation
+## Compilation & Installation
 
 Pre-requisites:
 
-* Install [Haskell Stack](https://docs.haskellstack.org/en/stable/README/)
+* `cabal-install-3.0.0.0`
+* `ghc-8.4.4` or higher
 
 It is sufficient to build, test and benchmark the library as follows
 for basic performance.  The library will be compiled to use broadword
 implementation of rank & select, which has reasonable performance.
 
-```text
-stack build
-stack test
-stack bench
+```bash
+cabal v2-configure --enable-tests --enable-benchmarks --disable-documentation
+cabal v2-build
+cabal v2-test
+cabal v2-bench
+cabal v2-install --overwrite-policy=always --installdir="$HOME/.local/bin"
 ```
 
-For best performance, add the `bmi2` and `avx2` flag to target the BMI2 and AVS2 instruction sets:
+Ensure that `$HOME/.local/bin` is in your path if you are using intending to
+use the `hw-dsv` binary.
 
-```text
-stack build   --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-simd:bmi2 --flag hw-simd:avx2 --flag hw-dsv:bmi2 --flag hw-dsv:avx2
-stack test    --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-simd:bmi2 --flag hw-simd:avx2 --flag hw-dsv:bmi2 --flag hw-dsv:avx2
-stack bench   --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-simd:bmi2 --flag hw-simd:avx2 --flag hw-dsv:bmi2 --flag hw-dsv:avx2
+For best performance, add the `bmi2` and `avx2` flags to target the BMI2 and
+AVS2 instruction are specified in the `cabal.project` file.
+
+For slightly older CPUs, remove `avx2` flags from the `cabal.project` file to
+target only the BMI2 instruction set.
+
+### Stack support
+
+It should be possible to install `hw-dsv` via stack:
+
+```bash
 stack install --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-simd:bmi2 --flag hw-simd:avx2 --flag hw-dsv:bmi2 --flag hw-dsv:avx2
 ```
 
-For slightly older CPUs, add only the `bmi2` flag to target the BMI2 instruction set: 
+Although your mileage may vary depending on which snapshot you are using.
 
-```text
-stack build   --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-simd:bmi2 --flag hw-dsv:bmi2
-stack test    --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-simd:bmi2 --flag hw-dsv:bmi2
-stack bench   --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-simd:bmi2 --flag hw-dsv:bmi2
-stack install --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-simd:bmi2 --flag hw-dsv:bmi2
-```
+The flags should be adjusted for the CPU you are targetting.
 
 ## Benchmark results
 
@@ -50,24 +56,21 @@ macOS High Sierra.
 
 With BMI2 disabled:
 
-```text
-$ stack install
+```bash
 $ cat 7g.csv | pv -t -e -b -a | hw-dsv query-lazy -k 1 -k 2 -d , -e '|' > /dev/null
 7.08GiB 0:07:25 [16.3MiB/s]
 ```
 
 With BMI2 and AVX2 enabled:
 
-```text
-$ stack install --flag bits-extra:bmi2 --flag hw-bits:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2 --flag hw-dsv:avx2
+```bash
 $ cat 7gb.csv | pv -t -e -b -a | hw-dsv query-lazy -k 1 -k 2 -d , -e '|' > /dev/null
 7.08GiB 0:00:39 [ 181MiB/s]
 ```
 
 With only BMI2 enabled:
 
-```text
-$ stack install --flag bits-extra:bmi2 --flag hw-bits:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-dsv:bmi2
+```bash
 $ cat 7gb.csv | pv -t -e -b -a | hw-dsv query-lazy -k 1 -k 2 -d , -e '|' > /dev/null
 7.08GiB 0:00:43 [ 165MiB/s]
 ```
