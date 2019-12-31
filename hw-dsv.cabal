@@ -161,8 +161,6 @@ executable hw-dsv
                         App.Data.List
                         App.Gen
                         App.IO
-                        Paths_hw_dsv
-  autogen-modules:      Paths_hw_dsv
   hs-source-dirs:       app
   ghc-options:          -threaded -rtsopts -with-rtsopts=-N
   build-depends:        hw-dsv
@@ -184,8 +182,6 @@ test-suite hw-dsv-space
   type:                 exitcode-stdio-1.0
   main-is:              Space.hs
   build-depends:        hw-dsv
-  other-modules:        Paths_hw_dsv
-  autogen-modules:      Paths_hw_dsv
   hs-source-dirs:       weigh
   build-tool-depends:   hspec-discover:hspec-discover
 
@@ -215,8 +211,6 @@ test-suite hw-dsv-test
                         HaskellWorks.Data.Dsv.Lazy.CursorSpec
                         HaskellWorks.Data.Dsv.Strict.Cursor.InternalSpec
                         HaskellWorks.Data.DsvSpec
-                        Paths_hw_dsv
-  autogen-modules:      Paths_hw_dsv
   hs-source-dirs:       test
   build-tool-depends:   hspec-discover:hspec-discover
 
@@ -238,8 +232,6 @@ benchmark bench
                       , vector
   type:                 exitcode-stdio-1.0
   main-is:              Main.hs
-  other-modules:        Paths_hw_dsv
-  autogen-modules:      Paths_hw_dsv
   hs-source-dirs:       bench
   ghc-options:          -msse4.2
   build-depends:        hw-dsv
