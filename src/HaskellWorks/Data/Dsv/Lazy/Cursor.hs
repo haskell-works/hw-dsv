@@ -73,8 +73,8 @@ toVectorVector = LCL.toVectorVector
 {-# INLINE toVectorVector #-}
 
 selectListVector :: [Int] -> DsvCursor -> [[LBS.ByteString]]
-selectListVector = LCL.selectListVector
-{-# DEPRECATED selectListVector "Use HaskellWorks.Data.Dsv.Lazy.Cursor.selectListVector instead" #-}
+selectListVector = LCL.selectListList
+{-# DEPRECATED selectListVector "Use HaskellWorks.Data.Dsv.Lazy.Cursor.Lazy.selectListList instead" #-}
 {-# INLINE selectListVector #-}
 
 toListVectorStrict :: DsvCursor -> [DV.Vector BS.ByteString]

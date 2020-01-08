@@ -95,7 +95,7 @@ runQueryLazyFast opts = do
 
   let !c = SVL.makeCursor (opts ^. the @"delimiter") bs
   let !sel = opts ^. the @"columns" <&> Z.realiseColumnDescLazy <&> Z.columnDescToTuple
-  let !rows = SVLL.mapSelectListVector sel c
+  let !rows = SVLL.mapSelectListList sel c
   let !outDelimiterBuilder = B.word8 (opts ^. the @"outDelimiter")
 
   runResourceT $ do
