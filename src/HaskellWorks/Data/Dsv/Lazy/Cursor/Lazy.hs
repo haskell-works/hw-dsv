@@ -9,8 +9,8 @@ module HaskellWorks.Data.Dsv.Lazy.Cursor.Lazy
   , toListList
   , toListVector
   , toVectorVector
-  , selectListVector
-  , mapSelectListVector
+  , selectListList
+  , mapSelectListList
   ) where
 
 import Data.Function
@@ -97,18 +97,18 @@ mapSelectRowFrom sel c = uncurry go <$> sel
         {-# INLINE go #-}
 {-# INLINE mapSelectRowFrom #-}
 
-selectListVector :: [Int] -> DsvCursor -> [[LBS.ByteString]]
-selectListVector sel c = if dsvCursorPosition d > dsvCursorPosition c && not (atEnd c)
-  then selectRowFrom sel c:selectListVector sel (trim d)
+selectListList :: [Int] -> DsvCursor -> [[LBS.ByteString]]
+selectListList sel c = if dsvCursorPosition d > dsvCursorPosition c && not (atEnd c)
+  then selectRowFrom sel c:selectListList sel (trim d)
   else []
   where nr = nextRow c
         d = nextPosition nr
-{-# INLINE selectListVector #-}
+{-# INLINE selectListList #-}
 
-mapSelectListVector :: [(Int, LBS.ByteString -> LBS.ByteString)] -> DsvCursor -> [[LBS.ByteString]]
-mapSelectListVector sel c = if dsvCursorPosition d > dsvCursorPosition c && not (atEnd c)
-  then mapSelectRowFrom sel c:mapSelectListVector sel (trim d)
+mapSelectListList :: [(Int, LBS.ByteString -> LBS.ByteString)] -> DsvCursor -> [[LBS.ByteString]]
+mapSelectListList sel c = if dsvCursorPosition d > dsvCursorPosition c && not (atEnd c)
+  then mapSelectRowFrom sel c:mapSelectListList sel (trim d)
   else []
   where nr = nextRow c
         d = nextPosition nr
-{-# INLINE mapSelectListVector #-}
+{-# INLINE mapSelectListList #-}
