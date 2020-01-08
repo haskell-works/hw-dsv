@@ -18,6 +18,7 @@ import qualified Data.Csv                                               as CSV
 import qualified Data.Csv.Streaming                                     as CSS
 import qualified Data.Vector.Storable                                   as DVS
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor                      as SVL
+import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Lazy                 as SVLL
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor                    as SVS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal           as SVS
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal.Reference as SVS
@@ -58,7 +59,7 @@ loadHwsvLazy filePath = do
 
   let c = SVL.makeCursor comma bs
 
-  pure (SVL.toListVector c)
+  pure (SVLL.toListVector c)
 
 makeBenchCsv :: IO [Benchmark]
 makeBenchCsv = do
