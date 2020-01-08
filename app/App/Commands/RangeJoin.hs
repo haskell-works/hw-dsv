@@ -82,7 +82,6 @@ runRangeJoin opts = do
   let input2StartColumn = opts ^. the @"input2StartColumn"
   let input2StopColumn  = opts ^. the @"input2StopColumn"
   let columns           = opts ^. the @"columns"
-  let rangeType         = opts ^. the @"rangeType"
   let outputFilePath    = opts ^. the @"outputFilePath"
   let outputDelimiter   = opts ^. the @"outputDelimiter"
 
