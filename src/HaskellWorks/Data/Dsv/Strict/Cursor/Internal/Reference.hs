@@ -45,9 +45,9 @@ atIndexOr2 _ v i | otherwise                       = unsafeIndex v (fromIntegral
 -- n: Number of rank select bit string words since beginning
 -- returns: dquote interest bits in high part and other interest bits in low part
 mkDsvRawBitsByWord64s :: Word64 -> Word64 -> Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
-mkDsvRawBitsByWord64s rdqs rnls rdls v = DVS.constructN (((DVS.length v + 7) `div` 8) * 2) go
-  where go :: DVS.Vector Word64 -> Word64
-        go u =  let vi = dvsLength u * 4 in
+mkDsvRawBitsByWord64s rdqs rnls rdls v = DVS.generate (((DVS.length v + 7) `div` 8) * 2) go
+  where go :: Int -> Word64
+        go u =  let vi = fromIntegral u * 4 in
           if dvsLength v - vi >= 4
             then let  w0    = unsafeIndex v vi
                       w0Dqs = testWord8s (w0 .^. rdqs)
@@ -106,9 +106,9 @@ mkCummulativeDqPopCount v = DVS.constructN (DVS.length v `div` 2) go
                   in atIndexOr2 0 u (ui - 1) + fromIntegral (popCount w)
 
 mkIbVector' :: DVS.Vector Word64 -> DVS.Vector Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
-mkIbVector' rawBits cpcs v = DVS.constructN ((DVS.length v + 7) `div` 8) go
-  where go :: DVS.Vector Word64 -> Word64
-        go u = let ui = dvsLength u in if ui > 1
+mkIbVector' rawBits cpcs v = DVS.generate ((DVS.length v + 7) `div` 8) go
+  where go :: Int -> Word64
+        go u = let ui = fromIntegral u in if ui > 1
           then  let vi  = ui * 2
                     cpc = unsafeIndex cpcs (ui - 1)
                     w0  = unsafeIndex rawBits  vi
@@ -141,11 +141,11 @@ mkIbVector delimiter v = mkIbVector' rawBits cpcs v
 -- n: Number of rank select bit string words since beginning
 -- returns: dquote interest bits in high part and other interest bits in low part
 mkStripes :: Word64 -> Word64 -> Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
-mkStripes rdqs rnls rdls v = DVS.constructN (((DVS.length v + 7) `div` 8) * 3) go
+mkStripes rdqs rnls rdls v = DVS.generate (((DVS.length v + 7) `div` 8) * 3) go
   where stripePatterns = DVS.fromList [rdqs, rnls, rdls]
-        go :: DVS.Vector Word64 -> Word64
+        go :: Int -> Word64
         go u =
-          let ui = dvsLength u
+          let ui = fromIntegral u
               si = ui `mod` 3
               vi = (ui `div` 3) * 8
               ws = unsafeIndex stripePatterns si
@@ -182,9 +182,9 @@ mkCummulativeDqPopCountFromStriped v = DVS.constructN (DVS.length v `div` 3) go
                 in unsafeIndex u (ui - 1) + fromIntegral (popCount w)
 
 mkDsvIbNlFromStriped :: DVS.Vector Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
-mkDsvIbNlFromStriped sv cpcs = DVS.constructN ((DVS.length sv) `div` 3) go
-  where go :: DVS.Vector Word64 -> Word64
-        go u = let ui = dvsLength u in if ui > 1
+mkDsvIbNlFromStriped sv cpcs = DVS.generate ((DVS.length sv) `div` 3) go
+  where go :: Int -> Word64
+        go u = let ui = fromIntegral u in if ui > 1
           then  let svi = ui * 2
                     cpc = unsafeIndex cpcs (ui - 1)
                     wdq = unsafeIndex sv  svi
@@ -199,9 +199,9 @@ mkDsvIbNlFromStriped sv cpcs = DVS.constructN ((DVS.length sv) `div` 3) go
                 in wnl .&. m
 
 mkDsvIbDlFromStriped :: DVS.Vector Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
-mkDsvIbDlFromStriped sv cpcs = DVS.constructN ((DVS.length sv) `div` 3) go
-  where go :: DVS.Vector Word64 -> Word64
-        go u = let ui = dvsLength u in if ui > 1
+mkDsvIbDlFromStriped sv cpcs = DVS.generate ((DVS.length sv) `div` 3) go
+  where go :: Int -> Word64
+        go u = let ui = fromIntegral u in if ui > 1
           then  let svi = ui * 2
                     cpc = unsafeIndex cpcs (ui - 1)
                     wdq = unsafeIndex sv  svi

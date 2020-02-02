@@ -15,10 +15,10 @@ testWord8s w =  let w8s = w
 {-# INLINE testWord8s #-}
 
 zipOr :: DVS.Vector Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
-zipOr as bs = DVS.constructN (DVS.length as `max` DVS.length bs) go
-  where go :: DVS.Vector Word64 -> Word64
+zipOr as bs = DVS.generate (DVS.length as `max` DVS.length bs) go
+  where go :: Int -> Word64
         go u =
-          let ui = DVS.length u
+          let ui = fromIntegral u
           in if ui < DVS.length as && ui < DVS.length bs
             then DVS.unsafeIndex as ui .|. DVS.unsafeIndex bs ui
             else error "Different sized vectors"
@@ -32,10 +32,10 @@ zip2Or []     []     = []
 {-# INLINE zip2Or #-}
 
 zipAnd :: DVS.Vector Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
-zipAnd as bs = DVS.constructN (DVS.length as `max` DVS.length bs) go
-  where go :: DVS.Vector Word64 -> Word64
+zipAnd as bs = DVS.generate (DVS.length as `max` DVS.length bs) go
+  where go :: Int -> Word64
         go u =
-          let ui = DVS.length u
+          let ui = fromIntegral u
           in if ui < DVS.length as && ui < DVS.length bs
             then DVS.unsafeIndex as ui .&. DVS.unsafeIndex bs ui
             else error "Different sized vectors"
