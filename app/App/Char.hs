@@ -1,7 +1,6 @@
 module App.Char where
 
 import Data.Char
-import Data.Semigroup      ((<>))
 import Data.Word
 import Options.Applicative (ReadM, eitherReader)
 

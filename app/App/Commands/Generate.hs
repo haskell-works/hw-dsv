@@ -8,7 +8,6 @@ module App.Commands.Generate
 import Control.Lens
 import Data.Generics.Product.Any
 import Data.List
-import Data.Semigroup            ((<>))
 import Options.Applicative       hiding (columns)
 
 import qualified App.Commands.Options.Type as Z

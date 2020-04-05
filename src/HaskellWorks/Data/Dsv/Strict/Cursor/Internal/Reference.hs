@@ -5,7 +5,6 @@
 module HaskellWorks.Data.Dsv.Strict.Cursor.Internal.Reference where
 
 import Data.Bits                                  (popCount)
-import Data.Semigroup
 import Data.Word
 import HaskellWorks.Data.AtIndex
 import HaskellWorks.Data.Bits.BitWise

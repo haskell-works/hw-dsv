@@ -9,7 +9,6 @@ import Control.Monad.IO.Class
 import Data.ByteString                           (ByteString)
 import Data.Char
 import Data.List                                 (isSuffixOf)
-import Data.Monoid                               ((<>))
 import HaskellWorks.Data.Bits.PopCount.PopCount1
 import HaskellWorks.Data.Dsv.Internal.Char       (pipe)
 import HaskellWorks.Data.FromByteString

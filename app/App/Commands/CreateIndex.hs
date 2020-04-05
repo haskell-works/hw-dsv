@@ -10,7 +10,6 @@ import App.Char
 import Control.Lens
 import Control.Monad
 import Data.Generics.Product.Any
-import Data.Semigroup                    ((<>))
 import HaskellWorks.Data.ByteString.Lazy
 import Options.Applicative               hiding (columns)
 
