@@ -7,7 +7,6 @@ import Control.Monad
 import Criterion.Main
 import Data.ByteString                     (ByteString)
 import Data.List
-import Data.Monoid                         ((<>))
 import Data.Vector                         (Vector)
 import Data.Word
 import HaskellWorks.Data.Dsv.Internal.Char (comma, pipe)

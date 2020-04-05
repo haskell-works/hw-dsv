@@ -3,7 +3,6 @@
 
 module HaskellWorks.Data.Dsv.Lazy.CursorSpec (spec) where
 
-import Data.Semigroup                      ((<>))
 import HaskellWorks.Data.Bits.BitShown
 import HaskellWorks.Data.Dsv.Internal.Char (comma)
 import HaskellWorks.Hspec.Hedgehog

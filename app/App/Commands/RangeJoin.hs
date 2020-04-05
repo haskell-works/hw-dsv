@@ -18,7 +18,6 @@ import Control.Monad.Trans.Resource
 import Data.Generics.Product.Any
 import Data.List
 import Data.Maybe                   (catMaybes)
-import Data.Semigroup               ((<>))
 import Data.Word
 import Options.Applicative          hiding (columns)
 import Text.Read                    (readMaybe)

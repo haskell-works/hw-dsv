@@ -7,7 +7,6 @@ module App.Commands.IndexWord8s
 
 import Control.Lens
 import Data.Generics.Product.Any
-import Data.Semigroup                      ((<>))
 import HaskellWorks.Data.Vector.AsVector64
 import Options.Applicative
 

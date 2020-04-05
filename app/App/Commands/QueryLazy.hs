@@ -17,7 +17,6 @@ import Control.Monad.IO.Class       (liftIO)
 import Control.Monad.Trans.Resource
 import Data.Generics.Product.Any
 import Data.List
-import Data.Semigroup               ((<>))
 import Options.Applicative          hiding (columns)
 
 import qualified App.Commands.Options.Type                as Z

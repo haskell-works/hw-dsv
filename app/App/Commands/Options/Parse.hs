@@ -6,7 +6,6 @@ module App.Commands.Options.Parse
   , rangeJoinColumn
   ) where
 
-import Data.Semigroup      ((<>))
 import Data.Text
 import Options.Applicative
 import Text.Read           (readEither)

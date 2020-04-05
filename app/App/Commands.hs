@@ -6,7 +6,6 @@ import App.Commands.IndexWord8s
 import App.Commands.QueryLazy
 import App.Commands.QueryStrict
 import App.Commands.RangeJoin
-import Data.Semigroup           ((<>))
 import Options.Applicative
 
 commands :: Parser (IO ())
