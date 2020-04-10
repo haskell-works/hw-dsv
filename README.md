@@ -30,7 +30,7 @@ Ensure that `$HOME/.local/bin` is in your path if you are using intending to
 use the `hw-dsv` binary.
 
 For best performance, add the `bmi2` and `avx2` flags to target the BMI2 and
-AVS2 instruction are specified in the `cabal.project` file.
+AVX2 instruction are specified in the `cabal.project` file.
 
 For slightly older CPUs, remove `avx2` flags from the `cabal.project` file to
 target only the BMI2 instruction set.
