@@ -11,7 +11,6 @@ module HaskellWorks.Data.Dsv.Lazy.Cursor
 
 import Data.Function
 import Data.Word
-import GHC.Word                                   (Word8)
 import HaskellWorks.Data.Dsv.Lazy.Cursor.Internal
 import HaskellWorks.Data.Dsv.Lazy.Cursor.Type
 import HaskellWorks.Data.Vector.AsVector64s

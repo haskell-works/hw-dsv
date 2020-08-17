@@ -16,7 +16,6 @@ import Control.Monad
 import Control.Monad.IO.Class       (liftIO)
 import Control.Monad.Trans.Resource
 import Data.Generics.Product.Any
-import Data.List
 import Options.Applicative          hiding (columns)
 
 import qualified App.Commands.Options.Type                as Z
@@ -25,6 +24,7 @@ import qualified App.IO                                   as IO
 import qualified Data.ByteString                          as BS
 import qualified Data.ByteString.Builder                  as B
 import qualified Data.ByteString.Lazy                     as LBS
+import qualified Data.List                                as L
 import qualified Data.Vector                              as DV
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor        as SVL
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Lazy   as SVLL
@@ -57,7 +57,7 @@ runQueryLazySlow opts = do
     forM_ rows $ \row -> do
       let fieldStrings = columnToFieldString row <$> (opts ^.. the @"columns" . each . the @"number")
 
-      liftIO $ B.hPutBuilder hOut $ mconcat (intersperse outDelimiterBuilder fieldStrings) <> B.word8 10
+      liftIO $ B.hPutBuilder hOut $ mconcat (L.intersperse outDelimiterBuilder fieldStrings) <> B.word8 10
 
       return ()
   return ()
@@ -79,7 +79,7 @@ runQueryLazyStrict opts = do
     forM_ rows $ \row -> do
       let fieldStrings = columnToFieldString row <$> (opts ^.. the @"columns" . each . the @"number")
 
-      liftIO $ B.hPutBuilder hOut $ mconcat (intersperse outDelimiterBuilder fieldStrings) <> B.word8 10
+      liftIO $ B.hPutBuilder hOut $ mconcat (L.intersperse outDelimiterBuilder fieldStrings) <> B.word8 10
 
       return ()
   return ()
@@ -102,7 +102,7 @@ runQueryLazyFast opts = do
     forM_ rows $ \row -> do
       let fieldStrings = fmap B.lazyByteString row
 
-      liftIO $ B.hPutBuilder hOut $ mconcat (intersperse outDelimiterBuilder fieldStrings) <> B.word8 10
+      liftIO $ B.hPutBuilder hOut $ mconcat (L.intersperse outDelimiterBuilder fieldStrings) <> B.word8 10
 
       return ()
   return ()

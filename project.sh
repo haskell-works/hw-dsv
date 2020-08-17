@@ -18,6 +18,7 @@ cabal-install() {
 cabal-build() {
   cabal v2-build \
     --enable-tests \
+    --enable-benchmarks \
     --write-ghc-environment-files=ghc8.4.4+ \
     $CABAL_FLAGS "$@"
 }

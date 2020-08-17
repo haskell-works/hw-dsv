@@ -16,13 +16,13 @@ import Control.Monad
 import Control.Monad.IO.Class       (liftIO)
 import Control.Monad.Trans.Resource
 import Data.Generics.Product.Any
-import Data.List
 import Options.Applicative
 
 import qualified App.Commands.Options.Type           as Z
 import qualified App.IO                              as IO
 import qualified Data.ByteString                     as BS
 import qualified Data.ByteString.Builder             as B
+import qualified Data.List                           as L
 import qualified Data.Vector                         as DV
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor as SVS
 
@@ -41,7 +41,7 @@ runQueryStrict opts = do
     forM_ rows $ \row -> do
       let fieldStrings = columnToFieldString row <$> (opts ^. the @"columns")
 
-      liftIO $ B.hPutBuilder hOut $ mconcat (intersperse outDelimiterBuilder fieldStrings) <> B.word8 10
+      liftIO $ B.hPutBuilder hOut $ mconcat (L.intersperse outDelimiterBuilder fieldStrings) <> B.word8 10
 
       return ()
   return ()
