@@ -7,11 +7,11 @@ module App.Commands.Generate
 
 import Control.Lens
 import Data.Generics.Product.Any
-import Data.List
 import Options.Applicative       hiding (columns)
 
 import qualified App.Commands.Options.Type as Z
 import qualified App.Gen                   as G
+import qualified Data.List                 as L
 import qualified Hedgehog.Gen              as G
 import qualified Hedgehog.Range            as R
 
@@ -29,7 +29,7 @@ runGenerate opts = do
 
   csv <- G.sample (G.list (R.singleton rows) (G.list (R.singleton fields) G.field)) :: IO [[String]]
 
-  putStr $ unlines $ map (intercalate "," . map printField) csv
+  putStr $ unlines $ map (L.intercalate "," . map printField) csv
 
   return ()
 

@@ -16,7 +16,6 @@ import Control.Lens
 import Control.Monad.IO.Class       (liftIO)
 import Control.Monad.Trans.Resource
 import Data.Generics.Product.Any
-import Data.List
 import Data.Maybe                   (catMaybes)
 import Data.Word
 import Options.Applicative          hiding (columns)
@@ -27,6 +26,7 @@ import qualified App.Data.RangeJoinColumn               as Z
 import qualified App.IO                                 as IO
 import qualified Data.ByteString.Builder                as B
 import qualified Data.ByteString.Lazy                   as LBS
+import qualified Data.List                              as L
 import qualified Data.Text                              as T
 import qualified Data.Text.Encoding                     as T
 import qualified Data.Vector                            as DV
@@ -95,7 +95,7 @@ runRangeJoin opts = do
     (_, hOut) <- IO.openOutputFile outputFilePath Nothing
     let outLbsss  = rangeJoin columnSelector input1StartColumn input1StopColumn rows1 input2StartColumn input2StopColumn rows2
     let outBss    = fmap (fmap B.lazyByteString) outLbsss
-    let outB      = mconcat (intersperse outNewlineBuilder (fmap (mconcat . intersperse outDelimiterBuilder) outBss))
+    let outB      = mconcat (L.intersperse outNewlineBuilder (fmap (mconcat . L.intersperse outDelimiterBuilder) outBss))
     liftIO $ B.hPutBuilder hOut outB
   return ()
 

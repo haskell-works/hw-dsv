@@ -8,7 +8,6 @@ import Control.Monad
 import Control.Monad.IO.Class
 import Data.ByteString                           (ByteString)
 import Data.Char
-import Data.List                                 (isSuffixOf)
 import HaskellWorks.Data.Bits.PopCount.PopCount1
 import HaskellWorks.Data.Dsv.Internal.Char       (pipe)
 import HaskellWorks.Data.FromByteString
@@ -17,6 +16,7 @@ import Hedgehog
 import Test.Hspec
 
 import qualified Data.ByteString                                        as BS
+import qualified Data.List                                              as L
 import qualified Data.Text                                              as T
 import qualified Data.Text.Encoding                                     as T
 import qualified Data.Vector.Storable                                   as DVS
@@ -35,7 +35,7 @@ spec :: Spec
 spec = describe "HaskellWorks.Data.Dsv.Strict.Cursor.InternalSpec" $ do
   it "Case 1" $ requireTest $ do
     entries <- liftIO $ IO.listDirectory "data/bench"
-    let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
+    let files = ("data/bench/" ++) <$> (".csv" `L.isSuffixOf`) `filter` entries
     forM_ files $ \file -> do
       v <- liftIO $ IO.mmapFromForeignRegion file
       let !actual   = DVS.foldr (\a b -> popCount1 a + b) 0 (fst $  SVS.makeIndexes pipe v)
@@ -68,7 +68,7 @@ spec = describe "HaskellWorks.Data.Dsv.Strict.Cursor.InternalSpec" $ do
     u === expected
   it "Case 6" $ requireTest $ do
     entries <- liftIO $ IO.listDirectory "data/bench"
-    let files = ("data/bench/" ++) <$> (".csv" `isSuffixOf`) `filter` entries
+    let files = ("data/bench/" ++) <$> (".csv" `L.isSuffixOf`) `filter` entries
     forM_ files $ \file -> do
       v <- liftIO $ IO.mmapFromForeignRegion file
       let !actual   = fst $ SVS.makeIndexes pipe v

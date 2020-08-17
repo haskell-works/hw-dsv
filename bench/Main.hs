@@ -6,7 +6,6 @@ module Main where
 import Control.Monad
 import Criterion.Main
 import Data.ByteString                     (ByteString)
-import Data.List
 import Data.Vector                         (Vector)
 import Data.Word
 import HaskellWorks.Data.Dsv.Internal.Char (comma, pipe)
@@ -15,6 +14,7 @@ import System.Directory
 import qualified Data.ByteString.Lazy                                   as LBS
 import qualified Data.Csv                                               as CSV
 import qualified Data.Csv.Streaming                                     as CSS
+import qualified Data.List                                              as L
 import qualified Data.Vector.Storable                                   as DVS
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor                      as SVL
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Lazy                 as SVLL
