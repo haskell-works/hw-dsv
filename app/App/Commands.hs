@@ -8,6 +8,8 @@ import App.Commands.QueryStrict
 import App.Commands.RangeJoin
 import Options.Applicative
 
+{- HLINT ignore "Monoid law, left identity" -}
+
 commands :: Parser (IO ())
 commands = commandsGeneral <|> commandsDebugging
 

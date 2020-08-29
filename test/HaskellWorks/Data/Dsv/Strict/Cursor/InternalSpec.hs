@@ -27,9 +27,9 @@ import qualified Hedgehog.Gen                                           as G
 import qualified Hedgehog.Range                                         as R
 import qualified System.Directory                                       as IO
 
-{-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
-{-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
-{-# ANN module ("HLint: ignore Redundant bracket"   :: String) #-}
+{- HLINT ignore "Redundant do"        -}
+{- HLINT ignore "Reduce duplication"  -}
+{- HLINT ignore "Redundant bracket"   -}
 
 spec :: Spec
 spec = describe "HaskellWorks.Data.Dsv.Strict.Cursor.InternalSpec" $ do

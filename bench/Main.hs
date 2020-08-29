@@ -24,7 +24,8 @@ import qualified HaskellWorks.Data.Dsv.Strict.Cursor.Internal.Reference as SVS
 import qualified HaskellWorks.Data.FromForeignRegion                    as IO
 import qualified HaskellWorks.Data.RankSelect.CsPoppy                   as RS
 
-{- HLINT ignore "Reduce duplication"  -}
+{- HLINT ignore "Reduce duplication"        -}
+{- HLINT ignore "Monoid law, left identity" -}
 
 loadCassavaStrict :: FilePath -> IO (Vector (Vector ByteString))
 loadCassavaStrict filePath = do

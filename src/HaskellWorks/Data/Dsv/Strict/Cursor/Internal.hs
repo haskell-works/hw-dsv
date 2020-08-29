@@ -1,11 +1,10 @@
-{-# LANGUAGE ExplicitForAll      #-}
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module HaskellWorks.Data.Dsv.Strict.Cursor.Internal where
 
 import Control.Monad.ST
-import Data.Bits                                  (popCount)
+import Data.Bits                                 (popCount)
 import Data.Word
 import HaskellWorks.Data.AtIndex
 import HaskellWorks.Data.Bits.BitWise
@@ -21,7 +20,7 @@ import qualified Data.Vector.Storable                       as DVS
 import qualified Data.Vector.Storable.Mutable               as DVSM
 import qualified HaskellWorks.Data.Dsv.Internal.Char.Word64 as CW
 
-{-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
+{- HLINT ignore "Reduce duplication" -}
 
 makeIndexes :: Word8 -> DVS.Vector Word64 -> (DVS.Vector Word64, DVS.Vector Word64)
 makeIndexes delimiter ws = case DVS.createT $ makeIndexes' CW.doubleQuote CW.newline (fillWord64 delimiter) ws of

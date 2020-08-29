@@ -32,6 +32,8 @@ import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Strict as SVLS
 import qualified System.Exit                              as IO
 import qualified System.IO                                as IO
 
+{- HLINT ignore "Reduce duplication" -}
+
 defaultMethod :: String
 defaultMethod = "lazy-traverse"
 

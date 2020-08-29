@@ -16,7 +16,7 @@ import Control.Lens
 import Control.Monad.IO.Class       (liftIO)
 import Control.Monad.Trans.Resource
 import Data.Generics.Product.Any
-import Data.Maybe                   (catMaybes)
+import Data.Maybe                   (fromMaybe, mapMaybe)
 import Data.Word
 import Options.Applicative          hiding (columns)
 import Text.Read                    (readMaybe)
@@ -35,7 +35,7 @@ import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Lazy as SVLL
 
 rangeJoin :: (DV.Vector LBS.ByteString -> DV.Vector LBS.ByteString -> [LBS.ByteString])
   -> Int -> Int -> [DV.Vector LBS.ByteString] -> Int -> Int -> [DV.Vector LBS.ByteString] -> [[LBS.ByteString]]
-rangeJoin f aa az as ba bz bs = rangeJoin' f (catMaybes (fmap (mkEntry aa az) as)) (catMaybes (fmap (mkEntry ba bz) bs))
+rangeJoin f aa az as ba bz bs = rangeJoin' f (mapMaybe (mkEntry aa az) as) (mapMaybe (mkEntry ba bz) bs)
 
 mkEntry :: Int -> Int -> DV.Vector LBS.ByteString -> Maybe (Word32, Word32, DV.Vector LBS.ByteString)
 mkEntry a z v = (,, v) <$> lookupWord32 a v <*> lookupWord32 z v
@@ -50,15 +50,15 @@ rangeJoin' :: (DV.Vector LBS.ByteString -> DV.Vector LBS.ByteString -> [LBS.Byte
   -> [(Word32, Word32, DV.Vector LBS.ByteString)] -> [(Word32, Word32, DV.Vector LBS.ByteString)] -> [[LBS.ByteString]]
 rangeJoin' f ((ua, uz, u):us) ((va, vz, v):vs) = if
   | uz < va   -> ("L":encodeWord32 ua:encodeWord32  uz     :f u e):rangeJoin' f                  us  ((va    , vz, v):vs)
-  | vz < ua   -> ("R":encodeWord32 va:encodeWord32  vz     :f e v):rangeJoin' f ((ua    , uz, u):us) (                vs)
+  | vz < ua   -> ("R":encodeWord32 va:encodeWord32  vz     :f e v):rangeJoin' f ((ua    , uz, u):us)                  vs
   | ua < va   -> ("L":encodeWord32 ua:encodeWord32 (va - 1):f u e):rangeJoin' f ((va    , uz, u):us) ((va    , vz, v):vs)
   | va < ua   -> ("R":encodeWord32 va:encodeWord32 (ua - 1):f e v):rangeJoin' f ((ua    , uz, u):us) ((ua    , vz, v):vs)
   | uz < vz   -> ("B":encodeWord32 ua:encodeWord32  uz     :f u v):rangeJoin' f                  us  ((uz + 1, vz, v):vs)
   | vz < uz   -> ("B":encodeWord32 va:encodeWord32  vz     :f u v):rangeJoin' f ((vz + 1, uz, u):us)                  vs
   | otherwise -> ("B":encodeWord32 va:encodeWord32  vz     :f u v):rangeJoin' f                  us                   vs
   where e = DV.empty
-rangeJoin' f ((ua, uz, _):us) []                = ("L":encodeWord32 ua:encodeWord32 uz:[]):rangeJoin' f us []
-rangeJoin' f []               ((va, vz, _):vs)  = ("R":encodeWord32 va:encodeWord32 vz:[]):rangeJoin' f [] vs
+rangeJoin' f ((ua, uz, _):us) []                = ["L", encodeWord32 ua, encodeWord32 uz]:rangeJoin' f us []
+rangeJoin' f []               ((va, vz, _):vs)  = ["R", encodeWord32 va, encodeWord32 vz]:rangeJoin' f [] vs
 rangeJoin' _ []               []                = []
 
 encodeWord32 :: Word32 -> LBS.ByteString
@@ -67,8 +67,8 @@ encodeWord32 = LBS.fromStrict . T.encodeUtf8 . T.pack . show
 mkColumnSelector :: [Z.RangeJoinColumn] -> DV.Vector LBS.ByteString -> DV.Vector LBS.ByteString -> [LBS.ByteString]
 mkColumnSelector []     _ _ = []
 mkColumnSelector (c:cs) u v = case c of
-  Z.LtColumn n -> (maybe "" id (u DV.!? n)):mkColumnSelector cs u v
-  Z.RtColumn n -> (maybe "" id (v DV.!? n)):mkColumnSelector cs u v
+  Z.LtColumn n -> fromMaybe "" (u DV.!? n):mkColumnSelector cs u v
+  Z.RtColumn n -> fromMaybe "" (v DV.!? n):mkColumnSelector cs u v
 
 runRangeJoin :: Z.RangeJoinOptions -> IO ()
 runRangeJoin opts = do

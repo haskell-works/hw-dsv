@@ -14,7 +14,7 @@ import qualified HaskellWorks.Data.Dsv.Lazy.Cursor      as SVL
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Lazy as SVLL
 import qualified HaskellWorks.Data.Dsv.Strict.Cursor    as SVS
 
-{-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
+{- HLINT ignore "Redundant do"        -}
 
 repeatedly :: (a -> Maybe a) -> a -> [a]
 repeatedly f a = a:case f a of
@@ -47,11 +47,7 @@ main = do
             Right v -> pure v
       , action "cassava streaming" $ do
           fmap (F.toList . CSS.decode CSS.HasHeader) (LBS.readFile infp) :: IO [Vector ByteString]
-      , action "hw-dsv strict" $ do
-          v <- loadCsvStrict infp :: IO (Vector (Vector ByteString))
-          pure v
-      , action "hw-dsv lazy" $ do
-          v <- loadCsvLazy infp :: IO [Vector LBS.ByteString]
-          pure v
+      , action "hw-dsv strict" (loadCsvStrict infp  :: IO (Vector (Vector ByteString)))
+      , action "hw-dsv lazy"   (loadCsvLazy infp    :: IO [Vector LBS.ByteString])
       ]
   return ()
