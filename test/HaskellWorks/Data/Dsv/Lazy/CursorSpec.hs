@@ -14,9 +14,9 @@ import qualified Data.Vector                            as DV
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor      as SVL
 import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Lazy as SVLL
 
-{-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
-{-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
-{-# ANN module ("HLint: ignore Redundant bracket"   :: String) #-}
+{- HLINT ignore "Redundant do"        -}
+{- HLINT ignore "Reduce duplication"  -}
+{- HLINT ignore "Redundant bracket"   -}
 
 subjectEmpty, subjectSS, subjectSM, subjectMS, subjectMM :: LBS.ByteString
 expectedEmpty, expectedSS, expectedSM, expectedMS, expectedMM :: [DV.Vector LBS.ByteString]

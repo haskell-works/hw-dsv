@@ -1,10 +1,9 @@
-{-# LANGUAGE ExplicitForAll      #-}
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module HaskellWorks.Data.Dsv.Strict.Cursor.Internal.Reference where
 
-import Data.Bits                                  (popCount)
+import Data.Bits                                 (popCount)
 import Data.Word
 import HaskellWorks.Data.AtIndex
 import HaskellWorks.Data.Bits.BitWise
@@ -18,7 +17,8 @@ import Prelude
 import qualified Data.Vector.Storable                       as DVS
 import qualified HaskellWorks.Data.Dsv.Internal.Char.Word64 as CW
 
-{-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
+{- HLINT ignore "Reduce duplication"  -}
+{- HLINT ignore "Redundant guard"     -}
 
 unsafeIndex :: DVS.Vector Word64 -> Int -> Word64
 unsafeIndex v i | i < 0                           = error $ "Invalid index: " <> show i <> " for vector sized " <> show (DVS.length v)
@@ -181,7 +181,7 @@ mkCummulativeDqPopCountFromStriped v = DVS.constructN (DVS.length v `div` 3) go
                 in unsafeIndex u (ui - 1) + fromIntegral (popCount w)
 
 mkDsvIbNlFromStriped :: DVS.Vector Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
-mkDsvIbNlFromStriped sv cpcs = DVS.generate ((DVS.length sv) `div` 3) go
+mkDsvIbNlFromStriped sv cpcs = DVS.generate (DVS.length sv `div` 3) go
   where go :: Int -> Word64
         go u = let ui = fromIntegral u in if ui > 1
           then  let svi = ui * 2
@@ -198,7 +198,7 @@ mkDsvIbNlFromStriped sv cpcs = DVS.generate ((DVS.length sv) `div` 3) go
                 in wnl .&. m
 
 mkDsvIbDlFromStriped :: DVS.Vector Word64 -> DVS.Vector Word64 -> DVS.Vector Word64
-mkDsvIbDlFromStriped sv cpcs = DVS.generate ((DVS.length sv) `div` 3) go
+mkDsvIbDlFromStriped sv cpcs = DVS.generate (DVS.length sv `div` 3) go
   where go :: Int -> Word64
         go u = let ui = fromIntegral u in if ui > 1
           then  let svi = ui * 2

@@ -35,7 +35,7 @@ ipv4ToWord32 lbs = case TAS.parse IPv4.parseIpAddress (T.unpack (T.decodeUtf8 (L
   Nothing          -> lbs
 
 realiseColumnDescLazy :: ColumnDesc Text -> ColumnDesc (LBS.ByteString -> LBS.ByteString)
-realiseColumnDescLazy cd = fmap realise cd
+realiseColumnDescLazy = fmap realise
   where realise :: Text -> LBS.ByteString -> LBS.ByteString
         realise t = case t of
           "id"             -> id

@@ -22,8 +22,10 @@ import qualified Data.ByteString.Lazy as LBS
 import qualified Data.List            as L
 import qualified Data.Vector          as DV
 
+{- HLINT ignore "Reduce duplication" -}
+
 snippet :: DsvCursor -> Int -> BS.ByteString -> BS.ByteString
-snippet c offset bs = BS.take (len `max` 0) $ BS.drop posC $ bs
+snippet c offset bs = BS.take (len `max` 0) $ BS.drop posC bs
   where d = nextField c
         posC = fromIntegral (dsvCursorPosition c) - offset
         posD = fromIntegral (dsvCursorPosition d) - offset

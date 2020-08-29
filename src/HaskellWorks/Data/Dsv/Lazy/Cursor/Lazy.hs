@@ -23,6 +23,8 @@ import qualified Data.ByteString.Lazy as LBS
 import qualified Data.List            as L
 import qualified Data.Vector          as DV
 
+{- HLINT ignore "Reduce duplication" -}
+
 snippet :: DsvCursor -> LBS.ByteString
 snippet c = LBS.take (len `max` 0) $ LBS.drop posC $ dsvCursorText c
   where d = nextField c
