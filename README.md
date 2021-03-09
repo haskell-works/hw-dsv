@@ -86,9 +86,10 @@ The `hw-dsv` application accepts 1-based column indexes rather than 0-based. The
 
 module Example where
 
-import qualified Data.ByteString.Lazy              as LBS
-import qualified Data.Vector                       as DV
-import qualified HaskellWorks.Data.Dsv.Lazy.Cursor as SVL
+import qualified Data.ByteString.Lazy                   as LBS
+import qualified Data.Vector                            as DV
+import qualified HaskellWorks.Data.Dsv.Lazy.Cursor      as SVL
+import qualified HaskellWorks.Data.Dsv.Lazy.Cursor.Lazy as SVL
 
 example :: IO ()
 example = do
