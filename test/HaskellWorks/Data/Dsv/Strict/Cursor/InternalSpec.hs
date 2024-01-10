@@ -1,6 +1,7 @@
 {-# LANGUAGE BangPatterns        #-}
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications    #-}
 
 module HaskellWorks.Data.Dsv.Strict.Cursor.InternalSpec (spec) where
 
@@ -42,26 +43,26 @@ spec = describe "HaskellWorks.Data.Dsv.Strict.Cursor.InternalSpec" $ do
       let !expected = DVS.foldr (\a b -> popCount1 a + b) 0 (       SVS.mkIbVector  pipe v)
       actual === expected
   it "Case 2" $ requireTest $ do
-    bs :: ByteString <- forAll $ T.encodeUtf8 . T.pack <$> G.string (R.linear 0 128) (G.element " \"|\n")
+    bs :: ByteString <- forAll $ T.encodeUtf8 . T.pack <$> G.string (R.linear 0 128) (G.element (id @String " \"|\n"))
     v <- forAll $ pure $ fromByteString bs
     let !actual   = DVS.foldr (\a b -> popCount1 a + b) 0 (fst $ SVS.makeIndexes pipe v)
     let !expected = DVS.foldr (\a b -> popCount1 a + b) 0 (      SVS.mkIbVector  pipe v)
     actual === expected
   it "Case 3" $ requireTest $ do
-    bs :: ByteString <- forAll $ T.encodeUtf8 . T.pack <$> G.string (R.linear 0 128) (G.element " \"|\n")
+    bs :: ByteString <- forAll $ T.encodeUtf8 . T.pack <$> G.string (R.linear 0 128) (G.element (id @String " \"|\n"))
     v <- forAll $ pure $ fromByteString bs
     let !actual   = DVS.foldr (\a b -> popCount1 a + b) 0 (fst $ SVS.makeIndexes pipe v)
     let !expected = DVS.foldr (\a b -> popCount1 a + b) 0 (      SVS.mkIbVector  pipe v)
     actual === expected
   it "Case 4" $ requireTest $ do
-    bs :: ByteString <- forAll $ T.encodeUtf8 . T.pack <$> G.string (R.linear 0 10000) (G.element " \"")
+    bs :: ByteString <- forAll $ T.encodeUtf8 . T.pack <$> G.string (R.linear 0 10000) (G.element (id @String " \""))
     v <- forAll $ pure $ fromByteString bs
     numQuotes <- forAll $ pure $ BS.length $ BS.filter (== fromIntegral (ord '"')) bs
     u <- forAll $ pure $ fst $ SVS.makeIndexes pipe v
     let !pc = DVS.foldr (\a b -> popCount1 a + b) 0 u
     pc === fromIntegral numQuotes
   it "Case 5" $ requireTest $ do
-    bs :: ByteString <- forAll $ T.encodeUtf8 . T.pack <$> G.string (R.linear 0 10000) (G.element " \"")
+    bs :: ByteString <- forAll $ T.encodeUtf8 . T.pack <$> G.string (R.linear 0 10000) (G.element (id @String " \""))
     v <- forAll $ pure $ fromByteString bs
     u <- forAll $ pure $ fst $ SVS.makeIndexes pipe v
     let !expected =            SVS.mkIbVector  pipe v
