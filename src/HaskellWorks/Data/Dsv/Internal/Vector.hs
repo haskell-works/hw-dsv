@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP           #-}
 {-# LANGUAGE MagicHash           #-}
 {-# LANGUAGE RankNTypes          #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -40,7 +41,11 @@ constructNS n s f = DVS.createT (go 0 s)
 {-# INLINE constructNS #-}
 
 ltWord :: Word64 -> Word64 -> Word64
+#if MIN_VERSION_base(4,17,2)
+ltWord (W64# a#) (W64# b#) = fromIntegral (I# (ltWord64# a# b#))
+#else
 ltWord (W64# a#) (W64# b#) = fromIntegral (I64# (ltWord# a# b#))
+#endif
 {-# INLINE ltWord #-}
 
 indexCsvChunk ::

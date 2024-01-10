@@ -16,6 +16,7 @@ cabal.sandbox.config
 *.hp
 
 /*.submodules
+/cabal.project.local
 /.stack-work/
 /.stack-work-*/
 /result
