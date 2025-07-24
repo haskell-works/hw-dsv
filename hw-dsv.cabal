@@ -9,10 +9,10 @@ homepage:               https://github.com/haskell-works/hw-dsv#readme
 bug-reports:            https://github.com/haskell-works/hw-dsv/issues
 author:                 John Ky
 maintainer:             newhoggy@gmail.com
-copyright:              2018-2020 John Ky
+copyright:              2018-2025 John Ky
 license:                BSD-3-Clause
 license-file:           LICENSE
-tested-with:            GHC == 9.2.2, GHC == 9.0.2, GHC == 8.10.7, GHC == 8.8.4, GHC == 8.6.5
+tested-with:            GHC == 9.12.2, GHC == 9.10.2, GHC == 9.8.4, GHC == 9.6.7
 build-type:             Simple
 extra-source-files:     README.md
                         ChangeLog.md
@@ -46,11 +46,11 @@ common cassava                    { build-depends: cassava                    >=
 common criterion                  { build-depends: criterion                  >= 1.4.1.0    && < 1.7    }
 common deepseq                    { build-depends: deepseq                    >= 1.4        && < 1.6    }
 common directory                  { build-depends: directory                  >= 1.2.2      && < 1.4    }
-common doctest                    { build-depends: doctest                    >= 0.16.2     && < 0.23   }
+common doctest                    { build-depends: doctest                    >= 0.16.2     && < 1      }
 common doctest-discover           { build-depends: doctest-discover           >= 0.2        && < 0.3    }
 common generic-lens               { build-depends: generic-lens               >= 2.2        && < 2.3    }
 common ghc-prim                   { build-depends: ghc-prim                   >= 0.4        && < 1      }
-common hedgehog                   { build-depends: hedgehog                   >= 0.5        && < 1.5    }
+common hedgehog                   { build-depends: hedgehog                   >= 0.5        && < 2      }
 common hspec                      { build-depends: hspec                      >= 2.4        && < 3      }
 common hw-bits                    { build-depends: hw-bits                    >= 0.7.0.2    && < 0.8    }
 common hw-hspec-hedgehog          { build-depends: hw-hspec-hedgehog          >= 0.1.0.4    && < 0.2    }

@@ -31,7 +31,7 @@ data ColumnDesc a = ColumnDesc
 
 ipv4ToWord32 :: LBS.ByteString -> LBS.ByteString
 ipv4ToWord32 lbs = case TAS.parse IPv4.parseIpAddress (T.unpack (T.decodeUtf8 (LBS.toStrict lbs))) of
-  Just ipv4Address -> LBS.fromStrict (T.encodeUtf8 (T.pack (show (ipv4Address ^. the @"word"))))
+  Just ipv4Address -> LBS.fromStrict (T.encodeUtf8 (T.pack (Prelude.show (ipv4Address ^. the @"word"))))
   Nothing          -> lbs
 
 realiseColumnDescLazy :: ColumnDesc Text -> ColumnDesc (LBS.ByteString -> LBS.ByteString)

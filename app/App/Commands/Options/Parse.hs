@@ -35,7 +35,7 @@ columnDesc = option $ eitherReader $ \s -> do
       if i == 0
         then Left "cannot index column 0"
         else Right (Z.ColumnDesc (i - 1) "id")
-    _ -> Left $ "invalid column description " <> show s
+    _ -> Left $ "invalid column description " <> Prelude.show s
 
 rangeJoinColumn :: Mod OptionFields Z.RangeJoinColumn -> Parser Z.RangeJoinColumn
 rangeJoinColumn = option $ eitherReader $ \s -> case s of
@@ -49,4 +49,4 @@ rangeJoinColumn = option $ eitherReader $ \s -> case s of
     if i == 0
       then Left "cannot index column 0"
       else Right (Z.RtColumn (i - 1))
-  _ -> Left $ "invalid range-join column: " <> show s
+  _ -> Left $ "invalid range-join column: " <> Prelude.show s
